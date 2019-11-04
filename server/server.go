@@ -1,11 +1,12 @@
 package server
 
-import (	
-	"github.com/robfig/cron/v3"
+import (
+	"fmt"
+	"net/http"
 )
 
-func ServerInit(){
-	
+func ServerInit() {
+
 	http.HandleFunc("/", index)
 	//http.HandleFunc("/api/echo", api.EchoHandleFunc)
 	//http.HandleFunc("/api/hello", api.HelloHandleFunc)
