@@ -1,5 +1,5 @@
 // JSON example
-package main
+/*package main
 
 import (
 	"bytes"
@@ -49,4 +49,4 @@ func main() {
 	if err := enc.Encode(resp); err != nil {
 		log.Fatalf("error: can't encode - %s", err)
 	}
-}
+}*/

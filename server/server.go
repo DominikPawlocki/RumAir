@@ -4,11 +4,16 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-type sensorReading struct {
-	Symbol string  // Stock symbol
-	Volume int     // Number of shares
-	Price  float64 // Trade price
-	Buy    bool    // true if buy trade, false if sell trade
+func ServerInit(){
+	
+	http.HandleFunc("/", index)
+	//http.HandleFunc("/api/echo", api.EchoHandleFunc)
+	//http.HandleFunc("/api/hello", api.HelloHandleFunc)
+
+	http.ListenAndServe(port(), nil)
 }
 
-//dont !!!!!!!!!!!!!!!!
+func index(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Welcome to Rumia air monitoring system.")
+}

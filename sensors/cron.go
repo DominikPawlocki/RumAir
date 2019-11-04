@@ -17,8 +17,8 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-func InitCron(a int, b int) int {
-	c := cron.New()
+func AddSensorToCron(c *cron.Cron, sensorId string, offsetInSeconds int) int {
+
 	c.AddFunc("30 * * * *", func() { fmt.Println("Every hour on the half hour") })
 	inspect(c.Entries())
 

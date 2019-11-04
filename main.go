@@ -1,15 +1,39 @@
-func main() {
-	http.HandleFunc("/", index)
-	http.HandleFunc("/api/echo", api.EchoHandleFunc)
-	http.HandleFunc("/api/hello", api.HelloHandleFunc)
+package main
 
-	http.HandleFunc("/api/books", api.BooksHandleFunc)
-	http.HandleFunc("/api/books/", api.BookHandleFunc)
+import (
+	"github.com/dompaw/RumAir/server"
 
-	http.ListenAndServe(port(), nil)
+	"github.com/robfig/cron/v3"
+)
+
+// Sensor aaaaaaaaaaaaaaa
+type Sensor struct {
+	ID   string
+	Desc string
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Welcome to Rumia air monitoring system.")
+var sensors = map[string]Sensor{
+	"0345391802": Sensor{ID: "0345391802", Desc: "The Hitchhiker's Guide to the Galaxy"},
+	"121212":     Sensor{ID: "121212", Desc: "Cloud Native Go"},
+}
+
+func main() {
+	server.ServerInit()
+
+	cron := cron.New()
+	sensorsSlc := AllSensors()
+	for i, sensor := range sensorsSlc {
+		sensors.AddSensorToCron(*cron, sensor.ID, i)
+	}
+}
+
+// AllSensors returns a slice of all sensors
+func AllSensors() []Sensor {
+	values := make([]Sensor, len(sensors))
+	idx := 0
+	for _, sensor := range sensors {
+		values[idx] = sensor
+		idx++
+	}
+	return values
 }

@@ -1,5 +1,5 @@
 // Key/Value database
-package main
+/*package main
 
 import (
 	"encoding/json"
@@ -76,3 +76,4 @@ func main() {
 		log.Fatal(err)
 	}
 }
+*/

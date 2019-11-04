@@ -1,5 +1,5 @@
 // Calling GitHub API
-package main
+/*package main
 
 import (
 	"encoding/json"
@@ -42,3 +42,4 @@ func main() {
 
 	fmt.Printf("%+v\n", user)
 }
+*/
