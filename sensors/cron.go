@@ -19,7 +19,7 @@ import (
 
 func AddSensorToCron(c *cron.Cron, sensorId string, offsetInSeconds int) int {
 
-	c.AddFunc("30 * * * *", func() { fmt.Println("Every hour on the half hour") })
+	id, err := c.AddFunc("30 * * * *", func() { fmt.Println("Every hour on the half hour") })
 	inspect(c.Entries())
 
 	/*for _, entry := range c.Entries() {
@@ -27,5 +27,5 @@ func AddSensorToCron(c *cron.Cron, sensorId string, offsetInSeconds int) int {
 		return entry
 	}*/
 
-	return c.Entries[0].ID
+	return id.ID
 }

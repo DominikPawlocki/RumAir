@@ -2,16 +2,20 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
-func ServerInit() {
+// Init aaaaaaaaaaaaaaaaaaaaa
+func Init() {
 
 	http.HandleFunc("/", index)
 	//http.HandleFunc("/api/echo", api.EchoHandleFunc)
 	//http.HandleFunc("/api/hello", api.HelloHandleFunc)
 
-	http.ListenAndServe(port(), nil)
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func index(w http.ResponseWriter, r *http.Request) {

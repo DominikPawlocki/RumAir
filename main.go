@@ -18,13 +18,16 @@ var sensors = map[string]Sensor{
 }
 
 func main() {
-	server.ServerInit()
+	server.Init()
 
 	cron := cron.New()
 	sensorsSlc := AllSensors()
 	for i, sensor := range sensorsSlc {
 		sensors.AddSensorToCron(*cron, sensor.ID, i)
 	}
+
+	cron.Start()
+	defer cron.Stop()
 }
 
 // AllSensors returns a slice of all sensors
