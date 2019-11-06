@@ -1,4 +1,3 @@
-// Calling GitHub API
 /*package main
 
 import (

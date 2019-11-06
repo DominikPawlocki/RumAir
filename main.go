@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/dompaw/RumAir/server"
+	"fmt"
 
-	"github.com/robfig/cron/v3"
+	"github.com/dompaw/RumAir/sensors"
+	"github.com/dompaw/RumAir/server"
 )
 
 // Sensor aaaaaaaaaaaaaaa
@@ -12,29 +13,42 @@ type Sensor struct {
 	Desc string
 }
 
-var sensors = map[string]Sensor{
-	"0345391802": Sensor{ID: "0345391802", Desc: "The Hitchhiker's Guide to the Galaxy"},
-	"121212":     Sensor{ID: "121212", Desc: "Cloud Native Go"},
+var sensorsToFetch = map[string]Sensor{
+	"1573048257175": Sensor{ID: "1573048257175", Desc: "Jana III Sobieskiego"},
+	"1573050028266": Sensor{ID: "1573050028266", Desc: "Sabata"},
+	"1573050067273": Sensor{ID: "1573050067273", Desc: "Różana"},
+	"1573050097014": Sensor{ID: "1573050097014", Desc: "Kujawska"},
+	"1573050124901": Sensor{ID: "1573050124901", Desc: "Kościelna (Skwer Plac Kaszubski)"},
 }
 
 func main() {
 	server.Init()
 
-	cron := cron.New()
+	//cron := cron.New()
 	sensorsSlc := AllSensors()
 	for i, sensor := range sensorsSlc {
-		sensors.AddSensorToCron(*cron, sensor.ID, i)
+		sensorID, err := sensors.AddSensorToCron(sensor.ID, i)
+		if err == nil {
+			fmt.Printf("Sensor %v added to Cron.", sensorID)
+		}
 	}
 
-	cron.Start()
-	defer cron.Stop()
+	/*if (cronSize, err) := sensors.StartCron(); err != nil {
+		return nil, err
+	}*/
+
+	cronSize, err := sensors.StartCron()
+	if err == nil {
+		fmt.Printf("Cron with size %v started correctly !", cronSize)
+	}
+	fmt.Printf("Cron NOT STARTED ! %v", err)
 }
 
 // AllSensors returns a slice of all sensors
 func AllSensors() []Sensor {
-	values := make([]Sensor, len(sensors))
+	values := make([]Sensor, len(sensorsToFetch))
 	idx := 0
-	for _, sensor := range sensors {
+	for _, sensor := range sensorsToFetch {
 		values[idx] = sensor
 		idx++
 	}
