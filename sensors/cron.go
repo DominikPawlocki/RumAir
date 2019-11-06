@@ -12,20 +12,52 @@ Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?*/
 package sensors
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/robfig/cron/v3"
 )
 
-func AddSensorToCron(c *cron.Cron, sensorId string, offsetInSeconds int) int {
+var cronInstance *cron.Cron = cron.New(cron.WithSeconds())
 
+/*func AddSensorToCron(c *cron.Cron, sensorId strings, offsetInSeconds int) cron.EntryID {
+	fmt.Println("---------------CRON ----------------------")
 	id, err := c.AddFunc("30 * * * *", func() { fmt.Println("Every hour on the half hour") })
-	inspect(c.Entries())
+	if err != nil {
+		fmt.Printf("Error occured when adding sensor %v to CRON !", sensorId)
+		panic(err)
+	}
 
-	/*for _, entry := range c.Entries() {
-	if id == entry.ID {
-		return entry
-	}*/
+	fmt.Printf("Sensor %v added to Cron.", sensorId)
 
-	return id.ID
+	return id
+}*/
+
+func GetCron() *cron.Cron {
+	return cronInstance
+}
+
+func AddSensorToCron(offsetInSeconds int, sensorDataFetcher func()) (cron.EntryID, error) {
+	timeOffset := 9 * offsetInSeconds
+	id, err := cronInstance.AddFunc(cronFormatBuilder(timeOffset), sensorDataFetcher)
+	if err != nil {
+		fmt.Println("Error occured when adding sensor to CRON !")
+		panic(err)
+	}
+	return id, nil
+}
+
+func cronFormatBuilder(secondsOffset int) string {
+	result := strconv.Itoa(secondsOffset) + " * * * * *"
+	return result
+}
+
+func StartCron() (int, error) {
+	numberOfEntriesInCron := len(cronInstance.Entries())
+	if numberOfEntriesInCron > 0 {
+		cronInstance.Start()
+		return numberOfEntriesInCron, nil
+	}
+	return -1, errors.New("Cron Not started !!")
 }

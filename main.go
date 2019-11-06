@@ -1,40 +1,39 @@
 package main
 
 import (
-	"github.com/dompaw/RumAir/server"
+	"fmt"
 
-	"github.com/robfig/cron/v3"
+	"github.com/dompaw/RumAir/sensors"
+	"github.com/dompaw/RumAir/server"
 )
 
-// Sensor aaaaaaaaaaaaaaa
-type Sensor struct {
-	ID   string
-	Desc string
-}
-
-var sensors = map[string]Sensor{
-	"0345391802": Sensor{ID: "0345391802", Desc: "The Hitchhiker's Guide to the Galaxy"},
-	"121212":     Sensor{ID: "121212", Desc: "Cloud Native Go"},
-}
-
 func main() {
-	server.Init()
-
-	cron := cron.New()
+	//cron := cron.New()
 	sensorsSlc := AllSensors()
 	for i, sensor := range sensorsSlc {
-		sensors.AddSensorToCron(*cron, sensor.ID, i)
+		if sensor.Handler != nil {
+			sensorID, err := sensors.AddSensorToCron(i, sensor.Handler)
+
+			if err == nil {
+				fmt.Printf("Sensor %v added to Cron.\n", sensorID)
+			}
+		}
 	}
 
-	cron.Start()
-	defer cron.Stop()
+	cronSize, err := sensors.StartCron()
+	if err != nil {
+		fmt.Printf("Cron NOT STARTED ! %v", err)
+	}
+	fmt.Printf("Cron with size %v started correctly !\n", cronSize)
+
+	server.Init()
 }
 
-// AllSensors returns a slice of all sensors
-func AllSensors() []Sensor {
-	values := make([]Sensor, len(sensors))
+// AllSensors returns a slice produced from map of all sensors
+func AllSensors() []sensors.Sensor {
+	values := make([]sensors.Sensor, len(sensors.SensorsToFetch))
 	idx := 0
-	for _, sensor := range sensors {
+	for _, sensor := range sensors.SensorsToFetch {
 		values[idx] = sensor
 		idx++
 	}
