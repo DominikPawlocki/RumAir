@@ -22,14 +22,12 @@ var sensorsToFetch = map[string]Sensor{
 }
 
 func main() {
-	server.Init()
-
 	//cron := cron.New()
 	sensorsSlc := AllSensors()
 	for i, sensor := range sensorsSlc {
 		sensorID, err := sensors.AddSensorToCron(sensor.ID, i)
 		if err == nil {
-			fmt.Printf("Sensor %v added to Cron.", sensorID)
+			fmt.Printf("Sensor %v added to Cron.\n", sensorID)
 		}
 	}
 
@@ -38,10 +36,12 @@ func main() {
 	}*/
 
 	cronSize, err := sensors.StartCron()
-	if err == nil {
-		fmt.Printf("Cron with size %v started correctly !", cronSize)
+	if err != nil {
+		fmt.Printf("Cron NOT STARTED ! %v", err)
 	}
-	fmt.Printf("Cron NOT STARTED ! %v", err)
+	fmt.Printf("Cron with size %v started correctly !\n", cronSize)
+
+	server.Init()
 }
 
 // AllSensors returns a slice of all sensors

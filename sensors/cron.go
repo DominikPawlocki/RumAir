@@ -14,11 +14,12 @@ package sensors
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/robfig/cron/v3"
 )
 
-var cronInstance *cron.Cron = cron.New()
+var cronInstance *cron.Cron = cron.New(cron.WithSeconds())
 
 /*func AddSensorToCron(c *cron.Cron, sensorId strings, offsetInSeconds int) cron.EntryID {
 	fmt.Println("---------------CRON ----------------------")
@@ -38,8 +39,8 @@ func GetCron() *cron.Cron {
 }
 
 func AddSensorToCron(sensorId string, offsetInSeconds int) (cron.EntryID, error) {
-	fmt.Println("---------------CRON ----------------------")
-	id, err := cronInstance.AddFunc("30 * * * *", func() { fmt.Println("Every hour on the half hour") })
+	timeOffset := 6 * offsetInSeconds
+	id, err := cronInstance.AddFunc("10 * * * * *", func() { fmt.Printf("Time %v \n", time.Now()) })
 	if err != nil {
 		fmt.Printf("Error occured when adding sensor %v to CRON !", sensorId)
 		panic(err)
