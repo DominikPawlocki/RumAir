@@ -21,6 +21,14 @@ var sensorsToFetch = map[string]Sensor{
 	"1573050124901": Sensor{ID: "1573050124901", Desc: "Kościelna (Skwer Plac Kaszubski)"},
 }
 
+SO2
+pył PM10
+CO
+pył PM2,5
+O3
+NO2
+benzen
+
 func main() {
 	//cron := cron.New()
 	sensorsSlc := AllSensors()
