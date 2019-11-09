@@ -49,12 +49,11 @@ func AddSensorToCron(offsetInSeconds int, sensorDataFetcher func()) (cron.EntryI
 }
 
 func cronFormatBuilder(secondsOffset int) string {
-	result := strconv.Itoa(secondsOffset) + " * * * * *"
-	return result
+	return strconv.Itoa(secondsOffset) + " * * * * *"
 }
 
-func StartCron() (int, error) {
-	numberOfEntriesInCron := len(cronInstance.Entries())
+func StartCron() (numberOfEntriesInCron int, err error) {
+	numberOfEntriesInCron = len(cronInstance.Entries())
 	if numberOfEntriesInCron > 0 {
 		cronInstance.Start()
 		return numberOfEntriesInCron, nil
