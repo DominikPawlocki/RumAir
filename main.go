@@ -11,8 +11,8 @@ func main() {
 	//cron := cron.New()
 	sensorsSlc := AllSensors()
 	for i, sensor := range sensorsSlc {
-		if sensor.Handler != nil {
-			sensorID, err := sensors.AddSensorToCron(i, sensor.Handler)
+		if sensor.CronHandler != nil {
+			sensorID, err := sensors.AddSensorToCron(i, sensor.CronHandler)
 
 			if err == nil {
 				fmt.Printf("Sensor %v added to Cron.\n", sensorID)
@@ -31,11 +31,11 @@ func main() {
 
 // AllSensors returns a slice produced from map of all sensors
 func AllSensors() []sensors.Sensor {
-	values := make([]sensors.Sensor, len(sensors.SensorsToFetch))
+	sensorsSlice := make([]sensors.Sensor, len(sensors.SensorsToFetch))
 	idx := 0
 	for _, sensor := range sensors.SensorsToFetch {
-		values[idx] = sensor
+		sensorsSlice[idx] = sensor
 		idx++
 	}
-	return values
+	return sensorsSlice
 }
