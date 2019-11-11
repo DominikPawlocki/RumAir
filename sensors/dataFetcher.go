@@ -14,6 +14,17 @@ type Sensor struct {
 	CronHandler func()
 }
 
+/*SO2
+pył PM10
+CO
+pył PM2,5
+O3
+NO2
+benzen
+
+AVERAGES : averages":"A10m,A30m,A1h","high_averages":"A24h,A8h,A8h_max,A1M,A1Y"
+*/
+
 type SensorRawReadingResult struct {
 	Name        string `json:"name"`
 	PublicRepos int    `json:"public_repos"`
@@ -40,6 +51,7 @@ func createUri(sensorID string) (url string) {
 	url = fmt.Sprintf("https://api.github.com/users/%s", sensorID)
 	return
 	//https://pmpro.dacsystem.pl/webapp/data/averages?_dc=1571382648880&type=chart&avg=1h&start=1571123328&end=1571382528&vars=08HUMID_O%3AA1h%2C08PRESS_O%3AA1h%2C08PM10A_6_k%3AA1h%2C08PM25A_6_k%3AA1h
+	//https://pmpro.dacsystem.pl/webapp/data/averages?_dc=1573496713351&type=chart&avg=1h&start=1573237393&end=1573496593&vars=05HUMID_O%3AA1h%2C05PRESS_O%3AA1h%2C05PM10A_6_k%3AA1h%2C05PM25A_6_k%3AA1h
 }
 
 func getSensorData(uri string) (res *SensorRawReadingResult, err error) {
@@ -58,11 +70,3 @@ func getSensorData(uri string) (res *SensorRawReadingResult, err error) {
 	//same like return res, err
 	return
 }
-
-/*SO2
-pył PM10
-CO
-pył PM2,5
-O3
-NO2
-benzen*/
