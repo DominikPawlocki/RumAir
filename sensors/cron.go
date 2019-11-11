@@ -34,11 +34,23 @@ var cronInstance *cron.Cron = cron.New(cron.WithSeconds())
 	return id
 }*/
 
+func AddStationsToCron(stations []Station) {
+	for i, station := range stations {
+		if station.CronHandler != nil {
+			sensorID, err := addStationToCron(i, station.CronHandler)
+
+			if err == nil {
+				fmt.Printf("Sensor %v added to Cron.\n", sensorID)
+			}
+		}
+	}
+}
+
 func GetCron() *cron.Cron {
 	return cronInstance
 }
 
-func AddSensorToCron(offsetInSeconds int, sensorDataFetcher func()) (cron.EntryID, error) {
+func addStationToCron(offsetInSeconds int, sensorDataFetcher func()) (cron.EntryID, error) {
 	timeOffset := 9 * offsetInSeconds
 	id, err := cronInstance.AddFunc(cronFormatBuilder(timeOffset), sensorDataFetcher)
 	if err != nil {
@@ -58,5 +70,5 @@ func StartCron() (numberOfEntriesInCron int, err error) {
 		cronInstance.Start()
 		return numberOfEntriesInCron, nil
 	}
-	return -1, errors.New("Cron Not started !!")
+	return -1, errors.New("Cron not started")
 }

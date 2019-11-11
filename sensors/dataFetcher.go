@@ -7,24 +7,37 @@ import (
 	"time"
 )
 
-// Sensor - reflects a physical air analyzer station put on the street or roof
-type Sensor struct {
+//Station - reflects a physical air analyzer station put on the street or roof. It has many sensors.
+//Stations differs itself, some has more sensors, some less, that its measurment capabilities differs.
+type Station struct {
 	ID          string
 	Desc        string
 	CronHandler func()
 }
+
+/*SO2
+pył PM10
+CO
+pył PM2,5
+O3
+NO2
+benzen
+
+AVERAGES : averages":"A10m,A30m,A1h","high_averages":"A24h,A8h,A8h_max,A1M,A1Y"
+*/
 
 type SensorRawReadingResult struct {
 	Name        string `json:"name"`
 	PublicRepos int    `json:"public_repos"`
 }
 
-var SensorsToFetch = map[string]Sensor{
-	"1573048257175": Sensor{ID: "1573048257175", Desc: "Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("1573048257175") }},
-	"1573050028266": Sensor{ID: "1573050028266", Desc: "Sabata", CronHandler: FetchSensor12345},
-	"1573050067273": Sensor{ID: "1573050067273", Desc: "Różana", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050067273") }},
-	"1573050097014": Sensor{ID: "1573050097014", Desc: "Kujawska", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050097014") }},
-	"1573050124901": Sensor{ID: "1573050124901", Desc: "Kościelna (Skwer Plac Kaszubski)", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050124901") }},
+var SensorsToFetch = map[string]Station{
+	//check it ! RU04
+	"1": Station{ID: "04", Desc: "Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("1573048257175") }},
+	"2": Station{ID: "05", Desc: "Sabata", CronHandler: FetchSensor12345},
+	"3": Station{ID: "06", Desc: "Różana", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050067273") }},
+	"4": Station{ID: "07", Desc: "Kujawska", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050097014") }},
+	"5": Station{ID: "08", Desc: "Kościelna (Skwer Plac Kaszubski)", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050124901") }},
 }
 
 func fetchSensorDataAndSaveToDB(sensorID string) {
@@ -40,6 +53,7 @@ func createUri(sensorID string) (url string) {
 	url = fmt.Sprintf("https://api.github.com/users/%s", sensorID)
 	return
 	//https://pmpro.dacsystem.pl/webapp/data/averages?_dc=1571382648880&type=chart&avg=1h&start=1571123328&end=1571382528&vars=08HUMID_O%3AA1h%2C08PRESS_O%3AA1h%2C08PM10A_6_k%3AA1h%2C08PM25A_6_k%3AA1h
+	//https://pmpro.dacsystem.pl/webapp/data/averages?_dc=1573496713351&type=chart&avg=1h&start=1573237393&end=1573496593&vars=05HUMID_O%3AA1h%2C05PRESS_O%3AA1h%2C05PM10A_6_k%3AA1h%2C05PM25A_6_k%3AA1h
 }
 
 func getSensorData(uri string) (res *SensorRawReadingResult, err error) {
@@ -58,11 +72,3 @@ func getSensorData(uri string) (res *SensorRawReadingResult, err error) {
 	//same like return res, err
 	return
 }
-
-/*SO2
-pył PM10
-CO
-pył PM2,5
-O3
-NO2
-benzen*/
