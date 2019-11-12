@@ -1,3 +1,5 @@
+package sensors
+
 //https://pmpro.dacsystem.pl/webapp/data/averages?type=chart&avg=2h&start=1561939200&end=1561949200&vars=38LAT
 
 /* data from air sensors collected by https://pmpro.dacsystem.pl/ are organized as : stationId+dataId.
@@ -9,11 +11,11 @@ Getting this data per sensor ids 01 to 40 (highest sensorId on 11/2019) gives us
 "vars":
 
 [
-"004CO:A1h",
+"004CO:A1h", Referencyjna, AM
 "004SO2:A1h",
 "004NO2:A1h",
 "004O3:A1h",
-"009PA:A1h",
+"009PA:A1h", referencyjna
 "009TEMP:A1h",
 "009WD:V1h",
 "009WS:V1h",
@@ -21,7 +23,7 @@ Getting this data per sensor ids 01 to 40 (highest sensorId on 11/2019) gives us
 "009O3:A1h",
 "009SO2:A1h",
 "009PM10:A1h",
-"20PM10A_W_k:A1h",
+"20PM10A_W_k:A1h", Obłuże, Krawiecka 35
 "20PM25A_W_k:A1h",
 "21PM10A_W_k:A1h",
 "22PM10A_W_k:A1h",
@@ -78,6 +80,10 @@ Getting this data per sensor ids 01 to 40 (highest sensorId on 11/2019) gives us
 "06PM25A_6_k:A1h",
 "07PM25A_6_k:A1h",
 "08PM25A_6_k:A1h"
+
+dodatkowo jest :
+06TEMP_O itd....
+
 ]*/
 
 /* STACJE WEJHEROWO :
