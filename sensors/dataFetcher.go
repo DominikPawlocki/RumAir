@@ -7,8 +7,9 @@ import (
 	"time"
 )
 
-// Sensor - reflects a physical air analyzer station put on the street or roof
-type Sensor struct {
+// Station - reflects a physical air analyzer station put on the street or roof. It has many sensors.
+//Stations differs itself, some has more sensors, some less, that its measurment capabilities differs.
+type Station struct {
 	ID          string
 	Desc        string
 	CronHandler func()
@@ -30,12 +31,13 @@ type SensorRawReadingResult struct {
 	PublicRepos int    `json:"public_repos"`
 }
 
-var SensorsToFetch = map[string]Sensor{
-	"1573048257175": Sensor{ID: "1573048257175", Desc: "Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("1573048257175") }},
-	"1573050028266": Sensor{ID: "1573050028266", Desc: "Sabata", CronHandler: FetchSensor12345},
-	"1573050067273": Sensor{ID: "1573050067273", Desc: "Różana", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050067273") }},
-	"1573050097014": Sensor{ID: "1573050097014", Desc: "Kujawska", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050097014") }},
-	"1573050124901": Sensor{ID: "1573050124901", Desc: "Kościelna (Skwer Plac Kaszubski)", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050124901") }},
+var SensorsToFetch = map[string]Station{
+	//check it ! RU04
+	"1": Station{ID: "04", Desc: "Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("1573048257175") }},
+	"2": Station{ID: "05", Desc: "Sabata", CronHandler: FetchSensor12345},
+	"3": Station{ID: "06", Desc: "Różana", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050067273") }},
+	"4": Station{ID: "07", Desc: "Kujawska", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050097014") }},
+	"5": Station{ID: "08", Desc: "Kościelna (Skwer Plac Kaszubski)", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050124901") }},
 }
 
 func fetchSensorDataAndSaveToDB(sensorID string) {

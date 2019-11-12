@@ -16,8 +16,11 @@ This class finds it and returns as a result, per station */
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 var measurmentURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
@@ -70,29 +73,49 @@ type SensorMeasurmentSimpleType struct {
 	HighAverages string `json:"high_averages"`
 }
 
-func GetStationMeasurments(stationID string) (result *[]SensorMeasurmentType, err error) {
+func GetStationMeasurmentsCapabilities(stationID string) (result []SensorMeasurmentType, err error) {
 	var netResp *http.Response
+
 	netResp, err = http.Get(measurmentURL)
 	if err != nil {
 		return nil, err
 	}
-	/*	if err := dec.Decode(entry); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}*/
+
 	defer netResp.Body.Close()
 
-	allMeasurments := &[]SensorMeasurmentType{}
+	// allMeasurments slice contains whole system capability. Pretty big JSON (ca 1800 objects).
+	var allMeasurments *[]SensorMeasurmentType
 
 	if bytesRead, err := ioutil.ReadAll(netResp.Body); err != nil && len(bytesRead) > 0 {
 		err = json.Unmarshal(bytesRead, allMeasurments)
-	}
 
-	result2 := allMeasurments[:0]
-	for _, measurmentType := range allMeasurments {
-		if measurmentType.Code == stationID {
-			result = append(result, measurmentType)
+		for _, measurmentType := range *allMeasurments {
+			if measurmentType.Code == stationID {
+				result = append(result, measurmentType)
+			}
 		}
 	}
+
+	return
+}
+
+func SaveToFile(v interface{}, fileName string) (err error) {
+	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+	if err != nil {
+		fmt.Printf("error: %s\n", err)
+		return
+	}
+	defer f.Close()
+
+	switch v.(type) {
+	case SensorMeasurmentSimpleType:
+		fmt.Fprintln(f, v.([]SensorMeasurmentSimpleType))
+	case SensorMeasurmentType:
+		fmt.Fprintln(f, v.([]SensorMeasurmentType))
+	default:
+		return errors.New("Cron not started")
+	}
+	f.Close()
 	return
 }
