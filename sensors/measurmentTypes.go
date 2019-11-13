@@ -20,44 +20,57 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
+	"strings"
 )
 
 var measurmentURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 
+type AvailableMeasurmentsResponce struct {
+	Success    bool                   `json:"success"`
+	TotalCount int                    `json:"totalCount"`
+	Message    string                 `json:"message"`
+	Data       []SensorMeasurmentType `json:"data"`
+}
+
+type AvailableMeasurmentsSimpleResponce struct {
+	TotalCount int                          `json:"totalCount"`
+	Data       []SensorMeasurmentSimpleType `json:"data"`
+}
+
+//SensorMeasurmentType - lets have ONE structure for both Unmarshall API responce and Marshall when saving to file.
 type SensorMeasurmentType struct {
-	ID                 int    `json:"id"`
-	Code               string `json:"code"`
-	Name               string `json:"name"`
-	CompoundType       string `json:"compound_type"`
-	PhysicalDeviceID   int    `json:"physical_device_id"`
-	PhysicalDeviceSlot string `json:"physical_device_slot"`
-	UnitID             string `json:"unit_id"`
-	CoefA              int    `json:"coef_a"`
-	CoefB              int    `json:"coef_b"`
-	TechnicalP         int    `json:"technical_p"`
-	VirtualP           int    `json:"virtual_p"`
-	AnalogP            int    `json:"analog_p"`
-	AnalogChan         int    `json:"analog_chan"`
-	BinaryP            int    `json:"binary_p"`
-	BinaryChan         int    `json:"binary_chan"`
-	BinaryCounter      int    `json:"binary_counter"`
-	CoverageRate       int    `json:"coverage_rate"`
-	AggUnit            string `json:"agg_unit"`
-	Fconv              int    `json:"fconv"`
-	Decimals           int    `json:"decimals"`
-	Format             string `json:"format"`
-	SampleType         string `json:"sample_type"`
-	AverageType        string `json:"average_type"`
-	Averages           string `json:"averages"`
-	HighAverages       string `json:"high_averages"`
-	Expression         string `json:"expression"`
-	FinishDate         string `json:"finish_date"`
-	IsPublished        int    `json:"is_published"`
-	Timeshift          int    `json:"timeshift"`
-	ManualP            int    `json:"manual_p"`
-	PassiveP           int    `json:"passive_p"`
-	StartDate          int    `json:"start_date"`
+	ID                 int     `json:"id"`
+	Code               string  `json:"code"`
+	Name               string  `json:"name"`
+	CompoundType       string  `json:"compound_type"`
+	PhysicalDeviceID   int     `json:"physical_device_id"`
+	PhysicalDeviceSlot string  `json:"physical_device_slot"`
+	UnitID             string  `json:"unit_id"`
+	CoefA              float32 `json:"coef_a"`
+	CoefB              float32 `json:"coef_b"`
+	TechnicalP         int     `json:"technical_p"`
+	VirtualP           int     `json:"virtual_p"`
+	AnalogP            int     `json:"analog_p"`
+	AnalogChan         int     `json:"analog_chan"`
+	BinaryP            int     `json:"binary_p"`
+	BinaryChan         int     `json:"binary_chan"`
+	BinaryCounter      int     `json:"binary_counter"`
+	CoverageRate       int     `json:"coverage_rate"`
+	AggUnit            string  `json:"agg_unit"`
+	Fconv              float32 `json:"fconv"`
+	Decimals           int     `json:"decimals"`
+	Format             string  `json:"format"`
+	SampleType         string  `json:"sample_type"`
+	AverageType        string  `json:"average_type"`
+	Averages           string  `json:"averages"`
+	HighAverages       string  `json:"high_averages"`
+	Expression         string  `json:"expression"`
+	FinishDate         string  `json:"finish_date"`
+	IsPublished        int     `json:"is_published"`
+	Timeshift          int     `json:"timeshift"`
+	ManualP            int     `json:"manual_p"`
+	PassiveP           int     `json:"passive_p"`
+	StartDate          int     `json:"start_date"`
 }
 
 type SensorMeasurmentSimpleType struct {
@@ -78,44 +91,60 @@ func GetStationMeasurmentsCapabilities(stationID string) (result []SensorMeasurm
 
 	netResp, err = http.Get(measurmentURL)
 	if err != nil {
+		fmt.Printf("Error during asking endpoint %s %v.", measurmentURL, err)
 		return nil, err
 	}
 
 	defer netResp.Body.Close()
 
 	// allMeasurments slice contains whole system capability. Pretty big JSON (ca 1800 objects).
-	var allMeasurments *[]SensorMeasurmentType
+	//SLICE INITIALIZATIONS !
+	//allMeasurments := make([]SensorMeasurmentType, 2)
+	//var allMeasurments *[]SensorMeasurmentType = &[]SensorMeasurmentType{}
+	var allMeasurments AvailableMeasurmentsResponce
 
-	if bytesRead, err := ioutil.ReadAll(netResp.Body); err != nil && len(bytesRead) > 0 {
-		err = json.Unmarshal(bytesRead, allMeasurments)
+	bytesRead, err := ioutil.ReadAll(netResp.Body)
+	if err != nil {
+		fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
+	}
 
-		for _, measurmentType := range *allMeasurments {
-			if measurmentType.Code == stationID {
+	if len(bytesRead) > 0 {
+		fmt.Printf("%v bytes read from network for `../table=Measurement&v=2` endpoint for %s. Now, deserializing. \n", len(bytesRead), stationID)
+		err = json.Unmarshal(bytesRead, &allMeasurments)
+		if err != nil {
+			fmt.Printf("Error during deserializing station %s occured. Data from `../table=Measurement&v=2`. Error is : %v", stationID, err)
+			return nil, err
+		}
+		for _, measurmentType := range allMeasurments.Data {
+			if strings.HasPrefix(measurmentType.Code, stationID) {
 				result = append(result, measurmentType)
 			}
 		}
 	}
-
+	fmt.Printf("Nr of results: %v", len(result))
 	return
 }
 
 func SaveToFile(v interface{}, fileName string) (err error) {
-	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	//f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
 		fmt.Printf("error: %s\n", err)
 		return
 	}
-	defer f.Close()
+	//defer f.Close()
+
+	var bytesToFile []byte
 
 	switch v.(type) {
-	case SensorMeasurmentSimpleType:
-		fmt.Fprintln(f, v.([]SensorMeasurmentSimpleType))
-	case SensorMeasurmentType:
-		fmt.Fprintln(f, v.([]SensorMeasurmentType))
+	case []SensorMeasurmentSimpleType:
+		bytesToFile, _ = json.MarshalIndent(v.([]SensorMeasurmentSimpleType), "", "\t")
+	case []SensorMeasurmentType:
+		bytesToFile, _ = json.MarshalIndent(v.([]SensorMeasurmentType), "", "\t")
 	default:
-		return errors.New("Cron not started")
+		return errors.New("Saving to file : type not recognized \n")
 	}
-	f.Close()
+	err = ioutil.WriteFile(fileName, bytesToFile, 0644)
+	//f.Close()
 	return
 }

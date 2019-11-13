@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Station - reflects a physical air analyzer station put on the street or roof. It has many sensors.
+//Station - reflects a physical air analyzer station put on the street or roof. It has many sensors.
 //Stations differs itself, some has more sensors, some less, that its measurment capabilities differs.
 type Station struct {
 	ID          string

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/dompaw/RumAir/sensors"
-	"github.com/dompaw/RumAir/server"
 )
 
 func main() {
@@ -13,7 +12,7 @@ func main() {
 	//startCron()
 
 	saveStationsCapabilitiesToFile(stations)
-	server.Init()
+	//server.Init()
 }
 
 // AllSensors returns a slice produced from map of all sensors
@@ -37,7 +36,7 @@ func startCron() {
 
 func saveStationsCapabilitiesToFile([]sensors.Station) {
 	if measurmentTypes, err :=
-		sensors.GetStationMeasurmentsCapabilities(sensors.SensorsToFetch["1"].ID); err != nil && len(measurmentTypes) > 0 {
+		sensors.GetStationMeasurmentsCapabilities(sensors.SensorsToFetch["1"].ID); err == nil && len(measurmentTypes) > 0 {
 		sensors.SaveToFile(measurmentTypes, "stationCapabilites.txt")
 	}
 }
