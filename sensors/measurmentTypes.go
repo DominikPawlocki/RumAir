@@ -1,12 +1,10 @@
 package sensors
 
-/* The stations has sensors which collects data - nothing unusual, uh?
-But which data every station collects? Does all the stations collects same data ? Does station X collects NO2?
-This is what this class is for.
-The call : https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2
-returns all avialble data for all the stations, so in short it tells which station has a capability to collect what - and returns it all (not "per station").
+/* The 'pmpro.dacsystem.pl' stations has sensors which collects different air measurments data - nothing unusual, uh?
+But which data every station is able to collect? Does all the stations collects same data ? Does station with id X collects NO2?
+The call : 'https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2' answers this question,but it returns all Poland stations in one Json file.
 
-This class finds it and returns as a result, per station */
+This code filters this huge response nicely, and it outputs to the file: which stations has which capability reported */
 
 /*{"id":145,"code":"06RPM","name":"Tachometr wentylatora","compound_type":"poziom","physical_device_id":31,"physical_device_slot":"rpm","unit_id":"_","coef_a":1,
 "coef_b":0,"technical_p":0,"virtual_p":0,"analog_p":0,"analog_chan":0,"binary_p":0,"binary_chan":0,"binary_counter":0,"coverage_rate":75,
@@ -23,7 +21,7 @@ import (
 	"strings"
 )
 
-var measurmentURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
+var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 
 type AvailableMeasurmentsResponce struct {
 	Success    bool                   `json:"success"`
@@ -89,9 +87,9 @@ type SensorMeasurmentSimpleType struct {
 func GetStationMeasurmentsCapabilities(stationID string) (result []SensorMeasurmentType, err error) {
 	var netResp *http.Response
 
-	netResp, err = http.Get(measurmentURL)
+	netResp, err = http.Get(allStationsMeasurmentsURL)
 	if err != nil {
-		fmt.Printf("Error during asking endpoint %s %v.", measurmentURL, err)
+		fmt.Printf("Error during asking endpoint %s %v.", allStationsMeasurmentsURL, err)
 		return nil, err
 	}
 
