@@ -15,10 +15,69 @@ Thats it ! Now I know which stations nearby my place Im interrested in grabbing 
 
 package sensors
 
+import (
+
+	//"errors"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"strings"
+)
+
 var geoBytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
 
-func getCitiesNearby(lat float32, lon float32) (citiesNearby []string) {
-	radius := 40
-	query := "?callback=?&radius=40&latitude=54.5708&longitude=18.3878"
-	var geoBytesQueryUrl = fmt.Sprintf("%s", geoBytesApiURL, sensorID)  + 
+type JsonPGeoBytesApiResponse [][]string
+
+//to small ! oraz inny package !
+func GetCitiesNearby(lat float32, lon float32) (citiesNearby []string, err error) {
+	radius := 0
+	var reverseGeocodingStringedResponce string
+	var bytesRead []byte
+
+	for until := true; until; until = (len(reverseGeocodingStringedResponce)) < 5 {
+		//Lets try bigger range !
+		radius += 30
+
+		bytesRead, err = getReverseGeocoding(radius, lat, lon)
+
+		if err != nil {
+			fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
+		}
+
+		if len(bytesRead) > 0 {
+			fmt.Printf("%v bytes read from network for `../getnearbycities...` endpoint for %f %f. Now, deserializing. \n", len(bytesRead), lat, lon)
+			//responce is JSON-P so simple Unmarshal doesnt work here
+			strs := strings.Split(string(bytesRead), ",")
+			if len(strs) > 1 {
+				//slice is immutable - append is good enough here, but might me bottleneck in different situation
+				citiesNearby = append(citiesNearby, strs[1])
+				if len(strs) > 15 {
+					//second city also
+					citiesNearby = append(citiesNearby, strs[14])
+				}
+			}
+		}
+		return
+	}
+	return
+}
+
+func getReverseGeocoding(radius int, lat float32, lon float32) (bytesRead []byte, err error) {
+	// concat strings by + not efficient but doesnt matter here
+	citiesNearbyURL := geoBytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
+
+	var netResp *http.Response
+
+	netResp, err = http.Get(citiesNearbyURL)
+	if err != nil {
+		fmt.Printf("Error during asking endpoint %s %v.", citiesNearbyURL, err)
+		return nil, err
+	}
+
+	defer netResp.Body.Close()
+
+	//var jsonPApiCallResultArray JsonPGeoBytesApiResponse
+
+	bytesRead, err = ioutil.ReadAll(netResp.Body)
+	return
 }

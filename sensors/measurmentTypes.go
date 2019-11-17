@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -35,7 +36,10 @@ type AvailableMeasurmentsSimpleResponce struct {
 	Data       []SensorMeasurmentSimpleType `json:"data"`
 }
 
-//SensorMeasurmentType - lets have ONE structure for both Unmarshall API responce and Marshall when saving to file.
+// SensorMeasurmentType - describes the type of stations sensor is capable to measure with its Units, name and so on.
+// The first two letters of `Code` is the station Id ! There is no specific call to fetch station Ids, so I have to deduct it from this call.
+// Lets have one structure for both Unmarshall API responce and Marshall when saving to file.
+// The station id field is : Code. If same first 2 letters then it means same station.
 type SensorMeasurmentType struct {
 	ID                 int     `json:"id"`
 	Code               string  `json:"code"`
@@ -84,46 +88,58 @@ type SensorMeasurmentSimpleType struct {
 	HighAverages string `json:"high_averages"`
 }
 
-func GetStationMeasurmentsCapabilities(stationID string) (result []SensorMeasurmentType, err error) {
-	var netResp *http.Response
+type AirStation struct {
+	ID           int
+	HasLatitude  bool
+	HasLongitude bool
+	Sensors      []SensorMeasurmentSimpleType
+}
 
-	netResp, err = http.Get(allStationsMeasurmentsURL)
+//GetStationIds - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system. It returns its Ids, all of them. Also, (one station can have many sensors).
+func GetStationIds(result map[string]AirStation) {
+	/*var stationIds = map[string]Station{
+		"1": Station{ID: "04", Desc: "Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("1573048257175") }},
+	}*/
+
+	var allMeasurments AvailableMeasurmentsSimpleResponce
+	err := callAllMeasurments(&allMeasurments)
 	if err != nil {
-		fmt.Printf("Error during asking endpoint %s %v.", allStationsMeasurmentsURL, err)
-		return nil, err
+		return
 	}
+	result = map[string]AirStation{} //exact same like result = make(map[string]AirStation)
+	for _, measurmentType := range allMeasurments.Data {
+		re := regexp.MustCompile("[0-9]+")
+		// Assumption ! - The 1st digits set in this string means stationId ! Like in `001NO2` the stationId is 001. Can be 2 or 3 numbers.
+		stationID := re.FindAllString(measurmentType.Code, 1)[0]
 
-	defer netResp.Body.Close()
-
-	// allMeasurments slice contains whole system capability. Pretty big JSON (ca 1800 objects).
-	//SLICE INITIALIZATIONS !
-	//allMeasurments := make([]SensorMeasurmentType, 2)
-	//var allMeasurments *[]SensorMeasurmentType = &[]SensorMeasurmentType{}
-	var allMeasurments AvailableMeasurmentsResponce
-
-	bytesRead, err := ioutil.ReadAll(netResp.Body)
-	if err != nil {
-		fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
-	}
-
-	if len(bytesRead) > 0 {
-		fmt.Printf("%v bytes read from network for `../table=Measurement&v=2` endpoint for %s. Now, deserializing. \n", len(bytesRead), stationID)
-		err = json.Unmarshal(bytesRead, &allMeasurments)
-		if err != nil {
-			fmt.Printf("Error during deserializing station %s occured. Data from `../table=Measurement&v=2`. Error is : %v", stationID, err)
-			return nil, err
+		if !doesStationExistsInMap(result, stationID) {
+			result[stationID] = AirStation{ID: 123}
 		}
-		for _, measurmentType := range allMeasurments.Data {
-			if strings.HasPrefix(measurmentType.Code, stationID) {
-				result = append(result, measurmentType)
-			}
+		r := result[stationID]
+		if isLongitude(measurmentType.Code) {
+			r.HasLongitude = true
+		}
+		if isLatitude(measurmentType.Code) {
+			r.HasLatitude = true
+		}
+		r.Sensors = append(r.Sensors, measurmentType)
+
+	}
+}
+
+func GetStationMeasurmentsCapabilities(stationID string) (result []SensorMeasurmentType, err error) {
+	allMeasurments, err := callAllMeasurments()
+	//if(err) !!!
+	for _, measurmentType := range allMeasurments.Data {
+		if strings.HasPrefix(measurmentType.Code, stationID) {
+			result = append(result, measurmentType)
 		}
 	}
 	fmt.Printf("Nr of results: %v", len(result))
 	return
 }
 
-func SaveToFile(v interface{}, fileName string) (err error) {
+func SaveJsonToFile(v interface{}, fileName string) (err error) {
 	//f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
@@ -134,6 +150,7 @@ func SaveToFile(v interface{}, fileName string) (err error) {
 
 	var bytesToFile []byte
 
+	//pattern called Type Assertion
 	switch v.(type) {
 	case []SensorMeasurmentSimpleType:
 		bytesToFile, _ = json.MarshalIndent(v.([]SensorMeasurmentSimpleType), "", "\t")
@@ -145,4 +162,59 @@ func SaveToFile(v interface{}, fileName string) (err error) {
 	err = ioutil.WriteFile(fileName, bytesToFile, 0644)
 	//f.Close()
 	return
+}
+
+func callAllMeasurments(result interface{}) (err error) {
+	var netResp *http.Response
+	//var result AvailableMeasurmentsResponce
+
+	netResp, err = http.Get(allStationsMeasurmentsURL)
+	if err != nil {
+		return
+	}
+
+	defer netResp.Body.Close()
+
+	// allMeasurments slice contains whole system capability. Pretty big JSON (ca 1800 objects).
+	//SLICE INITIALIZATIONS !
+	//allMeasurments := make([]SensorMeasurmentType, 2)
+	//var allMeasurments *[]SensorMeasurmentType = &[]SensorMeasurmentType{}
+
+	bytesRead, err := ioutil.ReadAll(netResp.Body)
+	if err != nil {
+		fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
+	}
+
+	if len(bytesRead) > 0 {
+		fmt.Printf("%v bytes read from network for `../table=Measurement&v=2` endpoint. Now, deserializing. \n", len(bytesRead))
+		err = json.Unmarshal(bytesRead, &result)
+		if err != nil {
+			fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
+			return
+		}
+	}
+	return
+}
+
+//Maps and slices are reference types in Go and should be passed by values !
+//also struct in Go has default value (zero value), instead of nil ! Nil for : pointers, functions, interfaces, slices, channels, and maps.
+func doesStationExistsInMap(stationsMap map[string]AirStation, stationID string) (result bool) {
+	if stationsMap[stationID].ID == 0 && stationsMap[stationID].Sensors == nil {
+		return false
+	}
+	return true
+}
+
+func isLatitude(code string) bool {
+	if strings.Contains(code, "LAT") {
+		return true
+	}
+	return false
+}
+
+func isLongitude(code string) bool {
+	if strings.Contains(code, "LON") {
+		return true
+	}
+	return false
 }
