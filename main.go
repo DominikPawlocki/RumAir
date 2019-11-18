@@ -7,12 +7,12 @@ import (
 )
 
 func main() {
-	stations := createAllStations()
+	createAllStations()
 	//sensors.AddStationsToCron(stations)
 	//startCron()
 
 	//saveStationsCapabilitiesToFile(stations)
-	geoLocalizeStations(stations)
+	d
 	//server.Init()
 }
 
@@ -36,15 +36,12 @@ func startCron() {
 }
 
 func saveStationsCapabilitiesToFile([]sensors.Station) {
-	if measurmentTypes, err :=
-		sensors.GetStationMeasurmentsCapabilities(sensors.SensorsToFetch["1"].ID); err == nil && len(measurmentTypes) > 0 {
+	if measurmentTypes :=
+		sensors.GetStationMeasurmentsCapabilities(sensors.SensorsToFetch["1"].ID); len(measurmentTypes) > 0 {
 		sensors.SaveJsonToFile(measurmentTypes, "stationCapabilites.txt")
 	}
 }
 
-func geoLocalizeStations([]sensors.Station) {
-	if _, err :=
-		sensors.GetCitiesNearby(54.5708, 18.3878); err == nil {
-
-	}
+func AA(){
+	if sensors.GetStationIds()
 }

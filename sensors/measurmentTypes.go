@@ -96,47 +96,53 @@ type AirStation struct {
 }
 
 //GetStationIds - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system. It returns its Ids, all of them. Also, (one station can have many sensors).
-func GetStationIds(result map[string]AirStation) {
-	/*var stationIds = map[string]Station{
-		"1": Station{ID: "04", Desc: "Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("1573048257175") }},
-	}*/
-
+func GetStationIds() (result map[string]*AirStation) {
 	var allMeasurments AvailableMeasurmentsSimpleResponce
 	err := callAllMeasurments(&allMeasurments)
 	if err != nil {
 		return
 	}
-	result = map[string]AirStation{} //exact same like result = make(map[string]AirStation)
+	re := regexp.MustCompile("[0-9]+")
+	result = map[string]*AirStation{} //exact same like result = make(map[string]AirStation)
+
 	for _, measurmentType := range allMeasurments.Data {
-		re := regexp.MustCompile("[0-9]+")
 		// Assumption ! - The 1st digits set in this string means stationId ! Like in `001NO2` the stationId is 001. Can be 2 or 3 numbers.
 		stationID := re.FindAllString(measurmentType.Code, 1)[0]
-
-		if !doesStationExistsInMap(result, stationID) {
-			result[stationID] = AirStation{ID: 123}
+		station, isExisting := result[stationID]
+		if !isExisting {
+			station = &AirStation{ID: 123}
+			result[stationID] = station
+		} else {
+			station = result[stationID]
 		}
-		r := result[stationID]
+
 		if isLongitude(measurmentType.Code) {
-			r.HasLongitude = true
+			station.HasLongitude = true
 		}
 		if isLatitude(measurmentType.Code) {
-			r.HasLatitude = true
+			station.HasLatitude = true
 		}
-		r.Sensors = append(r.Sensors, measurmentType)
-
+		station.Sensors = append(station.Sensors, measurmentType)
 	}
+	return
 }
 
-func GetStationMeasurmentsCapabilities(stationID string) (result []SensorMeasurmentType, err error) {
-	allMeasurments, err := callAllMeasurments()
-	//if(err) !!!
+//GetStationMeasurmentsCapabilities - Simplified version of func GetStationIds(). Returns raw all sensors, without sensor to station relation mapping.
+//Instead, it return richer sensor objects (SensorMeasurmentType) instead SensorMeasurmentSimpleType returned by GetStationIds() ...
+func GetStationMeasurmentsCapabilities(stationID string) (result []SensorMeasurmentType) {
+	//instead of reuturn nil - slice `zero` value default, return empty slice
+	allMeasurments := AvailableMeasurmentsResponce{Data: []SensorMeasurmentType{}}
+	err := callAllMeasurments(&allMeasurments)
+	if err != nil {
+		return allMeasurments.Data
+	}
 	for _, measurmentType := range allMeasurments.Data {
 		if strings.HasPrefix(measurmentType.Code, stationID) {
 			result = append(result, measurmentType)
 		}
 	}
 	fmt.Printf("Nr of results: %v", len(result))
-	return
+	return allMeasurments.Data
 }
 
 func SaveJsonToFile(v interface{}, fileName string) (err error) {
@@ -150,12 +156,14 @@ func SaveJsonToFile(v interface{}, fileName string) (err error) {
 
 	var bytesToFile []byte
 
-	//pattern called Type Assertion
+	// pattern called:  Type Assertion
 	switch v.(type) {
 	case []SensorMeasurmentSimpleType:
 		bytesToFile, _ = json.MarshalIndent(v.([]SensorMeasurmentSimpleType), "", "\t")
 	case []SensorMeasurmentType:
 		bytesToFile, _ = json.MarshalIndent(v.([]SensorMeasurmentType), "", "\t")
+	case map[string]*AirStation:
+		bytesToFile, _ = json.MarshalIndent(v.(map[string]*AirStation), "", "\t")
 	default:
 		return errors.New("Saving to file : type not recognized \n")
 	}
@@ -198,12 +206,6 @@ func callAllMeasurments(result interface{}) (err error) {
 
 //Maps and slices are reference types in Go and should be passed by values !
 //also struct in Go has default value (zero value), instead of nil ! Nil for : pointers, functions, interfaces, slices, channels, and maps.
-func doesStationExistsInMap(stationsMap map[string]AirStation, stationID string) (result bool) {
-	if stationsMap[stationID].ID == 0 && stationsMap[stationID].Sensors == nil {
-		return false
-	}
-	return true
-}
 
 func isLatitude(code string) bool {
 	if strings.Contains(code, "LAT") {
