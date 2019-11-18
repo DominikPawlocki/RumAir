@@ -28,7 +28,7 @@ var geoBytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCi
 
 type JsonPGeoBytesApiResponse [][]string
 
-//to small ! oraz inny package !
+//to smaller method ! oraz inny package !
 func GetCitiesNearby(lat float32, lon float32) (citiesNearby []string, err error) {
 	radius := 0
 	var reverseGeocodingStringedResponce string
