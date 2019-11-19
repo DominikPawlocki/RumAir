@@ -12,7 +12,7 @@ func main() {
 	//startCron()
 
 	//saveStationsCapabilitiesToFile(stations)
-	d
+	saveStationsCapabilitiesToFile()
 	//server.Init()
 }
 
@@ -35,13 +35,15 @@ func startCron() {
 	fmt.Printf("Cron with size %v started correctly !\n", cronSize)
 }
 
-func saveStationsCapabilitiesToFile([]sensors.Station) {
+func saveStationCapabilitiesToFile() {
 	if measurmentTypes :=
-		sensors.GetStationMeasurmentsCapabilities(sensors.SensorsToFetch["1"].ID); len(measurmentTypes) > 0 {
+		sensors.GetStationSensors(sensors.SensorsToFetch["1"].ID); len(measurmentTypes) > 0 {
 		sensors.SaveJsonToFile(measurmentTypes, "stationCapabilites.txt")
 	}
 }
 
-func AA(){
-	if sensors.GetStationIds()
+func saveStationsCapabilitiesToFile() {
+	if stationsWithSensors := sensors.GetAllStationsCapabilities(); len(stationsWithSensors) > 0 {
+		sensors.SaveJsonToFile(stationsWithSensors, "stationCapabilites.txt")
+	}
 }
