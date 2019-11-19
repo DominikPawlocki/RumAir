@@ -19,6 +19,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -89,16 +90,17 @@ type SensorMeasurmentSimpleType struct {
 }
 
 type AirStation struct {
-	ID           int
-	HasLatitude  bool
-	HasLongitude bool
-	Sensors      []SensorMeasurmentSimpleType
+	ID              int
+	LatitudeSensor  string
+	LongitudeSensor string
+	Sensors         []SensorMeasurmentSimpleType
+	SensorsCount    int
 }
 
-//GetStationIds - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system. It returns its Ids, all of them. Also, (one station can have many sensors).
-func GetStationIds() (result map[string]*AirStation) {
+//GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system. It returns its Ids, all of them. Also, (one station can have many sensors).
+func GetAllStationsCapabilities() (result map[string]*AirStation) {
 	var allMeasurments AvailableMeasurmentsSimpleResponce
-	err := callAllMeasurments(&allMeasurments)
+	err := doAllMeasurmentsAPIcall(&allMeasurments)
 	if err != nil {
 		return
 	}
@@ -110,29 +112,27 @@ func GetStationIds() (result map[string]*AirStation) {
 		stationID := re.FindAllString(measurmentType.Code, 1)[0]
 		station, isExisting := result[stationID]
 		if !isExisting {
-			station = &AirStation{ID: 123}
+			station = createNewStation(stationID)
 			result[stationID] = station
-		} else {
-			station = result[stationID]
 		}
-
 		if isLongitude(measurmentType.Code) {
-			station.HasLongitude = true
+			station.LongitudeSensor = measurmentType.Code
 		}
 		if isLatitude(measurmentType.Code) {
-			station.HasLatitude = true
+			station.LatitudeSensor = measurmentType.Code
 		}
 		station.Sensors = append(station.Sensors, measurmentType)
+		station.SensorsCount = len(station.Sensors)
 	}
 	return
 }
 
-//GetStationMeasurmentsCapabilities - Simplified version of func GetStationIds(). Returns raw all sensors, without sensor to station relation mapping.
-//Instead, it return richer sensor objects (SensorMeasurmentType) instead SensorMeasurmentSimpleType returned by GetStationIds() ...
-func GetStationMeasurmentsCapabilities(stationID string) (result []SensorMeasurmentType) {
+//GetStationSensors - Returns station all sensors.
+//Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
+func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
 	allMeasurments := AvailableMeasurmentsResponce{Data: []SensorMeasurmentType{}}
-	err := callAllMeasurments(&allMeasurments)
+	err := doAllMeasurmentsAPIcall(&allMeasurments)
 	if err != nil {
 		return allMeasurments.Data
 	}
@@ -172,7 +172,7 @@ func SaveJsonToFile(v interface{}, fileName string) (err error) {
 	return
 }
 
-func callAllMeasurments(result interface{}) (err error) {
+func doAllMeasurmentsAPIcall(result interface{}) (err error) {
 	var netResp *http.Response
 	//var result AvailableMeasurmentsResponce
 
@@ -219,4 +219,13 @@ func isLongitude(code string) bool {
 		return true
 	}
 	return false
+}
+
+func createNewStation(stationID string) (result *AirStation) {
+	if idAsInt, err := strconv.ParseInt(stationID, 10, 64); err == nil {
+		result = &AirStation{ID: int(idAsInt)}
+	} else {
+		result = &AirStation{ID: int(99999)}
+	}
+	return result
 }

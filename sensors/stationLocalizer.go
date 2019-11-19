@@ -24,9 +24,29 @@ import (
 	"strings"
 )
 
-var geoBytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
+type LocalizedAirStation struct {
+	Station      *AirStation
+	Lat          string
+	Lon          string
+	CitiesNearby []string
+}
 
-type JsonPGeoBytesApiResponse [][]string
+var geoBytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
+var geoBytesBaseApiURL string = "https://pmpro.dacsystem.pl/webapp/data"
+
+func GetStationLonLat(station *AirStation) (result *LocalizedAirStation) {
+	if station.LatitudeSensor && station.LongitudeSensor {
+	
+
+		if len(bytesRead) > 0 {
+			err = json.Unmarshal(bytesRead, res *odpowiedzLATLON)
+		
+			if(err==null){
+				station.
+			}
+		}
+	}
+}
 
 //to smaller method ! oraz inny package !
 func GetCitiesNearby(lat float32, lon float32) (citiesNearby []string, err error) {
@@ -38,7 +58,7 @@ func GetCitiesNearby(lat float32, lon float32) (citiesNearby []string, err error
 		//Lets try bigger range !
 		radius += 30
 
-		bytesRead, err = getReverseGeocoding(radius, lat, lon)
+		bytesRead, err = getReverseGeocodedCities(radius, lat, lon)
 
 		if err != nil {
 			fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
@@ -62,22 +82,59 @@ func GetCitiesNearby(lat float32, lon float32) (citiesNearby []string, err error
 	return
 }
 
-func getReverseGeocoding(radius int, lat float32, lon float32) (bytesRead []byte, err error) {
+func getReverseGeocodedCities(radius int, lat float32, lon float32) (bytesRead []byte, err error) {
 	// concat strings by + not efficient but doesnt matter here
 	citiesNearbyURL := geoBytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
 
+	return doAPIGet(citiesNearbyURL)
+}
+
+func getStationLocation(station *AirStation) (latitude string, longitude string, err error)
+{
+	//https://pmpro.dacsystem.pl/webapp/data/averages?type=chart&start=1561939200&end=1561949200&vars=27LON
+	stationLatitudeUri := geoBytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
+
+	bytesRead, err = doAPIGet(stationLatitudeUri)
+
+	if err != nil {
+		return _,_, err
+	}
+	
+	latitude = 
+
+	stationLongitudeUri := geoBytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
+
+	bytesRead, err = doAPIGet(stationLongitudeUri)
+
+	if err != nil {
+		return _,_, err
+	}
+
+	longitude = 
+
+	return
+}
+
+func doAPIGet(uri string) (bytesRead []byte, err error) {
 	var netResp *http.Response
 
-	netResp, err = http.Get(citiesNearbyURL)
+	netResp, err = http.Get(uri)
 	if err != nil {
-		fmt.Printf("Error during asking endpoint %s %v.", citiesNearbyURL, err)
+		fmt.Printf("Error during asking endpoint %s %v.", uri, err)
 		return nil, err
 	}
 
 	defer netResp.Body.Close()
 
-	//var jsonPApiCallResultArray JsonPGeoBytesApiResponse
-
 	bytesRead, err = ioutil.ReadAll(netResp.Body)
 	return
+}
+
+func ToUnixEpochTimestamp(){
+	layout := "01/02/2006 3:04:05 PM"
+    t, err := time.Parse(layout, "02/28/2016 9:03:46 PM")
+    if err != nil {
+        fmt.Println(err)
+    }
+    fmt.Println(t.Unix())
 }
