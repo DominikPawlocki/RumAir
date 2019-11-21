@@ -18,10 +18,12 @@ package sensors
 import (
 
 	//"errors"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type LocalizedAirStation struct {
@@ -32,21 +34,21 @@ type LocalizedAirStation struct {
 }
 
 var geoBytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
-var geoBytesBaseApiURL string = "https://pmpro.dacsystem.pl/webapp/data"
+var pmproSystemBaseApiURL string = "https://pmpro.dacsystem.pl/webapp/data"
 
-func GetStationLonLat(station *AirStation) (result *LocalizedAirStation) {
+/*func GetStationLonLat(station *AirStation) (result *LocalizedAirStation) {
 	if station.LatitudeSensor && station.LongitudeSensor {
-	
+
 
 		if len(bytesRead) > 0 {
 			err = json.Unmarshal(bytesRead, res *odpowiedzLATLON)
-		
+
 			if(err==null){
 				station.
 			}
 		}
 	}
-}
+}*/
 
 //to smaller method ! oraz inny package !
 func GetCitiesNearby(lat float32, lon float32) (citiesNearby []string, err error) {
@@ -89,28 +91,49 @@ func getReverseGeocodedCities(radius int, lat float32, lon float32) (bytesRead [
 	return doAPIGet(citiesNearbyURL)
 }
 
-func getStationLocation(station *AirStation) (latitude string, longitude string, err error)
-{
+func getStationLocation(station *AirStation) (latitude string, longitude string, err error) {
+	type LimitedOneValueResponse struct {
+		End    int `json:"end"`
+		Start  int `json:"start"`
+		Values [][]struct {
+			V string `json:"v"`
+		} `json:"values"`
+		Vars []string `json:"vars"`
+	}
+
+	resp := &LimitedOneValueResponse{}
+
 	//https://pmpro.dacsystem.pl/webapp/data/averages?type=chart&start=1561939200&end=1561949200&vars=27LON
-	stationLatitudeUri := geoBytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
+	curr, currMinus2h := nowAndMInus2hInUnixTimestamp()
+	stationLatitudeURI := pmproSystemBaseApiURL + fmt.Sprintf("/averages?type=chart&start=%s&end=%s&vars=%s", curr, currMinus2h, station.LatitudeSensor)
 
-	bytesRead, err = doAPIGet(stationLatitudeUri)
-
-	if err != nil {
-		return _,_, err
-	}
-	
-	latitude = 
-
-	stationLongitudeUri := geoBytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
-
-	bytesRead, err = doAPIGet(stationLongitudeUri)
+	bytesRead, err := doAPIGet(stationLatitudeURI)
 
 	if err != nil {
-		return _,_, err
+		return "", "", err
 	}
 
-	longitude = 
+	err = json.Unmarshal(bytesRead, resp)
+	if err != nil {
+		return "", "", err
+	}
+
+	latitude = resp.Values[0][0].V
+
+	stationLongitudeURI := pmproSystemBaseApiURL + fmt.Sprintf("/averages?type=chart&start=%s&end=%s&vars=%s", curr, currMinus2h, station.LongitudeSensor)
+
+	bytesRead, err = doAPIGet(stationLongitudeURI)
+
+	if err != nil {
+		return "", "", err
+	}
+
+	err = json.Unmarshal(bytesRead, resp)
+	if err != nil {
+		return "", "", err
+	}
+
+	longitude = resp.Values[0][0].V
 
 	return
 }
@@ -125,16 +148,14 @@ func doAPIGet(uri string) (bytesRead []byte, err error) {
 	}
 
 	defer netResp.Body.Close()
-
 	bytesRead, err = ioutil.ReadAll(netResp.Body)
+
 	return
 }
 
-func ToUnixEpochTimestamp(){
-	layout := "01/02/2006 3:04:05 PM"
-    t, err := time.Parse(layout, "02/28/2016 9:03:46 PM")
-    if err != nil {
-        fmt.Println(err)
-    }
-    fmt.Println(t.Unix())
+func nowAndMInus2hInUnixTimestamp() (current string, currentMinus2h string) {
+	current = string(time.Now().Unix())
+	currentMinus2h = string(time.Now().Add(-time.Hour).Unix())
+
+	return
 }
