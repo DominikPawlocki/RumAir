@@ -15,17 +15,6 @@ type Station struct {
 	CronHandler func()
 }
 
-/*SO2
-pył PM10
-CO
-pył PM2,5
-O3
-NO2
-benzen
-
-AVERAGES : averages":"A10m,A30m,A1h","high_averages":"A24h,A8h,A8h_max,A1M,A1Y"
-*/
-
 type SensorRawReadingResult struct {
 	Name        string `json:"name"`
 	PublicRepos int    `json:"public_repos"`

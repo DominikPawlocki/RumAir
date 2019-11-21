@@ -90,11 +90,11 @@ type SensorMeasurmentSimpleType struct {
 }
 
 type AirStation struct {
-	ID           int
-	HasLatitude  bool
-	HasLongitude bool
-	Sensors      []SensorMeasurmentSimpleType
-	SensorsCount int
+	ID              int
+	LatitudeSensor  string
+	LongitudeSensor string
+	Sensors         []SensorMeasurmentSimpleType
+	SensorsCount    int
 }
 
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system. It returns its Ids, all of them. Also, (one station can have many sensors).
@@ -116,10 +116,10 @@ func GetAllStationsCapabilities() (result map[string]*AirStation) {
 			result[stationID] = station
 		}
 		if isLongitude(measurmentType.Code) {
-			station.HasLongitude = true
+			station.LongitudeSensor = measurmentType.Code
 		}
 		if isLatitude(measurmentType.Code) {
-			station.HasLatitude = true
+			station.LatitudeSensor = measurmentType.Code
 		}
 		station.Sensors = append(station.Sensors, measurmentType)
 		station.SensorsCount = len(station.Sensors)
