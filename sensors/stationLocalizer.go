@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -50,16 +49,13 @@ func LocalizeStation(station *AirStation) (result *LocalizedAirStation, err erro
 	if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
 		result = &LocalizedAirStation{Station: station}
 
-		result.Lat, result.Lon, err = getStationLocation(station)
-		if err != nil {
-			return
-		}
-		result.CitiesNearby, err = getCitiesNearby(result.Lat, result.Lon)
-		if err != nil {
-			return
+		if result.Lat, result.Lon, err = getStationLocation(station); err == nil && result.Lat != 0 && result.Lon != 0 {
+			result.CitiesNearby, err = getCitiesNearby(result.Lat, result.Lon)
+			if err != nil {
+				return
+			}
 		}
 	}
-
 	return
 }
 
@@ -88,10 +84,11 @@ func getCitiesNearby(lat float64, lon float64) (citiesNearby []string, err error
 				if len(strs) > 15 {
 					//second city also
 					citiesNearby = append(citiesNearby, strs[14])
-				}
+					return
+				} else return citiesNearby, err
+				
 			}
 		}
-		return
 	}
 	return
 }
@@ -107,10 +104,10 @@ func getStationLocation(station *AirStation) (latitude float64, longitude float6
 	//https://pmpro.dacsystem.pl/webapp/data/averages?type=chart&start=1561939200&end=1561949200&vars=27LON
 	curr, currMinus2h := nowAndMInus2hInUnixTimestamp()
 
-	stationLatitudeURI := pmproSystemBaseApiURL + fmt.Sprintf("/averages?type=chart&start=%s&end=%s&vars=%s", curr, currMinus2h, station.LatitudeSensor)
+	stationLatitudeURI := pmproSystemBaseApiURL + fmt.Sprintf("/averages?type=chart&start=%v&end=%v&vars=%s", currMinus2h, curr, station.LatitudeSensor)
 	latitude, err = getLatOrLonFromAPI(stationLatitudeURI)
 
-	stationLongitudeURI := pmproSystemBaseApiURL + fmt.Sprintf("/averages?type=chart&start=%s&end=%s&vars=%s", curr, currMinus2h, station.LongitudeSensor)
+	stationLongitudeURI := pmproSystemBaseApiURL + fmt.Sprintf("/averages?type=chart&start=%v&end=%v&vars=%s", currMinus2h, curr, station.LongitudeSensor)
 	longitude, err = getLatOrLonFromAPI(stationLongitudeURI)
 
 	return
@@ -136,39 +133,44 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 		End    int `json:"end"`
 		Start  int `json:"start"`
 		Values [][]struct {
-			V string `json:"v"`
+			T int     `json:"t"`
+			V float64 `json:"v"`
 		} `json:"values"`
 		Vars []string `json:"vars"`
 	}
 
+	fmt.Printf("ENDPOINT : %s. \n", sensorCallURI)
+
 	resp := &LimitedOneValueResponse{}
 	bytesRead, err := doAPIGet(sensorCallURI)
 	if err != nil {
-		fmt.Printf("Error during asking endpoint %s %v.", sensorCallURI, err)
+		fmt.Printf("Error during asking endpoint %s %v.\n", sensorCallURI, err)
 		return
 	}
 	if len(bytesRead) == 0 {
-		fmt.Printf("0 bytes recieved from endpoint %s.", sensorCallURI)
+		fmt.Printf("0 bytes recieved from endpoint %s.\n", sensorCallURI)
 		return 0, fmt.Errorf("0 bytes recieved from endpoint %s", sensorCallURI)
 	}
 	err = json.Unmarshal(bytesRead, resp)
 	if err != nil {
-		fmt.Printf("Error during Unmarshall API responce %v.", err)
+		fmt.Printf("Error during Unmarshall API responce %v.\n", err)
 		return
 	}
 
-	result, err = strconv.ParseFloat(resp.Values[0][0].V, 64)
-	if err != nil {
-		fmt.Printf("Error during parsing string to float %s %v.", resp.Values[0][0].V, err)
-		return
+	if resp.Values[0] != nil && len(resp.Values[0]) > 0 && resp.Values[0][0].V != 0 {
+		result = resp.Values[0][0].V
+		/*result, err = strconv.ParseFloat(resp.Values[0][0].V, 64)
+		if err != nil {
+			fmt.Printf("Error during parsing string to float %s %v.\n", resp.Values[0][0].V, err)
+			return
+		}*/
 	}
-
 	return
 }
 
-func nowAndMInus2hInUnixTimestamp() (current string, currentMinus2h string) {
-	current = string(time.Now().Unix())
-	currentMinus2h = string(time.Now().Add(-time.Hour).Unix())
+func nowAndMInus2hInUnixTimestamp() (current int64, currentMinus2h int64) {
+	current = time.Now().Unix()
+	currentMinus2h = time.Now().Add(-3 * time.Hour).Unix()
 
 	return
 }
