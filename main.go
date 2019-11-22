@@ -11,8 +11,16 @@ func main() {
 	//sensors.AddStationsToCron(stations)
 	//startCron()
 
-	//saveStationsCapabilitiesToFile(stations)
-	saveStationsCapabilitiesToFile()
+	//saveStationsCapabilitiesToFile()
+
+	sts := sensors.GetAllStationsCapabilities()
+	localizedStations, err := sensors.LocalizeStations(sts)
+
+	if err != nil {
+		fmt.Println("Error during localizing occured ! %v", err)
+
+	}
+	fmt.Println("%v stations has been localized !", len(localizedStations))
 	//server.Init()
 }
 

@@ -16,49 +16,61 @@ Thats it ! Now I know which stations nearby my place Im interrested in grabbing 
 package sensors
 
 import (
-
-	//"errors"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
 
 type LocalizedAirStation struct {
 	Station      *AirStation
-	Lat          string
-	Lon          string
+	Lat          float64
+	Lon          float64
 	CitiesNearby []string
 }
 
 var geoBytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
 var pmproSystemBaseApiURL string = "https://pmpro.dacsystem.pl/webapp/data"
 
-/*func GetStationLonLat(station *AirStation) (result *LocalizedAirStation) {
-	if station.LatitudeSensor && station.LongitudeSensor {
+func LocalizeStations(stations map[string]*AirStation) (result map[string]*LocalizedAirStation, err error) {
+	result = map[string]*LocalizedAirStation{}
 
-
-		if len(bytesRead) > 0 {
-			err = json.Unmarshal(bytesRead, res *odpowiedzLATLON)
-
-			if(err==null){
-				station.
-			}
+	for _, station := range stations {
+		if localizedStation, err := LocalizeStation(station); err != nil {
+			result[string(station.ID)] = localizedStation //&LocalizedAirStation{Station: station, Lat: localizedStation.}
 		}
 	}
-}*/
+	return
+}
+
+func LocalizeStation(station *AirStation) (result *LocalizedAirStation, err error) {
+	if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
+		result = &LocalizedAirStation{Station: station}
+
+		result.Lat, result.Lon, err = getStationLocation(station)
+		if err != nil {
+			return
+		}
+		result.CitiesNearby, err = getCitiesNearby(result.Lat, result.Lon)
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
 
 //to smaller method ! oraz inny package !
-func GetCitiesNearby(lat float32, lon float32) (citiesNearby []string, err error) {
+func getCitiesNearby(lat float64, lon float64) (citiesNearby []string, err error) {
 	radius := 0
 	var reverseGeocodingStringedResponce string
 	var bytesRead []byte
 
 	for until := true; until; until = (len(reverseGeocodingStringedResponce)) < 5 {
-		//Lets try bigger range !
-		radius += 30
+		radius += 30 //Lets try bigger range. We need this city info, maybe there is some city further ...
 
 		bytesRead, err = getReverseGeocodedCities(radius, lat, lon)
 
@@ -84,56 +96,22 @@ func GetCitiesNearby(lat float32, lon float32) (citiesNearby []string, err error
 	return
 }
 
-func getReverseGeocodedCities(radius int, lat float32, lon float32) (bytesRead []byte, err error) {
+func getReverseGeocodedCities(radius int, lat float64, lon float64) (bytesRead []byte, err error) {
 	// concat strings by + not efficient but doesnt matter here
 	citiesNearbyURL := geoBytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
 
 	return doAPIGet(citiesNearbyURL)
 }
 
-func getStationLocation(station *AirStation) (latitude string, longitude string, err error) {
-	type LimitedOneValueResponse struct {
-		End    int `json:"end"`
-		Start  int `json:"start"`
-		Values [][]struct {
-			V string `json:"v"`
-		} `json:"values"`
-		Vars []string `json:"vars"`
-	}
-
-	resp := &LimitedOneValueResponse{}
-
+func getStationLocation(station *AirStation) (latitude float64, longitude float64, err error) {
 	//https://pmpro.dacsystem.pl/webapp/data/averages?type=chart&start=1561939200&end=1561949200&vars=27LON
 	curr, currMinus2h := nowAndMInus2hInUnixTimestamp()
+
 	stationLatitudeURI := pmproSystemBaseApiURL + fmt.Sprintf("/averages?type=chart&start=%s&end=%s&vars=%s", curr, currMinus2h, station.LatitudeSensor)
-
-	bytesRead, err := doAPIGet(stationLatitudeURI)
-
-	if err != nil {
-		return "", "", err
-	}
-
-	err = json.Unmarshal(bytesRead, resp)
-	if err != nil {
-		return "", "", err
-	}
-
-	latitude = resp.Values[0][0].V
+	latitude, err = getLatOrLonFromAPI(stationLatitudeURI)
 
 	stationLongitudeURI := pmproSystemBaseApiURL + fmt.Sprintf("/averages?type=chart&start=%s&end=%s&vars=%s", curr, currMinus2h, station.LongitudeSensor)
-
-	bytesRead, err = doAPIGet(stationLongitudeURI)
-
-	if err != nil {
-		return "", "", err
-	}
-
-	err = json.Unmarshal(bytesRead, resp)
-	if err != nil {
-		return "", "", err
-	}
-
-	longitude = resp.Values[0][0].V
+	longitude, err = getLatOrLonFromAPI(stationLongitudeURI)
 
 	return
 }
@@ -149,6 +127,41 @@ func doAPIGet(uri string) (bytesRead []byte, err error) {
 
 	defer netResp.Body.Close()
 	bytesRead, err = ioutil.ReadAll(netResp.Body)
+
+	return
+}
+
+func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
+	type LimitedOneValueResponse struct {
+		End    int `json:"end"`
+		Start  int `json:"start"`
+		Values [][]struct {
+			V string `json:"v"`
+		} `json:"values"`
+		Vars []string `json:"vars"`
+	}
+
+	resp := &LimitedOneValueResponse{}
+	bytesRead, err := doAPIGet(sensorCallURI)
+	if err != nil {
+		fmt.Printf("Error during asking endpoint %s %v.", sensorCallURI, err)
+		return
+	}
+	if len(bytesRead) == 0 {
+		fmt.Printf("0 bytes recieved from endpoint %s.", sensorCallURI)
+		return 0, fmt.Errorf("0 bytes recieved from endpoint %s", sensorCallURI)
+	}
+	err = json.Unmarshal(bytesRead, resp)
+	if err != nil {
+		fmt.Printf("Error during Unmarshall API responce %v.", err)
+		return
+	}
+
+	result, err = strconv.ParseFloat(resp.Values[0][0].V, 64)
+	if err != nil {
+		fmt.Printf("Error during parsing string to float %s %v.", resp.Values[0][0].V, err)
+		return
+	}
 
 	return
 }
