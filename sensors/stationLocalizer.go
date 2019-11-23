@@ -37,26 +37,23 @@ var pmproSystemBaseApiURL string = "https://pmpro.dacsystem.pl/webapp/data"
 func LocalizeStations(stations map[string]*AirStation) (result map[string]*LocalizedAirStation, err error) {
 	result = map[string]*LocalizedAirStation{}
 
-	for _, station := range stations {
-		if localizedStation, err := LocalizeStation(station); err != nil {
-			result[string(station.ID)] = localizedStation //&LocalizedAirStation{Station: station, Lat: localizedStation.}
+	for id, station := range stations {
+		if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
+			if localizedStation, err := LocalizeStation(station); err == nil {
+				result[id] = localizedStation
+			}
 		}
 	}
 	return
 }
 
 func LocalizeStation(station *AirStation) (result *LocalizedAirStation, err error) {
-	if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
-		result = &LocalizedAirStation{Station: station}
-
-		if result.Lat, result.Lon, err = getStationLocation(station); err == nil && result.Lat != 0 && result.Lon != 0 {
-			result.CitiesNearby, err = getCitiesNearby(result.Lat, result.Lon)
-			if err != nil {
-				return
-			}
-		}
+	result = &LocalizedAirStation{Station: station}
+	if result.Lat, result.Lon, err = getStationLocation(station); err == nil && result.Lat != 0 && result.Lon != 0 {
+		result.CitiesNearby, err = getCitiesNearby(result.Lat, result.Lon)
+		return
 	}
-	return
+	return result, fmt.Errorf("Can't localize station %v lat and lon. \n", station.ID)
 }
 
 //to smaller method ! oraz inny package !
@@ -85,8 +82,8 @@ func getCitiesNearby(lat float64, lon float64) (citiesNearby []string, err error
 					//second city also
 					citiesNearby = append(citiesNearby, strs[14])
 					return
-				} else return citiesNearby, err
-				
+				}
+				return
 			}
 		}
 	}
@@ -159,11 +156,6 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 
 	if resp.Values[0] != nil && len(resp.Values[0]) > 0 && resp.Values[0][0].V != 0 {
 		result = resp.Values[0][0].V
-		/*result, err = strconv.ParseFloat(resp.Values[0][0].V, 64)
-		if err != nil {
-			fmt.Printf("Error during parsing string to float %s %v.\n", resp.Values[0][0].V, err)
-			return
-		}*/
 	}
 	return
 }
