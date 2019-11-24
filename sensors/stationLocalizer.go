@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -31,7 +32,9 @@ type LocalizedAirStation struct {
 	CitiesNearby []string
 }
 
-var geoBytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
+var getNearbyCitiesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
+var locationiqBaseApiURL string = "https://locationiq.org/v1/reverse.php?key=e281731b38bb74"
+
 var pmproSystemBaseApiURL string = "https://pmpro.dacsystem.pl/webapp/data"
 
 func LocalizeStations(stations map[string]*AirStation) (result map[string]*LocalizedAirStation, err error) {
@@ -54,6 +57,27 @@ func LocalizeStation(station *AirStation) (result *LocalizedAirStation, err erro
 		return
 	}
 	return result, fmt.Errorf("Can't localize station %v lat and lon. \n", station.ID)
+}
+
+func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (cities string) {
+	var strBldr strings.Builder
+
+	citiesNoDuplicates := map[string]int{}
+	for _, sts := range localized {
+		for _, city := range sts.CitiesNearby {
+			//if _, ok := citiesNoDuplicates[city]; !ok {
+			citiesNoDuplicates[city] = citiesNoDuplicates[city] + 1
+			//}
+		}
+	}
+	for city, nrOfStations := range citiesNoDuplicates {
+		strBldr.WriteString(city)
+		strBldr.WriteString(": ")
+		strBldr.WriteString(strconv.Itoa(nrOfStations))
+		strBldr.WriteString(", ")
+	}
+
+	return strBldr.String()
 }
 
 //to smaller method ! oraz inny package !
@@ -92,9 +116,17 @@ func getCitiesNearby(lat float64, lon float64) (citiesNearby []string, err error
 
 func getReverseGeocodedCities(radius int, lat float64, lon float64) (bytesRead []byte, err error) {
 	// concat strings by + not efficient but doesnt matter here
-	citiesNearbyURL := geoBytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
+	citiesNearbyURL := getNearbyCitiesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
+	fmt.Printf("ENDPOINT : %s. \n", citiesNearbyURL)
 
 	return doAPIGet(citiesNearbyURL)
+}
+
+func dddd(radius int, lat float64, lon float64) (bytesRead []byte, err error) {
+	//https://locationiq.org/v1/reverse.php?key=e281731b38bb74&lat=54.5987&lon=18.26669336&format=json
+	citiesNearbyURL := locationiqBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
+	fmt.Printf("ENDPOINT : %s. \n", citiesNearbyURL)
+
 }
 
 func getStationLocation(station *AirStation) (latitude float64, longitude float64, err error) {
@@ -136,8 +168,6 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 		Vars []string `json:"vars"`
 	}
 
-	fmt.Printf("ENDPOINT : %s. \n", sensorCallURI)
-
 	resp := &LimitedOneValueResponse{}
 	bytesRead, err := doAPIGet(sensorCallURI)
 	if err != nil {
@@ -156,6 +186,7 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 
 	if resp.Values[0] != nil && len(resp.Values[0]) > 0 && resp.Values[0][0].V != 0 {
 		result = resp.Values[0][0].V
+		fmt.Printf("%v for : %s. \n", result, sensorCallURI)
 	}
 	return
 }

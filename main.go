@@ -15,12 +15,13 @@ func main() {
 
 	sts := sensors.GetAllStationsCapabilities()
 	localizedStations, err := sensors.LocalizeStations(sts)
-
 	if err != nil {
-		fmt.Println("Error during localizing occured ! %v", err)
-
+		fmt.Printf("Error during localizing occured ! %v", err)
 	}
-	fmt.Println("%v stations has been localized !", len(localizedStations))
+	fmt.Printf("%v stations has been localized ! \n", len(localizedStations))
+
+	cities := sensors.GetStationNrPerCity(localizedStations)
+	fmt.Printf("CITIES ARE : %s \n", cities)
 	//server.Init()
 }
 
@@ -41,13 +42,6 @@ func startCron() {
 		fmt.Printf("Cron NOT STARTED ! %v", err)
 	}
 	fmt.Printf("Cron with size %v started correctly !\n", cronSize)
-}
-
-func saveStationCapabilitiesToFile() {
-	if measurmentTypes :=
-		sensors.GetStationSensors(sensors.SensorsToFetch["1"].ID); len(measurmentTypes) > 0 {
-		sensors.SaveJsonToFile(measurmentTypes, "stationCapabilites.txt")
-	}
 }
 
 func saveStationsCapabilitiesToFile() {
