@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/dompaw/RumAir/sensors"
+	"github.com/dompaw/RumAir/airStations"
 )
 
 func main() {
@@ -13,31 +13,31 @@ func main() {
 
 	//saveStationsCapabilitiesToFile()
 
-	sts := sensors.GetAllStationsCapabilities()
-	localizedStations, err := sensors.LocalizeStations(sts)
+	sts := airStations.GetAllStationsCapabilities()
+	localizedStations, err := airStations.LocalizeStations(sts)
 	if err != nil {
 		fmt.Printf("Error during localizing occured ! %v", err)
 	}
 	fmt.Printf("%v stations has been localized ! \n", len(localizedStations))
 
-	cities := sensors.GetStationNrPerCity(localizedStations)
+	cities := airStations.GetStationNrPerCity(localizedStations)
 	fmt.Printf("CITIES ARE : %s \n", cities)
 	//server.Init()
 }
 
 // AllSensors returns a slice produced from map of all sensors
-func createAllStations() []sensors.Station {
-	sensorsSlice := make([]sensors.Station, len(sensors.SensorsToFetch))
+func createAllStations() []airStations.Station {
+	airStationsSlice := make([]airStations.Station, len(airStations.SensorsToFetch))
 	idx := 0
-	for _, sensor := range sensors.SensorsToFetch {
-		sensorsSlice[idx] = sensor
+	for _, sensor := range airStations.SensorsToFetch {
+		airStationsSlice[idx] = sensor
 		idx++
 	}
-	return sensorsSlice
+	return airStationsSlice
 }
 
 func startCron() {
-	cronSize, err := sensors.StartCron()
+	cronSize, err := airStations.StartCron()
 	if err != nil {
 		fmt.Printf("Cron NOT STARTED ! %v", err)
 	}
@@ -45,7 +45,7 @@ func startCron() {
 }
 
 func saveStationsCapabilitiesToFile() {
-	if stationsWithSensors := sensors.GetAllStationsCapabilities(); len(stationsWithSensors) > 0 {
-		sensors.SaveJsonToFile(stationsWithSensors, "stationCapabilites.txt")
+	if stationsWithSensors := airStations.GetAllStationsCapabilities(); len(stationsWithSensors) > 0 {
+		airStations.SaveJsonToFile(stationsWithSensors, "stationCapabilites.txt")
 	}
 }
