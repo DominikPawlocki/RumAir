@@ -5,18 +5,20 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/dompaw/RumAir/airStations"
 )
 
 var geobytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
 
 type LocalizedAirStation struct {
-	Station      *AirStation
+	Station      *airStations.AirStation
 	Lat          float64
 	Lon          float64
 	CitiesNearby []string
 }
 
-func LocalizeStations(stations map[string]*AirStation) (result map[string]*LocalizedAirStation, err error) {
+func LocalizeStations(stations map[string]*airStations.AirStation) (result map[string]*LocalizedAirStation, err error) {
 	result = map[string]*LocalizedAirStation{}
 
 	for id, station := range stations {
@@ -29,9 +31,9 @@ func LocalizeStations(stations map[string]*AirStation) (result map[string]*Local
 	return
 }
 
-func LocalizeStation(station *AirStation) (result *LocalizedAirStation, err error) {
+func LocalizeStation(station *airStations.AirStation) (result *LocalizedAirStation, err error) {
 	result = &LocalizedAirStation{Station: station}
-	if result.Lat, result.Lon, err = getStationLocation(station); err == nil && result.Lat != 0 && result.Lon != 0 {
+	if result.Lat, result.Lon, err = getStationCoordinates(station); err == nil && result.Lat != 0 && result.Lon != 0 {
 		result.CitiesNearby, err = getCitiesNearby(result.Lat, result.Lon)
 		return
 	}
