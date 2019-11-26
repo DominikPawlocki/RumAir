@@ -40,22 +40,32 @@ func LocalizeStation(station *airStations.AirStation) (result *LocalizedAirStati
 	return result, fmt.Errorf("Can't localize station %v lat and lon. \n", station.ID)
 }
 
-func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (cities string) {
+func GetStationNrPerCity(localized map[string]*LocalizedAirStation) string {
+	type stationsPerCity struct {
+		StationIdsConcat string
+		Count            int
+	}
 	var strBldr strings.Builder
 
-	citiesNoDuplicates := map[string]int{}
+	citiesNoDuplicates := map[string]*stationsPerCity{}
 	for _, sts := range localized {
 		for _, city := range sts.CitiesNearby {
-			//if _, ok := citiesNoDuplicates[city]; !ok {
-			citiesNoDuplicates[city] = citiesNoDuplicates[city] + 1
-			//}
+			if spc, ok := citiesNoDuplicates[city]; !ok {
+				citiesNoDuplicates[city] = &stationsPerCity{StationIdsConcat: strconv.Itoa(sts.Station.ID), Count: 1}
+			} else {
+				spc.Count++
+				spc.StationIdsConcat += fmt.Sprintf("%s %s ", ",", strconv.Itoa(sts.Station.ID))
+			}
 		}
 	}
+
 	for city, nrOfStations := range citiesNoDuplicates {
 		strBldr.WriteString(city)
-		strBldr.WriteString(": ")
-		strBldr.WriteString(strconv.Itoa(nrOfStations))
-		strBldr.WriteString(", ")
+		strBldr.WriteString(" with ")
+		strBldr.WriteString(strconv.Itoa(nrOfStations.Count))
+		strBldr.WriteString(" stations : ")
+		strBldr.WriteString(nrOfStations.StationIdsConcat)
+		strBldr.WriteString("\n")
 	}
 
 	return strBldr.String()

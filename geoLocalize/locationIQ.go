@@ -33,11 +33,11 @@ func getReverseGeocodedCitiesLocationIQ(radius int, lat float64, lon float64) (b
 	return doAPIGet(locationIqURL)
 }
 
-func getCitiesNearby(lat float64, lon float64) (citiesNearby []string, err error) {
+/*func getCitiesNearby(lat float64, lon float64) (citiesNearby []string, err error) {
 	radius := 0
 	var reverseGeocodingStringedResponce string
 	var bytesRead []byte
 
 	for until := true; until; until = (len(reverseGeocodingStringedResponce)) < 5 {
 	}
-}
+}*/
