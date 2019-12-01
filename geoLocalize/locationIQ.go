@@ -3,6 +3,7 @@ package geolocalize
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/dompaw/RumAir/airStations"
 )
@@ -12,8 +13,21 @@ var locationiqBaseApiURL string = "https://locationiq.org/v1/reverse.php?key=e28
 func LocalizeStationsLocIQ(stations map[string]*airStations.AirStation) (result map[string]*LocalizedAirStation, err error) {
 	result = map[string]*LocalizedAirStation{}
 
+	//LocationIQ free API has to be called in at min 1 sec interval, it returns 400 if not
+
+	/*var c chan int
+
+	select {
+	case _ = <-c:
+		time.Sleep(5 * time.Second)
+	case <-time.After(1 * time.Minute):
+		fmt.Println("timed out")
+	}*/
+
 	for id, station := range stations {
+
 		if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
+			time.Sleep(1 * time.Second)
 			if localizedStation, err := LocalizeStationLocIQ(station); err == nil {
 				result[id] = localizedStation
 			}
