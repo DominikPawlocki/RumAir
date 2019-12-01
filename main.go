@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dompaw/RumAir/airStations"
-	geolocalize "github.com/dompaw/RumAir/geoLocalize"
+	geolocalize "github.com/dompaw/RumAir/geolocalize"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	//saveStationsCapabilitiesToFile()
 
 	sts := airStations.GetAllStationsCapabilities()
-	localizedStations, err := geolocalize.LocalizeStations(sts)
+	localizedStations, err := geolocalize.LocalizeStationsLocIQ(sts)
 	if err != nil {
 		fmt.Printf("Error during localizing occured ! %v", err)
 	}
