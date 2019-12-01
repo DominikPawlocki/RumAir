@@ -73,7 +73,13 @@ func getCitiesNearbyLocIQ(lat float64, lon float64) (citiesNearby []string, err 
 			fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
 			return
 		}
-		citiesNearby = append(citiesNearby, fmt.Sprintf("%s, %s", result.Address.Town, result.Address.Suburb))
+
+		cityOrTown := result.Address.Town
+		if cityOrTown == "" {
+			cityOrTown = result.Address.County
+		}
+
+		citiesNearby = append(citiesNearby, fmt.Sprintf("%s, %s", cityOrTown, result.Address.Suburb))
 	}
 	return
 }

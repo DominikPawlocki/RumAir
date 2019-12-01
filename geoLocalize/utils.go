@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -31,12 +32,22 @@ func GetStationNrPerCity(localized map[string]*LocalizedAirStation) string {
 		}
 	}
 
-	for city, nrOfStations := range citiesNoDuplicates {
+	//cant sort input by city, cause its non-localized yet...
+	var keys []string = make([]string, len(citiesNoDuplicates))
+	itr := 0
+	for i := range citiesNoDuplicates {
+		keys[itr] = i
+		itr++
+	}
+	sort.Strings(keys)
+
+	for _, city := range keys {
+
 		strBldr.WriteString(city)
 		strBldr.WriteString(" with ")
-		strBldr.WriteString(strconv.Itoa(nrOfStations.Count))
+		strBldr.WriteString(strconv.Itoa(citiesNoDuplicates[city].Count))
 		strBldr.WriteString(" stations : ")
-		strBldr.WriteString(nrOfStations.StationIdsConcat)
+		strBldr.WriteString(citiesNoDuplicates[city].StationIdsConcat)
 		strBldr.WriteString("\n")
 	}
 
