@@ -22,7 +22,7 @@ func main() {
 	fmt.Printf("%v stations has been localized ! \n", len(localizedStations))
 
 	cities := geolocalize.GetStationNrPerCity(localizedStations)
-	fmt.Printf("CITIES ARE : %s \n", cities)
+	fmt.Printf("CITIES ARE : \n %s", cities)
 	//server.Init()
 }
 

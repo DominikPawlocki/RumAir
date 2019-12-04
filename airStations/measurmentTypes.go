@@ -21,6 +21,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
@@ -97,13 +98,26 @@ type AirStation struct {
 	SensorsCount    int
 }
 
-//GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system. It returns its Ids, all of them. Also, (one station can have many sensors).
+//GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
+//This method returns its Ids, all of them. Also, as one station can have many sensors, it returns it.
 func GetAllStationsCapabilities() (result map[string]*AirStation) {
 	var allMeasurments AvailableMeasurmentsSimpleResponce
-	err := doAllMeasurmentsAPIcall(&allMeasurments)
-	if err != nil {
-		return
+
+	var c chan error
+
+	go doAllMeasurmentsAPIcall(&allMeasurments, c)
+
+	select {
+	case err := <-c:
+		{
+			if err != nil {
+				return
+			}
+		}
+	case <-time.NewTimer()(500 * time.Millisecond):
+		fmt.Println(".")
 	}
+
 	re := regexp.MustCompile("[0-9]+")
 	result = map[string]*AirStation{} //exact same like result = make(map[string]AirStation)
 
@@ -132,27 +146,37 @@ func GetAllStationsCapabilities() (result map[string]*AirStation) {
 func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
 	allMeasurments := AvailableMeasurmentsResponce{Data: []SensorMeasurmentType{}}
-	err := doAllMeasurmentsAPIcall(&allMeasurments)
-	if err != nil {
-		return allMeasurments.Data
+
+	var c chan error
+
+	go doAllMeasurmentsAPIcall(&allMeasurments, c)
+
+	select {
+	case err := <-c:
+		{
+			if err != nil {
+				return allMeasurments.Data
+			}
+		}
+	case <-time.After(500 * time.Millisecond):
+		fmt.Print(".")
 	}
+
 	for _, measurmentType := range allMeasurments.Data {
 		if strings.HasPrefix(measurmentType.Code, stationID) {
 			result = append(result, measurmentType)
 		}
 	}
 	fmt.Printf("Nr of results: %v", len(result))
+
 	return allMeasurments.Data
 }
 
 func SaveJsonToFile(v interface{}, fileName string) (err error) {
-	//f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
 	if err != nil {
 		fmt.Printf("error: %s\n", err)
 		return
 	}
-	//defer f.Close()
 
 	var bytesToFile []byte
 
@@ -168,15 +192,13 @@ func SaveJsonToFile(v interface{}, fileName string) (err error) {
 		return errors.New("Saving to file : type not recognized \n")
 	}
 	err = ioutil.WriteFile(fileName, bytesToFile, 0644)
-	//f.Close()
 	return
 }
 
-func doAllMeasurmentsAPIcall(result interface{}) (err error) {
+func doAllMeasurmentsAPIcall(result interface{}, c chan error) {
 	var netResp *http.Response
-	//var result AvailableMeasurmentsResponce
 
-	netResp, err = http.Get(allStationsMeasurmentsURL)
+	netResp, err := http.Get(allStationsMeasurmentsURL)
 	if err != nil {
 		return
 	}
