@@ -21,10 +21,13 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
+
+/*type AvailableMeasurmenter interface {
+	doAllMeasurmentsAPIcall() (result interface{})
+}*/
 
 type AvailableMeasurmentsResponce struct {
 	Success    bool                   `json:"success"`
@@ -101,21 +104,14 @@ type AirStation struct {
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
 //This method returns its Ids, all of them. Also, as one station can have many sensors, it returns it.
 func GetAllStationsCapabilities() (result map[string]*AirStation) {
-	var allMeasurments AvailableMeasurmentsSimpleResponce
+	allMeasurments := AvailableMeasurmentsSimpleResponce{}
 
-	var c chan error
+	bytesRead := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
 
-	go doAllMeasurmentsAPIcall(&allMeasurments, c)
-
-	select {
-	case err := <-c:
-		{
-			if err != nil {
-				return
-			}
-		}
-	case <-time.NewTimer()(500 * time.Millisecond):
-		fmt.Println(".")
+	err := DeserializeWithConsoleDots(json.Unmarshal, bytesRead, &allMeasurments)
+	if err != nil {
+		fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
+		return
 	}
 
 	re := regexp.MustCompile("[0-9]+")
@@ -145,21 +141,13 @@ func GetAllStationsCapabilities() (result map[string]*AirStation) {
 //Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
 func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
-	allMeasurments := AvailableMeasurmentsResponce{Data: []SensorMeasurmentType{}}
+	var allMeasurments *AvailableMeasurmentsResponce
 
-	var c chan error
-
-	go doAllMeasurmentsAPIcall(&allMeasurments, c)
-
-	select {
-	case err := <-c:
-		{
-			if err != nil {
-				return allMeasurments.Data
-			}
-		}
-	case <-time.After(500 * time.Millisecond):
-		fmt.Print(".")
+	bytesRead := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	err := json.Unmarshal(bytesRead, &allMeasurments)
+	if err != nil {
+		fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
+		return
 	}
 
 	for _, measurmentType := range allMeasurments.Data {
@@ -195,7 +183,7 @@ func SaveJsonToFile(v interface{}, fileName string) (err error) {
 	return
 }
 
-func doAllMeasurmentsAPIcall(result interface{}, c chan error) {
+func doAllMeasurmentsAPIcall() (bytesRead []byte) {
 	var netResp *http.Response
 
 	netResp, err := http.Get(allStationsMeasurmentsURL)
@@ -210,18 +198,13 @@ func doAllMeasurmentsAPIcall(result interface{}, c chan error) {
 	//allMeasurments := make([]SensorMeasurmentType, 2)
 	//var allMeasurments *[]SensorMeasurmentType = &[]SensorMeasurmentType{}
 
-	bytesRead, err := ioutil.ReadAll(netResp.Body)
+	bytesRead, err = ioutil.ReadAll(netResp.Body)
 	if err != nil {
 		fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
 	}
 
 	if len(bytesRead) > 0 {
 		fmt.Printf("%v bytes read from network for `../table=Measurement&v=2` endpoint. Now, deserializing. \n", len(bytesRead))
-		err = json.Unmarshal(bytesRead, &result)
-		if err != nil {
-			fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
-			return
-		}
 	}
 	return
 }

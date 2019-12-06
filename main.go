@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	fmt.Printf("Starting ...")
 	createAllStations()
 	//sensors.AddStationsToCron(stations)
 	//startCron()
