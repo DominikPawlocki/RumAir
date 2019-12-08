@@ -21,19 +21,6 @@ import (
 
 var cronInstance *cron.Cron = cron.New(cron.WithSeconds())
 
-/*func AddSensorToCron(c *cron.Cron, sensorId strings, offsetInSeconds int) cron.EntryID {
-	fmt.Println("---------------CRON ----------------------")
-	id, err := c.AddFunc("30 * * * *", func() { fmt.Println("Every hour on the half hour") })
-	if err != nil {
-		fmt.Printf("Error occured when adding sensor %v to CRON !", sensorId)
-		panic(err)
-	}
-
-	fmt.Printf("Sensor %v added to Cron.", sensorId)
-
-	return id
-}*/
-
 func AddStationsToCron(stations []Station) {
 	for i, station := range stations {
 		if station.CronHandler != nil {

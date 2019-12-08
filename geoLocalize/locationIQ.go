@@ -15,7 +15,7 @@ func LocalizeStationsLocIQ(stations map[string]*airStations.AirStation) (result 
 	for id, station := range stations {
 		if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
 			//LocationIQ free API has to be called in at min 1 sec interval, it returns 400 if not
-			time.Sleep(1 * time.Second)
+			SleepWithOutputDotsOnConsole(1 * time.Second)
 			if localizedStation, err := LocalizeStationLocIQ(station); err == nil {
 				result[id] = localizedStation
 			}

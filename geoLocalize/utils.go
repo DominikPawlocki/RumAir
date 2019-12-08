@@ -83,7 +83,7 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 
 	if resp.Values[0] != nil && len(resp.Values[0]) > 0 && resp.Values[0][0].V != 0 {
 		result = resp.Values[0][0].V
-		fmt.Printf("%v for : %s. \n", result, sensorCallURI)
+		fmt.Printf(" %v for : %s. \n", result, sensorCallURI)
 	}
 	return
 }
@@ -123,4 +123,24 @@ func nowAndMInus2hInUnixTimestamp() (current int64, currentMinus2h int64) {
 	currentMinus2h = time.Now().Add(-3 * time.Hour).Unix()
 
 	return
+}
+
+func SleepWithOutputDotsOnConsole(d time.Duration) {
+	ticker := time.NewTicker(200 * time.Millisecond)
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case <-done:
+				return
+			case _ = <-ticker.C:
+				fmt.Printf(".")
+			}
+		}
+	}()
+
+	time.Sleep(d)
+
+	ticker.Stop()
+	done <- true
 }
