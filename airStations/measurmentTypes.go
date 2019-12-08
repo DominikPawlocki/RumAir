@@ -6,12 +6,6 @@ The call : 'https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2' ans
 
 This code filters this huge response nicely, and it outputs to the file: which stations has which capability reported */
 
-/*{"id":145,"code":"06RPM","name":"Tachometr wentylatora","compound_type":"poziom","physical_device_id":31,"physical_device_slot":"rpm","unit_id":"_","coef_a":1,
-"coef_b":0,"technical_p":0,"virtual_p":0,"analog_p":0,"analog_chan":0,"binary_p":0,"binary_chan":0,"binary_counter":0,"coverage_rate":75,
-"agg_unit":"_","fconv":1,"decimals":0,"format":"","sample_type":"normal","average_type":"arithmetic",
-"averages":"A10m,A30m,A1h","high_averages":"A24h,A8h,A8h_max,A1M,A1Y","expression":"","finish_date":"",
-"is_published":0,"timeshift":0,"manual_p":0,"passive_p":0,"start_date":1449754401}*/
-
 import (
 	"encoding/json"
 	"errors"
@@ -24,10 +18,6 @@ import (
 )
 
 var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
-
-/*type AvailableMeasurmenter interface {
-	doAllMeasurmentsAPIcall() (result interface{})
-}*/
 
 type AvailableMeasurmentsResponce struct {
 	Success    bool                   `json:"success"`
@@ -80,6 +70,7 @@ type SensorMeasurmentType struct {
 	StartDate          int     `json:"start_date"`
 }
 
+// Same like above, but simpler one
 type SensorMeasurmentSimpleType struct {
 	ID           int    `json:"id"`
 	Code         string `json:"code"`
@@ -102,7 +93,7 @@ type AirStation struct {
 }
 
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
-//This method returns its Ids, all of them. Also, as one station can have many sensors, it returns it.
+//This method returns all station's Ids, information if station is geolocalizable and its sensors (capabilities)
 func GetAllStationsCapabilities() (result map[string]*AirStation) {
 	allMeasurments := AvailableMeasurmentsSimpleResponce{}
 
