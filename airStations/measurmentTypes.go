@@ -1,4 +1,4 @@
-package sensors
+package airStations
 
 /* The 'pmpro.dacsystem.pl' stations has sensors which collects different air measurments data - nothing unusual, uh?
 But which data every station is able to collect? Does all the stations collects same data ? Does station with id X collects NO2?
@@ -24,6 +24,10 @@ import (
 )
 
 var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
+
+/*type AvailableMeasurmenter interface {
+	doAllMeasurmentsAPIcall() (result interface{})
+}*/
 
 type AvailableMeasurmentsResponce struct {
 	Success    bool                   `json:"success"`
@@ -97,13 +101,19 @@ type AirStation struct {
 	SensorsCount    int
 }
 
-//GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system. It returns its Ids, all of them. Also, (one station can have many sensors).
+//GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
+//This method returns its Ids, all of them. Also, as one station can have many sensors, it returns it.
 func GetAllStationsCapabilities() (result map[string]*AirStation) {
-	var allMeasurments AvailableMeasurmentsSimpleResponce
-	err := doAllMeasurmentsAPIcall(&allMeasurments)
+	allMeasurments := AvailableMeasurmentsSimpleResponce{}
+
+	bytesRead := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+
+	err := DeserializeWithConsoleDots(json.Unmarshal, bytesRead, &allMeasurments)
 	if err != nil {
+		fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
 		return
 	}
+
 	re := regexp.MustCompile("[0-9]+")
 	result = map[string]*AirStation{} //exact same like result = make(map[string]AirStation)
 
@@ -131,28 +141,30 @@ func GetAllStationsCapabilities() (result map[string]*AirStation) {
 //Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
 func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
-	allMeasurments := AvailableMeasurmentsResponce{Data: []SensorMeasurmentType{}}
-	err := doAllMeasurmentsAPIcall(&allMeasurments)
+	var allMeasurments *AvailableMeasurmentsResponce
+
+	bytesRead := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	err := json.Unmarshal(bytesRead, &allMeasurments)
 	if err != nil {
-		return allMeasurments.Data
+		fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
+		return
 	}
+
 	for _, measurmentType := range allMeasurments.Data {
 		if strings.HasPrefix(measurmentType.Code, stationID) {
 			result = append(result, measurmentType)
 		}
 	}
 	fmt.Printf("Nr of results: %v", len(result))
+
 	return allMeasurments.Data
 }
 
 func SaveJsonToFile(v interface{}, fileName string) (err error) {
-	//f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
 	if err != nil {
 		fmt.Printf("error: %s\n", err)
 		return
 	}
-	//defer f.Close()
 
 	var bytesToFile []byte
 
@@ -168,15 +180,13 @@ func SaveJsonToFile(v interface{}, fileName string) (err error) {
 		return errors.New("Saving to file : type not recognized \n")
 	}
 	err = ioutil.WriteFile(fileName, bytesToFile, 0644)
-	//f.Close()
 	return
 }
 
-func doAllMeasurmentsAPIcall(result interface{}) (err error) {
+func doAllMeasurmentsAPIcall() (bytesRead []byte) {
 	var netResp *http.Response
-	//var result AvailableMeasurmentsResponce
 
-	netResp, err = http.Get(allStationsMeasurmentsURL)
+	netResp, err := http.Get(allStationsMeasurmentsURL)
 	if err != nil {
 		return
 	}
@@ -188,18 +198,13 @@ func doAllMeasurmentsAPIcall(result interface{}) (err error) {
 	//allMeasurments := make([]SensorMeasurmentType, 2)
 	//var allMeasurments *[]SensorMeasurmentType = &[]SensorMeasurmentType{}
 
-	bytesRead, err := ioutil.ReadAll(netResp.Body)
+	bytesRead, err = ioutil.ReadAll(netResp.Body)
 	if err != nil {
 		fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
 	}
 
 	if len(bytesRead) > 0 {
 		fmt.Printf("%v bytes read from network for `../table=Measurement&v=2` endpoint. Now, deserializing. \n", len(bytesRead))
-		err = json.Unmarshal(bytesRead, &result)
-		if err != nil {
-			fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
-			return
-		}
 	}
 	return
 }

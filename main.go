@@ -3,47 +3,51 @@ package main
 import (
 	"fmt"
 
-	"github.com/dompaw/RumAir/sensors"
+	"github.com/dompaw/RumAir/airStations"
+	geolocalize "github.com/dompaw/RumAir/geolocalize"
 )
 
 func main() {
+	fmt.Printf("Starting ...")
 	createAllStations()
 	//sensors.AddStationsToCron(stations)
 	//startCron()
 
-	//saveStationsCapabilitiesToFile(stations)
-	saveStationsCapabilitiesToFile()
+	//saveStationsCapabilitiesToFile()
+
+	sts := airStations.GetAllStationsCapabilities()
+	localizedStations, err := geolocalize.LocalizeStationsLocIQ(sts)
+	if err != nil {
+		fmt.Printf("Error during localizing occured ! %v", err)
+	}
+	fmt.Printf("%v stations has been localized ! \n", len(localizedStations))
+
+	cities := geolocalize.GetStationNrPerCity(localizedStations)
+	fmt.Printf("CITIES ARE : \n %s", cities)
 	//server.Init()
 }
 
 // AllSensors returns a slice produced from map of all sensors
-func createAllStations() []sensors.Station {
-	sensorsSlice := make([]sensors.Station, len(sensors.SensorsToFetch))
+func createAllStations() []airStations.Station {
+	airStationsSlice := make([]airStations.Station, len(airStations.SensorsToFetch))
 	idx := 0
-	for _, sensor := range sensors.SensorsToFetch {
-		sensorsSlice[idx] = sensor
+	for _, sensor := range airStations.SensorsToFetch {
+		airStationsSlice[idx] = sensor
 		idx++
 	}
-	return sensorsSlice
+	return airStationsSlice
 }
 
 func startCron() {
-	cronSize, err := sensors.StartCron()
+	cronSize, err := airStations.StartCron()
 	if err != nil {
 		fmt.Printf("Cron NOT STARTED ! %v", err)
 	}
 	fmt.Printf("Cron with size %v started correctly !\n", cronSize)
 }
 
-func saveStationCapabilitiesToFile() {
-	if measurmentTypes :=
-		sensors.GetStationSensors(sensors.SensorsToFetch["1"].ID); len(measurmentTypes) > 0 {
-		sensors.SaveJsonToFile(measurmentTypes, "stationCapabilites.txt")
-	}
-}
-
 func saveStationsCapabilitiesToFile() {
-	if stationsWithSensors := sensors.GetAllStationsCapabilities(); len(stationsWithSensors) > 0 {
-		sensors.SaveJsonToFile(stationsWithSensors, "stationCapabilites.txt")
+	if stationsWithSensors := airStations.GetAllStationsCapabilities(); len(stationsWithSensors) > 0 {
+		airStations.SaveJsonToFile(stationsWithSensors, "stationCapabilites.txt")
 	}
 }
