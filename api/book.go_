@@ -50,6 +50,28 @@ func AllBooks() []Book {
 	return values
 }
 
+
+// userInfo return information on github user
+func userInfo(login string) (*User, error) {
+	// HTTP call
+	url := fmt.Sprintf("https://api.github.com/users/%s", login)
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// Decode JSON
+	user := &User{}
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+
 // BooksHandleFunc to be used as http.HandleFunc for Book API
 func BooksHandleFunc(w http.ResponseWriter, r *http.Request) {
 	switch method := r.Method; method {

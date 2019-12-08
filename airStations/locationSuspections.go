@@ -1,4 +1,4 @@
-package sensors
+package airStations
 
 //https://pmpro.dacsystem.pl/webapp/data/averages?type=chart&avg=2h&start=1561939200&end=1561949200&vars=38LAT
 
