@@ -151,6 +151,17 @@ func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
 	return allMeasurments.Data
 }
 
+func AAaaa(stations map[string]*AirStation, city string, stationIds []int) (result []string) {
+	var strBldr strings.Builder
+
+	for _, station := range stations {
+		strBldr.WriteString("Station :" + station.ID + "can :")
+
+		for _, sensor := range station {
+			strBldr.WriteString(" with ")
+	}
+}
+
 func SaveJsonToFile(v interface{}, fileName string) (err error) {
 	if err != nil {
 		fmt.Printf("error: %s\n", err)

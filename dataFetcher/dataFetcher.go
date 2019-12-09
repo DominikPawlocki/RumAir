@@ -22,11 +22,11 @@ type SensorRawReadingResult struct {
 
 // Station to be fetched - change to file
 var stationsToFetch = map[string]stationForFetchingData{
-	"1": stationForFetchingData{ID: "04", Desc: "Zagórze, Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("1573048257175") }},
+	"1": stationForFetchingData{ID: "04", Desc: "Zagórze, Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("04") }},
 	"2": stationForFetchingData{ID: "05", Desc: "Szmelta, Sabata", CronHandler: FetchSensor12345},
-	"3": stationForFetchingData{ID: "06", Desc: "Lotnisko, Różana", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050067273") }},
-	"4": stationForFetchingData{ID: "07", Desc: "Janowo, Kujawska", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050097014") }},
-	"5": stationForFetchingData{ID: "08", Desc: "Stara Rumia, Kościelna (Skwer Plac Kaszubski)", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050124901") }},
+	"3": stationForFetchingData{ID: "06", Desc: "Lotnisko, Różana", CronHandler: func() { fetchSensorDataAndSaveToDB("06") }},
+	"4": stationForFetchingData{ID: "07", Desc: "Janowo, Kujawska", CronHandler: func() { fetchSensorDataAndSaveToDB("07") }},
+	"5": stationForFetchingData{ID: "08", Desc: "Stara Rumia, Kościelna (Skwer Plac Kaszubski)", CronHandler: func() { fetchSensorDataAndSaveToDB("08") }},
 }
 
 func fetchSensorDataAndSaveToDB(sensorID string) {

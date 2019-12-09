@@ -12,15 +12,16 @@ func main() {
 	fmt.Printf("Starting ...")
 	//StartCron()
 
-	sts := saveStationsCapabilitiesToFile()
+	sts := saveAllStationsCapabilitiesToFile()
 	localizedStations, err := geolocalize.LocalizeStationsLocIQ(sts)
 	if err != nil {
 		fmt.Printf("Error during localizing occured ! %v", err)
 	}
 	fmt.Printf("%v stations has been localized ! \n", len(localizedStations))
+	fmt.Printf("%v stations are not localizable! \n", len(sts)-len(localizedStations))
 
-	cities := geolocalize.GetStationNrPerCity(localizedStations)
-	fmt.Printf("CITIES ARE : \n %s", cities)
+	//cities := geolocalize.GetStationNrPerCity(localizedStations)
+	//fmt.Printf("CITIES ARE : \n %s", cities)
 
 	//server.Init()
 }
@@ -33,9 +34,9 @@ func startCron() {
 	fmt.Printf("Cron with size %v started correctly !\n", cronSize)
 }
 
-func saveStationsCapabilitiesToFile() (result map[string]*airStations.AirStation) {
+func saveAllStationsCapabilitiesToFile() (result map[string]*airStations.AirStation) {
 	if result = airStations.GetAllStationsCapabilities(); len(result) > 0 {
-		airStations.SaveJsonToFile(result, "stationCapabilites.txt")
+		airStations.SaveJsonToFile(result, "allStationsCapabilites.txt")
 	}
 	return
 }
