@@ -5,7 +5,6 @@ import (
 
 	"github.com/dompaw/RumAir/airStations"
 	dataFetcher "github.com/dompaw/RumAir/dataFetcher"
-	geolocalize "github.com/dompaw/RumAir/geolocalize"
 )
 
 func main() {
@@ -13,12 +12,14 @@ func main() {
 	//StartCron()
 
 	sts := saveAllStationsCapabilitiesToFile()
-	localizedStations, err := geolocalize.LocalizeStationsLocIQ(sts)
+	/*localizedStations, err := geolocalize.LocalizeStationsLocIQ(sts)
 	if err != nil {
 		fmt.Printf("Error during localizing occured ! %v", err)
 	}
 	fmt.Printf("%v stations has been localized ! \n", len(localizedStations))
-	fmt.Printf("%v stations are not localizable! \n", len(sts)-len(localizedStations))
+	fmt.Printf("%v stations are not localizable! \n", len(sts)-len(localizedStations))*/
+
+	fmt.Printf("%s", airStations.ShowSensorsPerStationInfo(sts))
 
 	//cities := geolocalize.GetStationNrPerCity(localizedStations)
 	//fmt.Printf("CITIES ARE : \n %s", cities)

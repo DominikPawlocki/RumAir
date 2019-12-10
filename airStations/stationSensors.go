@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -85,7 +86,7 @@ type SensorMeasurmentSimpleType struct {
 }
 
 type AirStation struct {
-	ID              int
+	ID              int //ID as int doesnt make sense here, cause of eg 004
 	LatitudeSensor  string
 	LongitudeSensor string
 	Sensors         []SensorMeasurmentSimpleType
@@ -151,15 +152,20 @@ func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
 	return allMeasurments.Data
 }
 
-func AAaaa(stations map[string]*AirStation, city string, stationIds []int) (result []string) {
+func ShowSensorsPerStationInfo(stations map[string]*AirStation) string {
 	var strBldr strings.Builder
 
-	for _, station := range stations {
-		strBldr.WriteString("Station :" + station.ID + "can :")
+	sort.Strings(keys)
 
-		for _, sensor := range station {
-			strBldr.WriteString(" with ")
+	for idx, station := range stations {
+		strBldr.WriteString("Station : " + idx + " can : ")
+
+		for _, sensor := range station.Sensors {
+			strBldr.WriteString(" " + sensor.Code)
+		}
+		strBldr.WriteString("\n")
 	}
+	return strBldr.String()
 }
 
 func SaveJsonToFile(v interface{}, fileName string) (err error) {
