@@ -1,4 +1,4 @@
-package airStations
+package dataFetcher
 
 import (
 	"encoding/json"
@@ -7,9 +7,9 @@ import (
 	"time"
 )
 
-//Station - reflects a physical air analyzer station put on the street or roof. It has many sensors.
+//Station - reflects a physical air analyzer stationForFetchingData put on the street or roof. It has many sensors.
 //Stations differs itself, some has more sensors, some less, that its measurment capabilities differs.
-type Station struct {
+type stationForFetchingData struct {
 	ID          string
 	Desc        string
 	CronHandler func()
@@ -20,18 +20,17 @@ type SensorRawReadingResult struct {
 	PublicRepos int    `json:"public_repos"`
 }
 
-var SensorsToFetch = map[string]Station{
-	//check it ! RU04
-	"1": Station{ID: "04", Desc: "Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("1573048257175") }},
-	"2": Station{ID: "05", Desc: "Sabata", CronHandler: FetchSensor12345},
-	"3": Station{ID: "06", Desc: "Różana", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050067273") }},
-	"4": Station{ID: "07", Desc: "Kujawska", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050097014") }},
-	"5": Station{ID: "08", Desc: "Kościelna (Skwer Plac Kaszubski)", CronHandler: func() { fetchSensorDataAndSaveToDB("1573050124901") }},
+// Station to be fetched - change to file
+var stationsToFetch = map[string]stationForFetchingData{
+	"1": stationForFetchingData{ID: "04", Desc: "Zagórze, Jana III Sobieskiego", CronHandler: func() { fetchSensorDataAndSaveToDB("04") }},
+	"2": stationForFetchingData{ID: "05", Desc: "Szmelta, Sabata", CronHandler: FetchSensor12345},
+	"3": stationForFetchingData{ID: "06", Desc: "Lotnisko, Różana", CronHandler: func() { fetchSensorDataAndSaveToDB("06") }},
+	"4": stationForFetchingData{ID: "07", Desc: "Janowo, Kujawska", CronHandler: func() { fetchSensorDataAndSaveToDB("07") }},
+	"5": stationForFetchingData{ID: "08", Desc: "Stara Rumia, Kościelna (Skwer Plac Kaszubski)", CronHandler: func() { fetchSensorDataAndSaveToDB("08") }},
 }
 
 func fetchSensorDataAndSaveToDB(sensorID string) {
 	fmt.Printf("Fetch data for sensor %s on %v \n", sensorID, time.Now())
-
 }
 
 func FetchSensor12345() {
