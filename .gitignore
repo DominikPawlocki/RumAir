@@ -13,8 +13,12 @@
 *.out
 # Dependency directories (remove the comment below to include it)
 
-# vendor/
+# vendor/ Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
+.glide/ 
 .wercker/
 .vscode/
 
 *.txt
+
+# Ignore generated binary
+cosmosdb

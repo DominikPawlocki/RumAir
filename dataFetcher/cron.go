@@ -9,7 +9,7 @@ Day of month | Yes        | 1-31            | * / , - ?
 Month        | Yes        | 1-12 or JAN-DEC | * / , -
 Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?*/
 
-package airStations
+package dataFetcher
 
 import (
 	"errors"
@@ -21,7 +21,7 @@ import (
 
 var cronInstance *cron.Cron = cron.New(cron.WithSeconds())
 
-func AddStationsToCron(stations []Station) {
+func addStationsToCron(stations []stationForFetchingData) {
 	for i, station := range stations {
 		if station.CronHandler != nil {
 			sensorID, err := addStationToCron(i, station.CronHandler)
@@ -47,15 +47,32 @@ func addStationToCron(offsetInSeconds int, sensorDataFetcher func()) (cron.Entry
 	return id, nil
 }
 
+// AllSensors returns a slice produced from map of all sensors
+func createAllStations(stationsMap map[string]stationForFetchingData) []stationForFetchingData {
+	airStationsSlice := make([]stationForFetchingData, len(stationsMap))
+	idx := 0
+	for _, sensor := range stationsMap {
+		airStationsSlice[idx] = sensor
+		idx++
+	}
+	return airStationsSlice
+}
+
 func cronFormatBuilder(secondsOffset int) string {
 	return strconv.Itoa(secondsOffset) + " * * * * *"
 }
 
-func StartCron() (numberOfEntriesInCron int, err error) {
+func startCron() (numberOfEntriesInCron int, err error) {
 	numberOfEntriesInCron = len(cronInstance.Entries())
 	if numberOfEntriesInCron > 0 {
 		cronInstance.Start()
 		return numberOfEntriesInCron, nil
 	}
 	return -1, errors.New("Cron not started")
+}
+
+func StartCron() (numberOfEntriesInCron int, err error) {
+	stations := createAllStations(stationsToFetch)
+	addStationsToCron(stations)
+	return startCron()
 }
