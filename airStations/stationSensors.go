@@ -13,7 +13,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -154,8 +153,6 @@ func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
 
 func ShowSensorsPerStationInfo(stations map[string]*AirStation) string {
 	var strBldr strings.Builder
-
-	sort.Strings(keys)
 
 	for idx, station := range stations {
 		strBldr.WriteString("Station : " + idx + " can : ")

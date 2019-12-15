@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/dompaw/RumAir/airStations"
+	airStations "github.com/dompaw/RumAir/airStations"
 	dataFetcher "github.com/dompaw/RumAir/dataFetcher"
+	db "github.com/dompaw/RumAir/db"
 )
 
 func main() {
@@ -12,17 +13,24 @@ func main() {
 	//StartCron()
 
 	sts := saveAllStationsCapabilitiesToFile()
+	//----------------------- localizing logic ------------------------
 	/*localizedStations, err := geolocalize.LocalizeStationsLocIQ(sts)
 	if err != nil {
 		fmt.Printf("Error during localizing occured ! %v", err)
 	}
 	fmt.Printf("%v stations has been localized ! \n", len(localizedStations))
-	fmt.Printf("%v stations are not localizable! \n", len(sts)-len(localizedStations))*/
+	fmt.Printf("%v stations are not localizable! \n", len(sts)-len(localizedStations))
+	cities := geolocalize.GetStationNrPerCity(localizedStations)
+	fmt.Printf("CITIES ARE : \n %s", cities)
+	*/
 
+	//----------------------- showing stations shorthang capabilities -----------------------------------
 	fmt.Printf("%s", airStations.ShowSensorsPerStationInfo(sts))
 
-	//cities := geolocalize.GetStationNrPerCity(localizedStations)
-	//fmt.Printf("CITIES ARE : \n %s", cities)
+	//------------------------ mongo DB ----------------------------------
+	db.PlayMongo()
+	// ----------------------------------------------
+
 
 	//server.Init()
 }
