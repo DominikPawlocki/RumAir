@@ -1,6 +1,5 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
+# after https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/go?view=azure-devops
+# this is non-dockerized build version. 
 # https://aka.ms/yaml
 
 trigger:
@@ -25,3 +24,15 @@ pool:
       echo '##vso[task.prependpath]$(GOBIN)'
       echo '##vso[task.prependpath]$(GOROOT)/bin'
     displayName: 'Set up the Go workspace'
+
+    - script: go get -v -t -d ./...
+    workingDirectory: '$(modulePath)'
+    displayName: 'go get dependencies'
+
+    - script: go build -v .
+    workingDirectory: '$(modulePath)'
+    displayName: 'Build'
+
+    # - script: go test -v ./...
+    # workingDirectory: '$(modulePath)'
+    # displayName: 'Run tests'
