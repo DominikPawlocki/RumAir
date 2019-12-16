@@ -19,6 +19,7 @@
 .vscode/
 
 *.txt
+!ReadMe.txt
 
 # Ignore generated binary
 cosmosdb
