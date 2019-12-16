@@ -1,5 +1,5 @@
-# after https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/go?view=azure-devops
-# this is non-dockerized build version. 
+# starting point https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/go?view=azure-devops
+# this is NON-CONTENERIZED (NON-DOCKERIZE) build version. 
 # https://aka.ms/yaml
 
 trigger:
@@ -27,16 +27,24 @@ steps:
   
 - script: |
     go version
+  displayName: 'Show GO version used.'
+
+- script: |
     go get -v -t -d ./...
     if [ -f Gopkg.toml ]; then
         curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
         dep ensure
     fi
-    go build -v .
   workingDirectory: '$(modulePath)'
-  displayName: 'Get dependencies, then build'
+  displayName: 'Get dependencies.'
+
+- script: |
+      go build -v .
+  workingDirectory: '$(modulePath)'
+  displayName: 'Building app.'
+
   
-      # - script: go test -v ./...
-      # workingDirectory: '$(modulePath)'
-      # displayName: 'Run tests'
+# - script: go test -v ./...
+  # workingDirectory: '$(modulePath)'
+  # displayName: 'Run tests'
   
