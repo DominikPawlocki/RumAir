@@ -1,0 +1,34 @@
+# Docker image
+# Build a Docker image to run, deploy, or push to a container registry.
+# Add steps that use Docker Compose, tag images, push to a registry, run an image, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+pool:
+    vmImage: 'ubuntu-latest'
+  
+  variables:
+    imageName: 'pipelines-go:$(build.buildId)'
+  
+  steps:
+  - script: docker build -f Dockerfile -t $(imageName) .
+    displayName: 'docker build'
+
+
+# or, after https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/containers/build-image?view=azure-devops
+
+# trigger:
+# - master
+
+# pool:
+#   vmImage: 'Ubuntu-16.04'
+
+# variables:
+#   imageName: 'pipelines-javascript-docker'
+
+# steps:
+# - task: Docker@2
+#   displayName: Build an image
+#   inputs:
+#     repository: $(imageName)
+#     command: build
+#     Dockerfile: app/Dockerfile
