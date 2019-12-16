@@ -12,7 +12,9 @@
 # FROM
 # https://github.com/MicrosoftDocs/pipelines-go
 
-FROM golang:latest 
+#FROM golang:latest 
+
+FROM alpine:3.5
 
 RUN mkdir /app 
 ADD . /app/ 
