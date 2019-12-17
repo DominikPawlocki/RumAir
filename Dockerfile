@@ -12,7 +12,7 @@
 # FROM
 # https://github.com/MicrosoftDocs/pipelines-go
 
-#FROM golang:latest 
+#FROM golang:latest ; golang:<version>-alpine ; golang:<version>-windowsservercore
 
 FROM golang:latest 
 
@@ -20,6 +20,7 @@ WORKDIR /go/src/app
 COPY . .
 
 RUN go get -d -v ./...
+# or go install might be faster in that case.
 RUN go build -v ./...
 
 CMD ["app"]
