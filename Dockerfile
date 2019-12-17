@@ -12,15 +12,15 @@
 # FROM
 # https://github.com/MicrosoftDocs/pipelines-go
 
-#FROM golang:latest 
+#FROM golang:latest ; golang:<version>-alpine ; golang:<version>-windowsservercore
 
-FROM alpine:3.5
+FROM golang:latest 
 
-RUN mkdir /app 
-ADD . /app/ 
-WORKDIR /app
-RUN go get -d
-RUN go build -o main . 
+WORKDIR /go/src/app
+COPY . .
 
-CMD ["/app/main"]
-EXPOSE 80
+RUN go get -d -v ./...
+# or go install might be faster in that case.
+RUN go build -v ./...
+
+CMD ["app"]
