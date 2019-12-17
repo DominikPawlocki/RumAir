@@ -14,13 +14,12 @@
 
 #FROM golang:latest 
 
-FROM alpine:3.5
+FROM golang:latest 
 
-RUN mkdir /app 
-ADD . /app/ 
-WORKDIR /app
-RUN go get -d
-RUN go build -o main . 
+WORKDIR /go/src/app
+COPY . .
 
-CMD ["/app/main"]
-EXPOSE 80
+RUN go get -d -v ./...
+RUN go build -v ./...
+
+CMD ["app"]
