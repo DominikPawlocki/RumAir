@@ -6,10 +6,10 @@
 pool:
     vmImage: 'ubuntu-latest'
   
-  variables:
+variables:
     imageName: 'pipelines-go:$(build.buildId)'
   
-  steps:
+steps:
   - script: docker build -f Dockerfile -t $(imageName) .
     displayName: 'docker build'
 
