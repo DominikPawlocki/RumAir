@@ -20,7 +20,7 @@ func LocalizeStationsGeoBytes(stations map[string]*airStations.AirStation) (resu
 
 	for id, station := range stations {
 		if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
-			if localizedStation, err := LocalizeStationGeoBytes(station); err == nil {
+			if localizedStation, err := localizeStationGeoBytes(station); err == nil {
 				result[id] = localizedStation
 			}
 		}
@@ -28,7 +28,7 @@ func LocalizeStationsGeoBytes(stations map[string]*airStations.AirStation) (resu
 	return
 }
 
-func LocalizeStationGeoBytes(station *airStations.AirStation) (result *LocalizedAirStation, err error) {
+func localizeStationGeoBytes(station *airStations.AirStation) (result *LocalizedAirStation, err error) {
 	result = &LocalizedAirStation{Station: station}
 	if result.Lat, result.Lon, err = getStationCoordinates(station); err == nil && result.Lat != 0 && result.Lon != 0 {
 		result.CitiesNearby, err = getCitiesNearbyGeoBytes(result.Lat, result.Lon)
