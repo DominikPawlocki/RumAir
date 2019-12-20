@@ -39,12 +39,13 @@ steps:
   displayName: 'Get dependencies.'
 
 - script: |
-      go build -v .
+    go build -v .
   workingDirectory: '$(modulePath)'
   displayName: 'Building app.'
 
   
-# - script: go test -v ./...
-  # workingDirectory: '$(modulePath)'
-  # displayName: 'Run tests'
+- script: 
+    go test -v ./...
+  workingDirectory: '$(modulePath)'
+  displayName: 'Run tests'
   
