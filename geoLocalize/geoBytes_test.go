@@ -57,14 +57,10 @@ var expectedAirStation2 = &airStations.AirStation{
 
 var expected = map[string]*airStations.AirStation{"02": expectedAirStation1, "021": expectedAirStation2}
 
-func TestLocalizeStationsGeoBytes(t *testing.T) {
-	//(stations map[string]*airStations.AirStation) (result map[string]*LocalizedAirStation, err error) {
+func Test_LocalizeStationsGeoBytes(t *testing.T) {
 	actual, _ := LocalizeStationsGeoBytes(expected)
 
-	assert.Len(t, actual, 1, "Wrong number of books.")
+	assert.Len(t, actual, 1, "Wrong lenght")
 	assert.Len(t, actual["02"].CitiesNearby, 2, "Wrong number of books.")
-	assert.ElementsMatchf(t, actual["02"].CitiesNearby, []string{"Gdynia", "Gdansk"}, "Wrong number of books.")
-	//assert.Equal(t, `{"title":"Cloud Native Go","author":"M.-L. Reimer","isbn":"0123456789"}`, string(json), "Book JSON marshalling wrong.")
+	assert.ElementsMatchf(t, actual["02"].CitiesNearby, [2]string{"Gdynia", "Gdansk"}, "Wrong number of books.")
 }
-
-//make([]SensorMeasurmentType, 2)

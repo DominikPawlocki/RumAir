@@ -64,10 +64,7 @@ func getCitiesNearbyGeoBytes(lat float64, lon float64) (citiesNearby []string, e
 			fmt.Printf("%v bytes read from network for `../getnearbycities...` endpoint for %f %f. Now, deserializing. \n", len(bytesRead), lat, lon)
 			//responce is JSON-P so simple Unmarshal doesnt work here
 			strs := strings.Split(string(bytesRead), ",")
-
-			for _, str := range strs {
-				RemoveDoubleQuotes(str)
-			}
+			strs = removeDoubleQuotesFromSlice(strs)
 
 			if len(strs) > 1 {
 				//slice is immutable - append is good enough here, but might me bottleneck in different situation
@@ -84,6 +81,15 @@ func getCitiesNearbyGeoBytes(lat float64, lon float64) (citiesNearby []string, e
 	return
 }
 
-func RemoveDoubleQuotes(chars *string)(){
-	chars = strings.Trim(chars, """)
+func removeDoubleQuotesFromSlice(s []string) (result []string) {
+	result = make([]string, len(s))
+
+	for i, str := range s {
+		result[i] = removeDoubleQuotes(str)
+	}
+	return result
+}
+
+func removeDoubleQuotes(chars string) string {
+	return strings.Trim(chars, "\"")
 }
