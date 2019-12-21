@@ -8,13 +8,6 @@ import (
 
 var geobytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
 
-type LocalizedAirStation struct {
-	Station      *airStations.AirStation
-	Lat          float64
-	Lon          float64
-	CitiesNearby []string
-}
-
 func LocalizeStationsGeoBytes(stations map[string]*airStations.AirStation) (result map[string]*LocalizedAirStation, err error) {
 	result = map[string]*LocalizedAirStation{}
 
