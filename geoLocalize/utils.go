@@ -13,26 +13,23 @@ import (
 	"github.com/dompaw/RumAir/airStations"
 )
 
+type LocalizedAirStation struct {
+	Station      *airStations.AirStation
+	Lat          float64
+	Lon          float64
+	CitiesNearby []string
+}
+
+type stationsPerCity struct {
+	StationIdsConcat string
+	Count            int
+}
+
 func GetStationNrPerCity(localized map[string]*LocalizedAirStation) string {
-	type stationsPerCity struct {
-		StationIdsConcat string
-		Count            int
-	}
 	var strBldr strings.Builder
 
-	citiesNoDuplicates := map[string]*stationsPerCity{}
-	for _, sts := range localized {
-		for _, city := range sts.CitiesNearby {
-			if spc, ok := citiesNoDuplicates[city]; !ok {
-				citiesNoDuplicates[city] = &stationsPerCity{StationIdsConcat: strconv.Itoa(sts.Station.ID), Count: 1}
-			} else {
-				spc.Count++
-				spc.StationIdsConcat += fmt.Sprintf("%s %s ", ",", strconv.Itoa(sts.Station.ID))
-			}
-		}
-	}
+	citiesNoDuplicates := orderStationsPerCity(localized)
 
-	//cant sort input by city, cause its non-localized yet...
 	var keys []string = make([]string, len(citiesNoDuplicates))
 	itr := 0
 	for i := range citiesNoDuplicates {
@@ -52,6 +49,22 @@ func GetStationNrPerCity(localized map[string]*LocalizedAirStation) string {
 	}
 
 	return strBldr.String()
+}
+
+func orderStationsPerCity(localized map[string]*LocalizedAirStation) (citiesNoDuplicates map[string]*stationsPerCity) {
+	citiesNoDuplicates = map[string]*stationsPerCity{}
+
+	for _, sts := range localized {
+		for _, city := range sts.CitiesNearby {
+			if spc, ok := citiesNoDuplicates[city]; !ok {
+				citiesNoDuplicates[city] = &stationsPerCity{StationIdsConcat: strconv.Itoa(sts.Station.ID), Count: 1}
+			} else {
+				spc.Count++
+				spc.StationIdsConcat += fmt.Sprintf("%s %s ", ",", strconv.Itoa(sts.Station.ID))
+			}
+		}
+	}
+	return
 }
 
 func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {

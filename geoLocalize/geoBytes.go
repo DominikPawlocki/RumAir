@@ -8,19 +8,12 @@ import (
 
 var geobytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
 
-type LocalizedAirStation struct {
-	Station      *airStations.AirStation
-	Lat          float64
-	Lon          float64
-	CitiesNearby []string
-}
-
 func LocalizeStationsGeoBytes(stations map[string]*airStations.AirStation) (result map[string]*LocalizedAirStation, err error) {
 	result = map[string]*LocalizedAirStation{}
 
 	for id, station := range stations {
 		if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
-			if localizedStation, err := LocalizeStationGeoBytes(station); err == nil {
+			if localizedStation, err := localizeStationGeoBytes(station); err == nil {
 				result[id] = localizedStation
 			}
 		}
@@ -28,7 +21,7 @@ func LocalizeStationsGeoBytes(stations map[string]*airStations.AirStation) (resu
 	return
 }
 
-func LocalizeStationGeoBytes(station *airStations.AirStation) (result *LocalizedAirStation, err error) {
+func localizeStationGeoBytes(station *airStations.AirStation) (result *LocalizedAirStation, err error) {
 	result = &LocalizedAirStation{Station: station}
 	if result.Lat, result.Lon, err = getStationCoordinates(station); err == nil && result.Lat != 0 && result.Lon != 0 {
 		result.CitiesNearby, err = getCitiesNearbyGeoBytes(result.Lat, result.Lon)
@@ -64,6 +57,8 @@ func getCitiesNearbyGeoBytes(lat float64, lon float64) (citiesNearby []string, e
 			fmt.Printf("%v bytes read from network for `../getnearbycities...` endpoint for %f %f. Now, deserializing. \n", len(bytesRead), lat, lon)
 			//responce is JSON-P so simple Unmarshal doesnt work here
 			strs := strings.Split(string(bytesRead), ",")
+			strs = removeDoubleQuotesFromSlice(strs)
+
 			if len(strs) > 1 {
 				//slice is immutable - append is good enough here, but might me bottleneck in different situation
 				citiesNearby = append(citiesNearby, strs[1])
@@ -77,4 +72,17 @@ func getCitiesNearbyGeoBytes(lat float64, lon float64) (citiesNearby []string, e
 		}
 	}
 	return
+}
+
+func removeDoubleQuotesFromSlice(s []string) (result []string) {
+	result = make([]string, len(s))
+
+	for i, str := range s {
+		result[i] = removeDoubleQuotes(str)
+	}
+	return result
+}
+
+func removeDoubleQuotes(chars string) string {
+	return strings.Trim(chars, "\"")
 }
