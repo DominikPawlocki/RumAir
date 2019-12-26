@@ -128,9 +128,36 @@ func GetAllStationsCapabilities() (result map[string]*AirStation) {
 	return
 }
 
+func GetStationCapabilities(stationID string) (result *AirStation) {
+	var allMeasurments *AvailableMeasurmentsSimpleResponce
+
+	bytesRead := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	err := json.Unmarshal(bytesRead, &allMeasurments)
+	if err != nil {
+		fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
+		return
+	}
+	result = createNewStation(stationID)
+
+	for _, measurmentType := range allMeasurments.Data {
+		if strings.HasPrefix(measurmentType.Code, stationID) {
+			result.Sensors = append(result.Sensors, measurmentType)
+			if isLongitude(measurmentType.Code) {
+				result.LongitudeSensor = measurmentType.Code
+			}
+			if isLatitude(measurmentType.Code) {
+				result.LatitudeSensor = measurmentType.Code
+			}
+		}
+	}
+	result.SensorsCount = len(result.Sensors)
+
+	return result
+}
+
 //GetStationSensors - Returns station all sensors.
 //Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
-func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
+func getStationSensors(stationID string) (result []SensorMeasurmentType) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
 	var allMeasurments *AvailableMeasurmentsResponce
 
@@ -148,10 +175,10 @@ func GetStationSensors(stationID string) (result []SensorMeasurmentType) {
 	}
 	fmt.Printf("Nr of results: %v", len(result))
 
-	return allMeasurments.Data
+	return result
 }
 
-func ShowSensorsPerStationInfo(stations map[string]*AirStation) string {
+func ShowSensorsCodePerStation(stations map[string]*AirStation) string {
 	var strBldr strings.Builder
 
 	for idx, station := range stations {

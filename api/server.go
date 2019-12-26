@@ -6,13 +6,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-
-	"github.com/dompaw/RumAir/airStations"
-	geolocalize "github.com/dompaw/RumAir/geoLocalize"
 )
 
 func Init() {
-
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		fmt.Printf("Fatal error, API server NOT started ! %v", err)
 		log.Fatal(err)
@@ -24,12 +20,12 @@ func main() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	// replace http.HandleFunc with myRouter.HandleFunc
-	myRouter.HandleFunc("/stations/locate/locationIQ", geolocalize.LocalizeStationsLocIQ)
-	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", geolocalize.LocalizeStationsLocIQ)
-	myRouter.HandleFunc("/stations/locate/geobytes", geolocalize.LocalizeStationsGeoBytes(sts))
-	myRouter.HandleFunc("/stations/{id}/sensors", airStations.GetStationSensors(id)).Methods("POST")
-	myRouter.HandleFunc("/stations/sensors", airStations.GetAllStationsCapabilities()).Methods("POST")
-	myRouter.HandleFunc("/stations/sensors/simplified", airStations.ShowSensorsCodePerStation(sts)).Methods("POST")
+	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)
+	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler)
+	// myRouter.HandleFunc("/stations/locate/geobytes", geolocalize.LocalizeStationsGeoBytes(sts))
+	// myRouter.HandleFunc("/stations/{id}/sensors", airStations.GetStationSensors(id)).Methods("POST")
+	// myRouter.HandleFunc("/stations/sensors", airStations.GetAllStationsCapabilities()).Methods("POST")
+	// myRouter.HandleFunc("/stations/sensors/simplified", airStations.ShowSensorsCodePerStation(sts)).Methods("POST")
 
 	// finally, instead of passing in nil, we want
 	// to pass in our newly created router as the second

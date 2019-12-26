@@ -25,7 +25,7 @@ func main() {
 	*/
 
 	//----------------------- showing stations shorthang capabilities -----------------------------------
-	fmt.Printf("%s", airStations.ShowSensorsPerStationInfo(sts))
+	fmt.Printf("%s", airStations.ShowSensorsCodePerStation(sts))
 
 	//------------------------ mongo DB ----------------------------------
 	db.PlayMongo()
