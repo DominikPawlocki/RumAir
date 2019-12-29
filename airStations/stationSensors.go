@@ -178,18 +178,18 @@ func getStationSensors(stationID string) (result []SensorMeasurmentType) {
 	return result
 }
 
-func ShowSensorsCodePerStation(stations map[string]*AirStation) string {
+func ShowStationsSensorsCodes(stations map[string]*AirStation) (result []string) {
+
 	var strBldr strings.Builder
 
 	for idx, station := range stations {
-		strBldr.WriteString("Station : " + idx + " can : ")
-
+		strBldr.Reset()
 		for _, sensor := range station.Sensors {
 			strBldr.WriteString(" " + sensor.Code)
 		}
-		strBldr.WriteString("\n")
+		result = append(result, fmt.Sprintf("Station : %s can : %s", idx, strBldr.String()))
 	}
-	return strBldr.String()
+	return result
 }
 
 func SaveJsonToFile(v interface{}, fileName string) (err error) {
