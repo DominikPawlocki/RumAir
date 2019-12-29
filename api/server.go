@@ -8,14 +8,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Init() {
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		fmt.Printf("Fatal error, API server NOT started ! %v", err)
-		log.Fatal(err)
-	}
-}
-
-func main() {
+func Main() {
 	fmt.Println("Starting a server ..")
 	myRouter := mux.NewRouter().StrictSlash(true)
 
@@ -30,5 +23,5 @@ func main() {
 	// finally, instead of passing in nil, we want
 	// to pass in our newly created router as the second
 	// argument
-	log.Fatal(http.ListenAndServe(":10000", myRouter))
+	log.Fatal(http.ListenAndServe(":8080", myRouter))
 }

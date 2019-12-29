@@ -23,7 +23,7 @@ type Hello struct {
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 
-	if result := airStations.GetAllStationsCapabilities(); len(result) <= 0 {
+	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
 		resultBytes, _ = json.Marshal(Hello{"Welcome to Rumia air monitoring system."})
 	} else if localized, err := geolocalize.LocalizeStationsLocIQ(result); err != nil {
 		resultBytes, _ = json.Marshal(Hello{err.Error()})

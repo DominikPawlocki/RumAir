@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-func DoHttpCallWithConsoleDots(fn func() []byte) (bytesRead []byte) {
+func DoHttpCallWithConsoleDots(fn func() ([]byte, error)) (bytesRead []byte, err error) {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	done := make(chan bool)
 
 	go selectTicker(done, ticker)
 
-	bytesRead = fn()
+	bytesRead, err = fn()
 
 	ticker.Stop()
 	done <- true

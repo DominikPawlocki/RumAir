@@ -10,9 +10,10 @@ import (
 )
 
 var stations map[string]*AirStation
+var err error
 
 func setup() {
-	stations = GetAllStationsCapabilities()
+	stations, err = GetAllStationsCapabilities()
 }
 
 func TestMain(m *testing.M) {
@@ -23,6 +24,7 @@ func TestMain(m *testing.M) {
 }
 
 func Test_GetAllStationsCapabilities(t *testing.T) {
+	assert.Nil(t, err, fmt.Sprintf("There is error %v: ", err))
 
 	assert.GreaterOrEqual(t, len(stations), 30, fmt.Sprintf("There should be minimum like 30 stations fetched. %v stations was fetched. ", len(stations)))
 	assert.Contains(t, stations, "02", "Station '02'should exist. ")

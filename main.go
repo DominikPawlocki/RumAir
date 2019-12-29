@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	airStations "github.com/dompaw/RumAir/airStations"
+	api "github.com/dompaw/RumAir/api"
 	dataFetcher "github.com/dompaw/RumAir/dataFetcher"
-	db "github.com/dompaw/RumAir/db"
 )
 
 func main() {
 	fmt.Printf("Starting ...")
 	//StartCron()
 
-	sts := saveAllStationsCapabilitiesToFile()
+	//sts := saveAllStationsCapabilitiesToFile()
 	//----------------------- localizing logic ------------------------
 	/*localizedStations, err := geolocalize.LocalizeStationsLocIQ(sts)
 	if err != nil {
@@ -25,13 +25,13 @@ func main() {
 	*/
 
 	//----------------------- showing stations shorthang capabilities -----------------------------------
-	fmt.Printf("%s", airStations.ShowSensorsCodePerStation(sts))
+	//fmt.Printf("%s", airStations.ShowStationsSensorsCodes(sts))
 
 	//------------------------ mongo DB ----------------------------------
-	db.PlayMongo()
+	//db.PlayMongo()
 	// ----------------------------------------------
 
-	//server.Init()
+	api.Main()
 }
 
 func startCron() {
@@ -43,7 +43,7 @@ func startCron() {
 }
 
 func saveAllStationsCapabilitiesToFile() (result map[string]*airStations.AirStation) {
-	if result = airStations.GetAllStationsCapabilities(); len(result) > 0 {
+	if result, err := airStations.GetAllStationsCapabilities(); err != nil && len(result) > 0 {
 		airStations.SaveJsonToFile(result, "allStationsCapabilites.txt")
 	}
 	return
