@@ -192,12 +192,12 @@ func getStationSensors(stationID string) (result []SensorMeasurmentType) {
 func ShowStationsSensorsCodes(stations map[string]*AirStation) (result []string) {
 	var strBldr strings.Builder
 
-	for idx, station := range stations {
+	for _, stationID := range sortAirStationsIds(stations) {
 		strBldr.Reset()
-		for _, sensor := range station.Sensors {
+		for _, sensor := range stations[stationID].Sensors {
 			strBldr.WriteString(" " + sensor.Code)
 		}
-		result = append(result, fmt.Sprintf("Station : %s can : %s", idx, strBldr.String()))
+		result = append(result, fmt.Sprintf("Station : %s can : %s", stationID, strBldr.String()))
 	}
 	return result
 }

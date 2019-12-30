@@ -2,6 +2,7 @@ package airStations
 
 import (
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -40,4 +41,16 @@ func selectTicker(done chan bool, ticker *time.Ticker) {
 			fmt.Printf(".")
 		}
 	}
+}
+
+func sortAirStationsIds(stations map[string]*AirStation) (sortedKeys []string) {
+	sortedKeys = make([]string, len(stations))
+
+	var idx int = 0
+	for key := range stations {
+		sortedKeys[idx] = key
+		idx++
+	}
+	sort.Strings(sortedKeys)
+	return
 }

@@ -3,6 +3,7 @@ package airStations
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"testing"
 
@@ -57,4 +58,6 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 
 	assert.GreaterOrEqual(t, len(actual), 30, fmt.Sprintf("There should be minimum like 30 stations fetched. %v stations was fetched.", len(actual)))
 	assert.GreaterOrEqual(t, len(actual[5]), 70, fmt.Sprintf("Station with slice index 5 should have more sensors. Now it has %v", actual[5]))
+
+	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
 }
