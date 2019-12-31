@@ -17,7 +17,7 @@ func Main() {
 	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler)
 	// myRouter.HandleFunc("/stations/locate/geobytes", geolocalize.LocalizeStationsGeoBytes(sts))
 	// myRouter.HandleFunc("/stations/{id}/sensors", airStations.GetStationSensors(id)).Methods("POST")
-	// myRouter.HandleFunc("/stations/sensors", airStations.GetAllStationsCapabilities()).Methods("POST")
+	myRouter.HandleFunc("/stations/sensors", GetAllStationsCapabilitiesHandler).Methods("GET")
 	myRouter.HandleFunc("/stations/sensors/simplified", ShowStationsSensorsCodesHandler).Methods("GET")
 
 	// finally, instead of passing in nil, we want

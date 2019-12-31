@@ -10,6 +10,8 @@ import (
 func ShowStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 
+	//REWORK LIKE BELOW !
+
 	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
 		resultBytes, _ = json.Marshal(err.Error())
 		w.WriteHeader(500)
@@ -36,6 +38,23 @@ func ShowStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(resultBytes)
 	}
 
+}
+
+func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request) {
+	var resultBytes []byte
+	// ADD UNIT TEST!
+	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		if resultBytes, err = json.Marshal(result); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(resultBytes)
+		}
+	}
 }
 
 /*
