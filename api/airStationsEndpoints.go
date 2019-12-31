@@ -37,3 +37,61 @@ func ShowStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+/*
+func EchoHandleFunc(w http.ResponseWriter, r *http.Request) {
+	message := r.URL.Query()["message"][0]
+
+	w.Header().Add("Content-Type", "text/plain")
+	fmt.Fprintf(w, message)
+}
+
+
+// Decode JSON
+	user := &User{}
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(user); err != nil {
+		return nil, err
+	}
+
+		if created {
+			w.Header().Add("Location", "/api/books/"+isbn)
+			w.WriteHeader(http.StatusCreated)
+		} else {
+			w.WriteHeader(http.StatusConflict)
+		}
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Unsupported request method."))
+	}
+
+
+
+	func sendResponse(entry *Entry, w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(entry); err != nil {
+		log.Printf("error encoding %+v - %s", entry, err)
+	}
+
+
+
+	func kvPostHandler(w http.ResponseWriter, r *http.Request) {
+	// Decode request
+		...
+	dec := json.NewDecoder(r.Body)
+	entry := &Entry{}
+	if err := dec.Decode(entry); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if !ok {
+		http.Error(w, fmt.Sprintf("Key %q not found", key), http.StatusNotFound)
+		return
+	}
+
+
+	/*resp := map[string]interface{}{
+	"ok":      true,
+	"balance": prevBalance + req.Amount,
+*/

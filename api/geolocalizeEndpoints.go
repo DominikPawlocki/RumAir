@@ -11,11 +11,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-/*myRouter.HandleFunc("/stations/locate/locationIQ", geolocalize.LocalizeStationsLocIQ)
-myRouter.HandleFunc("/stations/{id}/locate/locationIQ", geolocalize.LocalizeStationsLocIQ)
-myRouter.HandleFunc("/stations/locate/geobytes", geolocalize.LocalizeStationsGeoBytes(sts))*/
-
-// Hello response structure
+REMOVE HELLO AND ADD ERROR HANDLING !
+THEN, ADD 1 MISSING ENDPOINT FOR GEOLOCALIZE CITIES !
 type Hello struct {
 	Message string
 }
@@ -68,8 +65,3 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	fmt.Fprintf(w, "%+v", string(reqBody))
 }
-
-/*resp := map[string]interface{}{
-	"ok":      true,
-	"balance": prevBalance + req.Amount,
-}*/
