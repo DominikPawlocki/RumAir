@@ -18,7 +18,7 @@ func Main() {
 	// myRouter.HandleFunc("/stations/locate/geobytes", geolocalize.LocalizeStationsGeoBytes(sts))
 	// myRouter.HandleFunc("/stations/{id}/sensors", airStations.GetStationSensors(id)).Methods("POST")
 	myRouter.HandleFunc("/stations/sensors", GetAllStationsCapabilitiesHandler).Methods("GET")
-	myRouter.HandleFunc("/stations/sensors/simplified", ShowStationsSensorsCodesHandler).Methods("GET")
+	myRouter.HandleFunc("/stations/sensors/simplified", ShowAllStationsSensorsCodesHandler).Methods("GET")
 
 	// finally, instead of passing in nil, we want
 	// to pass in our newly created router as the second

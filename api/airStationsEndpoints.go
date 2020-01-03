@@ -2,58 +2,50 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/dompaw/RumAir/airStations"
 )
 
-func ShowStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
+func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 
-	//REWORK LIKE BELOW !
-
 	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
-		resultBytes, _ = json.Marshal(err.Error())
-		w.WriteHeader(500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	} else if len(result) > 0 {
 		if sensorsPerStation := airStations.ShowStationsSensorsCodes(result); len(sensorsPerStation) > 0 {
-			resultBytes, err = json.Marshal(sensorsPerStation)
-			if err != nil {
-				resultBytes, _ = json.Marshal("Error on deserializing sensorsPerStation, when stations seems fetched ")
-				w.WriteHeader(500)
-				w.Write(resultBytes)
+			if resultBytes, err = json.Marshal(sensorsPerStation); err != nil {
+				http.Error(w, fmt.Sprintf("Error on deserializing sensorsPerStation, when stations seems fetched. \n %v", err.Error()), http.StatusInternalServerError)
+				return
 			} else {
 				//w.WriteHeader(200)is called automatically
 				w.Header().Add("Content-Type", "application/json; charset=utf-8")
 				w.Write(resultBytes)
 			}
 		} else {
-			resultBytes, _ = json.Marshal("Empty result Sensors per stations, when stations seems fetched ")
-			w.WriteHeader(500)
-			w.Write(resultBytes)
+			http.Error(w, fmt.Sprintf("Empty result Sensors per stations, when stations seems fetched. \n %v", err.Error()), http.StatusInternalServerError)
+			return
 		}
 	} else {
-		resultBytes, _ = json.Marshal("No stations can be fetched ")
-		w.WriteHeader(500)
-		w.Write(resultBytes)
+		http.Error(w, fmt.Sprintf("Empty result Sensors per stations, when stations seems fetched. \n"), http.StatusInternalServerError)
+		return
 	}
 
 }
 
 func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
-	// ADD UNIT TEST!
 	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	} else if resultBytes, err = json.Marshal(result); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	} else {
-		if resultBytes, err = json.Marshal(result); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		} else {
-			w.Header().Set("Content-Type", "application/json")
-			w.Write(resultBytes)
-		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(resultBytes)
 	}
 }
 
