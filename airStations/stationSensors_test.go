@@ -61,3 +61,8 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 
 	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
 }
+
+//go:generate moq -out mocked_tests.go . IStationsCapabiltiesFetcher
+type IStationsCapabiltiesFetcher interface {
+	GetAllStationsCapabilities() (map[string]*AirStation, error)
+}

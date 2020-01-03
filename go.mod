@@ -8,6 +8,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/gorilla/mux v1.7.3
+	github.com/matryer/moq v0.0.0-20191223155252-4203548722f8 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/stretchr/testify v1.4.0
