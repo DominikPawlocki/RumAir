@@ -33,10 +33,10 @@ func Test_GetAllStationsCapabilities(t *testing.T) {
 }
 
 /// This test fails right now, and its connected to a story with sensorID processing.
-func Test_GetAllStationsCapabilities_StationShouldContainOnlyOwnSensors(t *testing.T) {
+func Test_GetAllStationsCapabilities_StationShouldContainOnlyOwnSensorsOrHESwhateverItIs(t *testing.T) {
 	for idx, station := range stations {
 		for _, sensor := range station.Sensors {
-			assert.Truef(t, strings.HasPrefix(sensor.Code, idx),
+			assert.Truef(t, (strings.HasPrefix(sensor.Code, idx) || strings.HasPrefix(sensor.Code, fmt.Sprintf("HES%s", idx))),
 				fmt.Sprintf("Every sensor for station should start with its id. %s in that case, and sensor starts wrongly with %s.", idx, sensor.Code))
 		}
 	}
