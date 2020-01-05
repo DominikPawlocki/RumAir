@@ -2,16 +2,17 @@ package airStations
 
 import (
 	"fmt"
+	"sort"
 	"time"
 )
 
-func DoHttpCallWithConsoleDots(fn func() []byte) (bytesRead []byte) {
+func DoHttpCallWithConsoleDots(fn func() ([]byte, error)) (bytesRead []byte, err error) {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	done := make(chan bool)
 
 	go selectTicker(done, ticker)
 
-	bytesRead = fn()
+	bytesRead, err = fn()
 
 	ticker.Stop()
 	done <- true
@@ -40,4 +41,16 @@ func selectTicker(done chan bool, ticker *time.Ticker) {
 			fmt.Printf(".")
 		}
 	}
+}
+
+func sortAirStationsIds(stations map[string]*AirStation) (sortedKeys []string) {
+	sortedKeys = make([]string, len(stations))
+
+	var idx int = 0
+	for key := range stations {
+		sortedKeys[idx] = key
+		idx++
+	}
+	sort.Strings(sortedKeys)
+	return
 }
