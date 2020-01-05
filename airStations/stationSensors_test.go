@@ -32,6 +32,7 @@ func Test_GetAllStationsCapabilities(t *testing.T) {
 	assert.GreaterOrEqual(t, len(stations["02"].Sensors), 25, fmt.Sprintf("Station '02' had like 10 sensors minimum. Now it has %v", len(stations["02"].Sensors)))
 }
 
+/// This test fails right now, and its connected to a story with sensorID processing.
 func Test_GetAllStationsCapabilities_StationShouldContainOnlyOwnSensors(t *testing.T) {
 	for idx, station := range stations {
 		for _, sensor := range station.Sensors {
@@ -61,6 +62,8 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 
 	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
 }
+
+//to do : spike mocking !
 
 //go:generate moq -out mocked_tests.go . IStationsCapabiltiesFetcher
 type IStationsCapabiltiesFetcher interface {

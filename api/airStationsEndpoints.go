@@ -8,16 +8,17 @@ import (
 	"github.com/dompaw/RumAir/airStations"
 )
 
+// ...stations/sensors/codes
 func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 
 	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if len(result) > 0 {
 		if sensorsPerStation := airStations.ShowStationsSensorsCodes(result); len(sensorsPerStation) > 0 {
 			if resultBytes, err = json.Marshal(sensorsPerStation); err != nil {
-				http.Error(w, fmt.Sprintf("Error on deserializing sensorsPerStation, when stations seems fetched. \n %v", err.Error()), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("%s %v", deserializingSensorsPerStationError, err.Error()), http.StatusInternalServerError)
 				return
 			} else {
 				//w.WriteHeader(200)is called automatically
@@ -35,10 +36,11 @@ func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) 
 
 }
 
+// .../stations/sensors
 func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if resultBytes, err = json.Marshal(result); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -55,6 +57,13 @@ func EchoHandleFunc(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "text/plain")
 	fmt.Fprintf(w, message)
+}
+
+func createNewArticle(w http.ResponseWriter, r *http.Request) {
+	// get the body of our POST request
+	// return the string response containing the request body
+	reqBody, _ := ioutil.ReadAll(r.Body)
+	fmt.Fprintf(w, "%+v", string(reqBody))
 }
 
 

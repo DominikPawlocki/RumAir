@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/dompaw/RumAir/airStations"
@@ -11,43 +10,44 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//REMOVE HELLO AND ADD ERROR HANDLING !
-//THEN, ADD 1 MISSING ENDPOINT FOR GEOLOCALIZE CITIES !
-type Hello struct {
-	Message string
-}
+// Todo : ADD 1 MISSING ENDPOINT FOR GEOLOCALIZE CITIES !
 
+// .../stations/locate/locationIQ)
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 
 	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
-		resultBytes, _ = json.Marshal(Hello{"Welcome to Rumia air monitoring system."})
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
+		return
 	} else if localized, err := geolocalize.LocalizeStationsLocIQ(result); err != nil {
-		resultBytes, _ = json.Marshal(Hello{err.Error()})
+		http.Error(w, fmt.Sprintf("%s %v", locationIQfetchingError, err.Error()), http.StatusInternalServerError)
+		return
 	} else if localized != nil {
 		if resultBytes, err = json.Marshal(localized); err != nil {
-			resultBytes, _ = json.Marshal(Hello{"Error during serializing response from geolocalizing stations via LocationIQ API."})
+			http.Error(w, fmt.Sprintf("%s %v", locationIQdeserializingError, err.Error()), http.StatusInternalServerError)
+			return
 		}
 	}
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.Write(resultBytes)
 }
 
+// .../stations/{id}/locate/locationIQ"
 func LocalizeStationUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	stationID := vars["id"]
 
-	fmt.Fprintf(w, "Key: "+stationID)
-
 	var resultBytes []byte
 
 	if result := airStations.GetStationCapabilities(stationID); len(result.Sensors) <= 0 {
-		resultBytes, _ = json.Marshal(Hello{fmt.Sprintf("Didnt find any sensor for station id %v .", stationID)})
+		http.Error(w, fmt.Sprintf("Cannot fectch station with ID %s", stationID), http.StatusInternalServerError)
+		return
 	} else if localized, err := geolocalize.LocalizeStationLocIQ(result); err != nil {
-		resultBytes, _ = json.Marshal(Hello{err.Error()})
+		http.Error(w, fmt.Sprintf("%s %v", locationIQfetchingError, err.Error()), http.StatusInternalServerError)
+		return
 	} else if localized != nil {
 		if resultBytes, err = json.Marshal(localized); err != nil {
-			resultBytes, _ = json.Marshal(Hello{"Error during serializing response from geolocalizing stations via LocationIQ API."})
+			http.Error(w, fmt.Sprintf("%s %v", locationIQdeserializingError, err.Error()), http.StatusInternalServerError)
 		}
 	}
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
@@ -57,11 +57,4 @@ func LocalizeStationUsingLocationIQHandler(w http.ResponseWriter, r *http.Reques
 func index(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Welcome to Rumia air monitoring system.")
-}
-
-func createNewArticle(w http.ResponseWriter, r *http.Request) {
-	// get the body of our POST request
-	// return the string response containing the request body
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	fmt.Fprintf(w, "%+v", string(reqBody))
 }
