@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,7 +66,24 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 
 //to do : spike mocking !
 
-//go:generate moq -out mocked_tests.go . IStationsCapabiltiesFetcher
-type IStationsCapabiltiesFetcher interface {
-	GetAllStationsCapabilities() (map[string]*AirStation, error)
+
+
+func TestFoo(t *testing.T) {
+	ctrl := gomock.NewController(t)
+
+	// Assert that Bar() is invoked.
+	defer ctrl.Finish()
+
+	m := GetAllStationsCapabilities(ctrl)
+	
+
+	// Asserts that the first and only call to Bar() is passed 99.
+	// Anything else will fail.
+	m.
+		EXPECT().
+		Bar(gomock.Eq(99)).
+		Return(101).
+		AnyTimes()
+
+		//stations, err = GetAllStationsCapabilities()
 }

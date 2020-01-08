@@ -11,8 +11,13 @@ import (
 // ...stations/sensors/codes
 func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
+	type aaa struct {
+		DoAllMeasurmentsAPIcall func() (bytesRead []byte, err error)
+	}
 
-	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
+	fetchData := aaa{DoAllMeasurmentsAPIcall: airStations.DoAllMeasurmentsAPIcall}
+
+	if result, err := airStations.GetAllStationsCapabilities(fetchData.DoAllMeasurmentsAPIcall{}); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if len(result) > 0 {

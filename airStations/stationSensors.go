@@ -17,6 +17,10 @@ import (
 	"strings"
 )
 
+type IStationsCapabiltiesFetcher interface {
+	DoAllMeasurmentsAPIcall() (bytesRead []byte, err error)
+}
+
 var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 
 type AvailableMeasurmentsResponce struct {
@@ -94,10 +98,10 @@ type AirStation struct {
 
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
 //This method returns all station's Ids, information if station is geolocalizable and its sensors (capabilities)
-func GetAllStationsCapabilities() (result map[string]*AirStation, err error) {
+func GetAllStationsCapabilities(fetchData IStationsCapabiltiesFetcher) (result map[string]*AirStation, err error) {
 	allMeasurments := AvailableMeasurmentsSimpleResponce{}
 
-	bytesRead, err := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
 		return
 	}
@@ -131,10 +135,10 @@ func GetAllStationsCapabilities() (result map[string]*AirStation, err error) {
 	return
 }
 
-func GetStationCapabilities(stationID string) (result *AirStation) {
+func GetStationCapabilities(fetchData IStationsCapabiltiesFetcher, stationID string) (result *AirStation) {
 	var allMeasurments *AvailableMeasurmentsSimpleResponce
 
-	bytesRead, err := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
 		fmt.Printf("Error during getting data from `../table=Measurement&v=2`. Error is : %v", err)
 		return
@@ -164,11 +168,11 @@ func GetStationCapabilities(stationID string) (result *AirStation) {
 
 //GetStationSensors - Returns station all sensors.
 //Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
-func getStationSensors(stationID string) (result []SensorMeasurmentType) {
+func getStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) (result []SensorMeasurmentType) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
 	var allMeasurments *AvailableMeasurmentsResponce
 
-	bytesRead, err := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
 		fmt.Printf("Error during getting data from `../table=Measurement&v=2`. Error is : %v", err)
 		return
@@ -225,7 +229,7 @@ func SaveJsonToFile(v interface{}, fileName string) (err error) {
 	return
 }
 
-func doAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
+func DoAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
 	var netResp *http.Response
 
 	netResp, err = http.Get(allStationsMeasurmentsURL)
