@@ -18,7 +18,14 @@ import (
 )
 
 type IStationsCapabiltiesFetcher interface {
-	DoAllMeasurmentsAPIcall() (bytesRead []byte, err error)
+	DoAllMeasurmentsAPIcall() ([]byte, error)
+}
+type Aaa struct {
+	//DoAllMeasurmentsAPIcall() (bytesRead []byte, err error)
+}
+
+func (a Aaa) DoAllMeasurmentsAPIcall() ([]byte, error) {
+	return DoAllMeasurmentsAPIcall()
 }
 
 var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"

@@ -64,26 +64,20 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
 }
 
-//to do : spike mocking !
 
 
-
-func TestFoo(t *testing.T) {
-	ctrl := gomock.NewController(t)
-
-	// Assert that Bar() is invoked.
+	// Assert that Bar() is invked.
 	defer ctrl.Finish()
 
-	m := GetAllStationsCapabilities(ctrl)
+	m := GetAllStationsCapabilities(trl)
 	
 
-	// Asserts that the first and only call to Bar() is passed 99.
-	// Anything else will fail.
-	m.
+	// Asserts that the first and only cal to Bar() is passed 99.
+m.
 		EXPECT().
 		Bar(gomock.Eq(99)).
-		Return(101).
-		AnyTimes()
+		Rturn(101).
+		AnyTimes(
 
-		//stations, err = GetAllStationsCapabilities()
+		//stations, rr = GetAllStationsCapabilities()
 }
