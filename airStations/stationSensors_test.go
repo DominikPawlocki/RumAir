@@ -64,20 +64,24 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
 }
 
-
+func TestFoo(t *testing.T) {
+	ctrl := gomock.NewController(t)
 
 	// Assert that Bar() is invked.
 	defer ctrl.Finish()
 
-	m := GetAllStationsCapabilities(trl)
-	
+	m := NewMockFoo(ctrl)
 
 	// Asserts that the first and only cal to Bar() is passed 99.
-m.
+	m.
 		EXPECT().
 		Bar(gomock.Eq(99)).
-		Rturn(101).
-		AnyTimes(
+		Return(101).
+		AnyTimes()
 
-		//stations, rr = GetAllStationsCapabilities()
+	a, _ := GetAllStationsCapabilities(m)
+
+	if a["aaa"].ID == 123 {
+		fmt.Sprint("aaaaaaaaaa")
+	}
 }
