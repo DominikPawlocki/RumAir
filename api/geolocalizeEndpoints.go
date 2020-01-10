@@ -16,7 +16,7 @@ import (
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 
-	if result, err := airStations.GetAllStationsCapabilities(airStations.Aaa{}); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if localized, err := geolocalize.LocalizeStationsLocIQ(result); err != nil {
@@ -39,7 +39,7 @@ func LocalizeStationUsingLocationIQHandler(w http.ResponseWriter, r *http.Reques
 
 	var resultBytes []byte
 
-	if result := airStations.GetStationCapabilities(airStations.Aaa{}, stationID); len(result.Sensors) <= 0 {
+	if result := airStations.GetStationCapabilities(airStations.StationsCapabiltiesFetcher{}, stationID); len(result.Sensors) <= 0 {
 		http.Error(w, fmt.Sprintf("Cannot fectch station with ID %s", stationID), http.StatusInternalServerError)
 		return
 	} else if localized, err := geolocalize.LocalizeStationLocIQ(result); err != nil {

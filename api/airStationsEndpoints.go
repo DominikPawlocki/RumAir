@@ -12,7 +12,7 @@ import (
 func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 
-	if result, err := airStations.GetAllStationsCapabilities(airStations.Aaa{}); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if len(result) > 0 {
@@ -39,7 +39,7 @@ func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) 
 // .../stations/sensors
 func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
-	if result, err := airStations.GetAllStationsCapabilities(airStations.Aaa{}); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if resultBytes, err = json.Marshal(result); err != nil {

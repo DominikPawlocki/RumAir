@@ -20,11 +20,10 @@ import (
 type IStationsCapabiltiesFetcher interface {
 	DoAllMeasurmentsAPIcall() ([]byte, error)
 }
-type Aaa struct {
-	//DoAllMeasurmentsAPIcall() (bytesRead []byte, err error)
+type StationsCapabiltiesFetcher struct {
 }
 
-func (a Aaa) DoAllMeasurmentsAPIcall() ([]byte, error) {
+func (StationsCapabiltiesFetcher) DoAllMeasurmentsAPIcall() ([]byte, error) {
 	return DoAllMeasurmentsAPIcall()
 }
 

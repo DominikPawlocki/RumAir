@@ -1,25 +1,26 @@
 package airStations
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"sort"
 	"strings"
 	"testing"
 
-	"github.com/golang/mock/gomock"
+	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
 
 var stations map[string]*AirStation
 var err error
 
-func setup() {
-	stations, err = GetAllStationsCapabilities()
+func setupReal() {
+	stations, err = GetAllStationsCapabilities(StationsCapabiltiesFetcher{})
 }
 
 func TestMain(m *testing.M) {
-	setup()
+	setupReal()
 	code := m.Run()
 	//shutdown()
 	os.Exit(code)
@@ -45,7 +46,7 @@ func Test_GetAllStationsCapabilities_StationShouldContainOnlyOwnSensorsOrHESwhat
 
 func Test_GetStationsCapabilities_StationShouldContainOnlyOwnSensors(t *testing.T) {
 	var stationID string = "04"
-	actual := GetStationCapabilities(stationID)
+	actual := GetStationCapabilities(StationsCapabiltiesFetcher{}, stationID)
 
 	assert.NotNil(t, actual)
 	assert.Equal(t, actual.ID, 4, fmt.Sprintf("Asking for %v stationID, got %v in result", stationID, actual.ID))
@@ -70,18 +71,18 @@ func TestFoo(t *testing.T) {
 	// Assert that Bar() is invked.
 	defer ctrl.Finish()
 
-	m := NewMockFoo(ctrl)
-
-	// Asserts that the first and only cal to Bar() is passed 99.
+	m := NewMockIStationsCapabiltiesFetcher(ctrl)
 	m.
+		//a, _ := GetAllStationsCapabilities(m)
+
+		// Asserts that the first and only cal to Bar() is passed 99.
+		m.
 		EXPECT().
-		Bar(gomock.Eq(99)).
-		Return(101).
+		DoAllMeasurmentsAPIcall().
+		Return(nil, errors.New("timeout expired")).
 		AnyTimes()
 
-	a, _ := GetAllStationsCapabilities(m)
-
-	if a["aaa"].ID == 123 {
+	/*if a["aaa"].ID == 123 {
 		fmt.Sprint("aaaaaaaaaa")
-	}
+	}*/
 }
