@@ -1,14 +1,12 @@
 package airStations
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"sort"
 	"strings"
 	"testing"
 
-	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,7 +24,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func Test_GetAllStationsCapabilities(t *testing.T) {
+func Test_GetAllStationsCapabilities_ResponseContainsStation02(t *testing.T) {
 	assert.Nil(t, err, fmt.Sprintf("There is error %v: ", err))
 
 	assert.GreaterOrEqual(t, len(stations), 30, fmt.Sprintf("There should be minimum like 30 stations fetched. %v stations was fetched. ", len(stations)))
@@ -63,26 +61,4 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 	assert.GreaterOrEqual(t, len(actual[5]), 70, fmt.Sprintf("Station with slice index 5 should have more sensors. Now it has %v", actual[5]))
 
 	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
-}
-
-func TestFoo(t *testing.T) {
-	ctrl := gomock.NewController(t)
-
-	// Assert that Bar() is invked.
-	defer ctrl.Finish()
-
-	m := NewMockIStationsCapabiltiesFetcher(ctrl)
-	m.
-		//a, _ := GetAllStationsCapabilities(m)
-
-		// Asserts that the first and only cal to Bar() is passed 99.
-		m.
-		EXPECT().
-		DoAllMeasurmentsAPIcall().
-		Return(nil, errors.New("timeout expired")).
-		AnyTimes()
-
-	/*if a["aaa"].ID == 123 {
-		fmt.Sprint("aaaaaaaaaa")
-	}*/
 }
