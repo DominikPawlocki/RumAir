@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Given_APIError_When_GetAllStationsCapabilities_Then_ResponseIsNilDataAndError(t *testing.T) {
+func Test_Given_APIError_When_GetAllStationsCapabilities_Then_ResponseIsNilAndError(t *testing.T) {
 	errorText := "timeout expired"
 
 	ctrl := gomock.NewController(t)

@@ -37,9 +37,9 @@ func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 // .../stations/sensors
-func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request) {
+func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
 	var resultBytes []byte
-	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(f); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if resultBytes, err = json.Marshal(result); err != nil {

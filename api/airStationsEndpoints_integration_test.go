@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dompaw/RumAir/airStations"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,7 +35,7 @@ func Test_GetAllStationsCapabilitiesHandler(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(GetAllStationsCapabilitiesHandler)
+	handler := http.Handler(MockableHTTPHandler{mockableDataFetcher: airStations.StationsCapabiltiesFetcher{}})
 	handler.ServeHTTP(rr, req)
 
 	assert.Equal(t, rr.Code, http.StatusOK, fmt.Sprintf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK))
