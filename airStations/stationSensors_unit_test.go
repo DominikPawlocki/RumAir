@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Given_APIError_When_GetAllStationsCapabilities_Then_ResponseIsNilAndError(t *testing.T) {
-	errorText := "timeout expired"
+func Test_Given_ErrorResponseFromPmProApiCall_When_GetAllStationsCapabilities_Then_ResponseIsNilAndError(t *testing.T) {
+	exampleMockErrorText := "timeout expired"
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -21,11 +21,11 @@ func Test_Given_APIError_When_GetAllStationsCapabilities_Then_ResponseIsNilAndEr
 	m.
 		EXPECT().
 		DoAllMeasurmentsAPIcall().
-		Return(nil, errors.New(errorText)).
+		Return(nil, errors.New(exampleMockErrorText)).
 		AnyTimes()
 
 	stations, err = GetAllStationsCapabilities(m)
 
 	assert.Nil(t, stations)
-	assert.Equal(t, errorText, err.Error(), fmt.Sprintf("Expected error like %s,but got %s in result", errorText, err.Error()))
+	assert.Equal(t, exampleMockErrorText, err.Error(), fmt.Sprintf("Expected error like %s,but got %s in result", exampleMockErrorText, err.Error()))
 }
