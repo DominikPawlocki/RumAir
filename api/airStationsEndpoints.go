@@ -9,10 +9,10 @@ import (
 )
 
 // ...stations/sensors/codes
-func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
+func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
 	var resultBytes []byte
 
-	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(f); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if len(result) > 0 {
@@ -26,11 +26,11 @@ func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) 
 				w.Write(resultBytes)
 			}
 		} else {
-			http.Error(w, fmt.Sprintf("Empty result Sensors per stations, when stations seems fetched. \n %v", err.Error()), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("%s %v", emptySensorsPerStationError, err.Error()), http.StatusInternalServerError)
 			return
 		}
 	} else {
-		http.Error(w, fmt.Sprintf("Empty result Sensors per stations, when stations seems fetched. \n"), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("%s", emptySensorsPerStationError), http.StatusInternalServerError)
 		return
 	}
 

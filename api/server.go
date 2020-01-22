@@ -11,10 +11,12 @@ import (
 
 type MockableHTTPHandler struct {
 	mockableDataFetcher airStations.IStationsCapabiltiesFetcher
+	methodToBeCalled    func(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher)
 }
 
 func (m MockableHTTPHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	GetAllStationsCapabilitiesHandler(w, r, m.mockableDataFetcher)
+	m.methodToBeCalled(w, r, m.mockableDataFetcher)
+	//GetAllStationsCapabilitiesHandler(w, r, m.mockableDataFetcher)
 }
 
 func Main() {
@@ -26,9 +28,12 @@ func Main() {
 	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler)
 	// myRouter.HandleFunc("/stations/locate/geobytes", geolocalize.LocalizeStationsGeoBytes(sts))
 	// myRouter.HandleFunc("/stations/{id}/sensors", airStations.GetStationSensors(id)).Methods("POST")
-	//myRouter.Handle("/stations/sensors", GetAllStationsCapabilitiesHandler).Methods("GET")//--------------------
-	myRouter.Handle("/stations/sensors", MockableHTTPHandler{mockableDataFetcher: airStations.StationsCapabiltiesFetcher{}}).Methods("GET")
-	myRouter.HandleFunc("/stations/sensors/codes", ShowAllStationsSensorsCodesHandler).Methods("GET")
+	myRouter.Handle("/stations/sensors", MockableHTTPHandler{
+		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		methodToBeCalled:    GetAllStationsCapabilitiesHandler}).Methods("GET")
+	myRouter.Handle("/stations/sensors/codes", MockableHTTPHandler{
+		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		methodToBeCalled:    ShowAllStationsSensorsCodesHandler}).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8080", myRouter))
 }
