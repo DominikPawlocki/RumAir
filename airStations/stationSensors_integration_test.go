@@ -62,3 +62,10 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 
 	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
 }
+
+func Test_Given_StationNumber04_When_GetStationSensors_Then_ItReturnsMinimum25Sensors(t *testing.T) {
+	actual := GetStationSensors(StationsCapabiltiesFetcher{}, "04")
+
+	assert.GreaterOrEqual(t, len(actual), 25, fmt.Sprintf("There should be minimum like 25 stations fetched. %v stations was fetched.", len(actual)))
+	assert.IsTypef(t, []SensorMeasurmentType{}, actual, fmt.Sprintf("Wrong return type !"))
+}

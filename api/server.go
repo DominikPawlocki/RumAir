@@ -16,16 +16,14 @@ type MockableHTTPHandler struct {
 
 func (m MockableHTTPHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.methodToBeCalled(w, r, m.mockableDataFetcher)
-	//GetAllStationsCapabilitiesHandler(w, r, m.mockableDataFetcher)
 }
 
 func Main() {
 	fmt.Println("Starting a server ..")
 	myRouter := mux.NewRouter().StrictSlash(true)
 
-	// replace http.HandleFunc with myRouter.HandleFunc
-	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)
-	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler)
+	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)  //not mockable for unit testing
+	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler) //not mockable for unit testing
 	// myRouter.HandleFunc("/stations/locate/geobytes", geolocalize.LocalizeStationsGeoBytes(sts))
 	// myRouter.HandleFunc("/stations/{id}/sensors", airStations.GetStationSensors(id)).Methods("POST")
 	myRouter.Handle("/stations/sensors", MockableHTTPHandler{

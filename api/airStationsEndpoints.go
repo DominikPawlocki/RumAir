@@ -44,6 +44,7 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 		return
 	} else if resultBytes, err = json.Marshal(result); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		//w.Write([]byte("Unsupported request method."))
 		return
 	} else {
 		w.Header().Set("Content-Type", "application/json")
@@ -83,15 +84,6 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Unsupported request method."))
-	}
-
-
-
-	func sendResponse(entry *Entry, w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json")
-	enc := json.NewEncoder(w)
-	if err := enc.Encode(entry); err != nil {
-		log.Printf("error encoding %+v - %s", entry, err)
 	}
 
 
