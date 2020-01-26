@@ -174,7 +174,7 @@ func GetStationCapabilities(fetchData IStationsCapabiltiesFetcher, stationID str
 
 //GetStationSensors - Returns station all sensors.
 //Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
-func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) (result []SensorMeasurmentType) {
+func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) (result []SensorMeasurmentType, err error) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
 	var allMeasurments *AvailableMeasurmentsResponce
 
@@ -196,7 +196,7 @@ func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) 
 	}
 	fmt.Printf("Nr of results: %v", len(result))
 
-	return result
+	return
 }
 
 func ShowStationsSensorsCodes(stations map[string]*AirStation) (result []string) {

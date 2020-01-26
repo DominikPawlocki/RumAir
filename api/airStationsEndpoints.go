@@ -3,13 +3,14 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 
 	"github.com/dompaw/RumAir/airStations"
 )
 
 // ...stations/sensors/codes
-func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
 	var resultBytes []byte
 
 	if result, err := airStations.GetAllStationsCapabilities(f); err != nil {
@@ -33,7 +34,6 @@ func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request, 
 		http.Error(w, fmt.Sprintf("%s", emptySensorsPerStationError), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 // .../stations/sensors
@@ -52,14 +52,27 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 	}
 }
 
-/*
-func EchoHandleFunc(w http.ResponseWriter, r *http.Request) {
-	message := r.URL.Query()["message"][0]
+// .../stations/{id}/sensors
+func ShowStationSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+	var resultBytes []byte
 
-	w.Header().Add("Content-Type", "text/plain")
-	fmt.Fprintf(w, message)
+	//stationID := r.URL.Query()["message"][0]
+	vars := mux.Vars(r)
+	stationID := vars["id"]
+
+	if result, err := airStations.GetStationSensors(f, stationID); err != nil {
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
+		return
+	} else if resultBytes, err = json.Marshal(result); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(resultBytes)
+	}
 }
 
+/*
 func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	// get the body of our POST request
 	// return the string response containing the request body

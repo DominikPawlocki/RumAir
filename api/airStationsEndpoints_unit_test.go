@@ -96,7 +96,7 @@ func Test_Given_ErrorResponseFromDoAllMeasurmentsAPIcall_When_ShowAllStationsSen
 	req, _ := sut()
 
 	rr := httptest.NewRecorder()
-	handler := http.Handler(MockableHTTPHandler{mockableDataFetcher: mock, methodToBeCalled: ShowAllStationsSensorsCodesHandler})
+	handler := http.Handler(MockableHTTPHandler{mockableDataFetcher: mock, methodToBeCalled: ShowAllStationsSensorCodesHandler})
 	handler.ServeHTTP(rr, req)
 
 	assert.Equal(t, http.StatusInternalServerError, rr.Code, fmt.Sprintf("Got %v code, want %v", rr.Code, http.StatusInternalServerError))
@@ -121,7 +121,7 @@ func Test_Given_CorrectResponseFromDoAllMeasurmentsAPIcall_When_ShowAllStationsS
 	req, _ := sut()
 
 	rr := httptest.NewRecorder()
-	handler := http.Handler(MockableHTTPHandler{mockableDataFetcher: mock, methodToBeCalled: ShowAllStationsSensorsCodesHandler})
+	handler := http.Handler(MockableHTTPHandler{mockableDataFetcher: mock, methodToBeCalled: ShowAllStationsSensorCodesHandler})
 	handler.ServeHTTP(rr, req)
 
 	assert.Equal(t, http.StatusInternalServerError, rr.Code, fmt.Sprintf("Got %v code, want %v", rr.Code, http.StatusInternalServerError))

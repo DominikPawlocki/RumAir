@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//remember that TestMain(m *testing.M) is also called for that module !
+
 func Test_Given_ErrorResponseFromDoAllMeasurmentsAPIcall_When_GetAllStationsCapabilities_Then_ResponseIsNilAndError(t *testing.T) {
 	exampleMockErrorText := "timeout expired"
 
@@ -31,7 +33,7 @@ func Test_Given_ErrorResponseFromDoAllMeasurmentsAPIcall_When_GetAllStationsCapa
 	assert.Equal(t, exampleMockErrorText, err.Error(), fmt.Sprintf("Expected error like %s,but got %s in result", exampleMockErrorText, err.Error()))
 }
 
-func Test_GivenTwoStations_When_ShowStationsSensorsCodes_Then_(t *testing.T) {
+func Test_GivenTwoStations_When_ShowStationsSensorsCodes_Then_AnswerIsCorrect(t *testing.T) {
 	var localizableStation = &AirStation{
 		ID: 2,
 		Sensors: []SensorMeasurmentSimpleType{
@@ -79,8 +81,9 @@ func Test_Given_StationNumber04_And_ErrorResponseFromDoAllMeasurmentsAPIcall_Whe
 		Return(nil, errors.New(exampleMockErrorText)).
 		AnyTimes()
 
-	actual := GetStationSensors(StationsCapabiltiesFetcher{}, "04")
+	actual, err := GetStationSensors(m, "04")
 
-	assert.Nil(t, stations)
+	assert.Nil(t, actual)
+	assert.NotNil(t, err)
 	assert.Equal(t, exampleMockErrorText, err.Error(), fmt.Sprintf("Expected error like %s,but got %s in result", exampleMockErrorText, err.Error()))
 }

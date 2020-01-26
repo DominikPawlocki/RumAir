@@ -1,6 +1,7 @@
 package airStations
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"sort"
@@ -10,15 +11,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// flag introduced, for possible distinguid differentciation from integration or unit tests. Not used right now.
+//usage like : go test -v .\airStations\stationSensors.go .\airStations\utils.go .\airStations\stationSensors_integration_test.go  -args -isIntegration=true
+var isIntegration = flag.Bool("isIntegration", false, "isIntegration")
 var stations map[string]*AirStation
 var err error
 
-func setupReal() {
+func setupIntegrationTests() {
 	stations, err = GetAllStationsCapabilities(StationsCapabiltiesFetcher{})
 }
 
 func TestMain(m *testing.M) {
-	setupReal()
+	flag.Parse()
+	fmt.Printf("Flag `isIntegration` set to : %v \n", *isIntegration)
+
+	setupIntegrationTests()
 	code := m.Run()
 	//shutdown()
 	os.Exit(code)
@@ -63,9 +70,10 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
 }
 
-func Test_Given_StationNumber04_When_GetStationSensors_Then_ItReturnsMinimum25Sensors(t *testing.T) {
-	actual := GetStationSensors(StationsCapabiltiesFetcher{}, "04")
+func Test_Given_StationNumber04_When_GetStationSensors_Then_AnswerContainsMinimum25Sensors(t *testing.T) {
+	actual, err := GetStationSensors(StationsCapabiltiesFetcher{}, "04")
 
+	assert.Nil(t, err)
 	assert.GreaterOrEqual(t, len(actual), 25, fmt.Sprintf("There should be minimum like 25 stations fetched. %v stations was fetched.", len(actual)))
 	assert.IsTypef(t, []SensorMeasurmentType{}, actual, fmt.Sprintf("Wrong return type !"))
 }
