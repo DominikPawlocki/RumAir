@@ -195,6 +195,9 @@ func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) 
 		}
 	}
 	fmt.Printf("Nr of results: %v", len(result))
+	if len(result) == 0 {
+		return nil, errors.New("Empty result Sensors per stations, when stations seems fetched. \n")
+	}
 
 	return
 }

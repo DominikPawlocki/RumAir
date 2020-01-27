@@ -61,7 +61,7 @@ func ShowStationSensorCodesHandler(w http.ResponseWriter, r *http.Request, f air
 	stationID := vars["id"]
 
 	if result, err := airStations.GetStationSensors(f, stationID); err != nil {
-		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusNotFound)
 		return
 	} else if resultBytes, err = json.Marshal(result); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
