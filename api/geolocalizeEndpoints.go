@@ -10,7 +10,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Todo : ADD 1 MISSING ENDPOINT FOR GEOLOCALIZE CITIES !
+// .../stations/locate/geobytes
+func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Request) {
+	var resultBytes []byte
+
+	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
+		return
+	} else if localized, err := geolocalize.LocalizeStationsGeoBytes(result); err != nil {
+		http.Error(w, fmt.Sprintf("%s %v", geoBytesfetchingError, err.Error()), http.StatusInternalServerError)
+		return
+	} else if localized != nil {
+		if resultBytes, err = json.Marshal(localized); err != nil {
+			http.Error(w, fmt.Sprintf("%s %v", geoBytesdeserializingError, err.Error()), http.StatusInternalServerError)
+			return
+		}
+	}
+	w.Header().Add("Content-Type", "application/json; charset=utf-8")
+	w.Write(resultBytes)
+}
 
 // .../stations/locate/locationIQ)
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {

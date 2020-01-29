@@ -24,7 +24,7 @@ func Main() {
 
 	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)  //not mockable for unit testing
 	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler) //not mockable for unit testing
-	// myRouter.HandleFunc("/stations/locate/geobytes", geolocalize.LocalizeStationsGeoBytes(sts))
+	myRouter.HandleFunc("/stations/locate/geobytes", LocalizeAllStationsUsingGeoBytesHandler)      //not mockable for unit testing
 	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
 		methodToBeCalled:    ShowStationSensorCodesHandler}).Methods("GET")
