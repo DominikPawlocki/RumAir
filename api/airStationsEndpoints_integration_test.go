@@ -68,7 +68,7 @@ func Test_WhenShowAllStationsSensorsCodesHandler_ThenResponceIsCorrect(t *testin
 
 	stringifiedResponse := rr.Body.String()
 
-	assert.Nil(t, rr.Code, http.StatusOK, fmt.Sprintf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK))
+	assert.Equal(t, rr.Code, http.StatusOK, fmt.Sprintf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK))
 
 	expected197chars :=
 		`["Station : 00 can :  HES00_RH HES00_PA HES00_TA HES00_PM10 HES00_PM25","Station : 001 can :  001FLOW 001AR_AH 001AR_RH 001AR_TIN 001AR_TDEV 001NO 001NO2 001NOX 001RH 001PA 001RAIN 001TEMP 001WD`

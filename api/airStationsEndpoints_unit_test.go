@@ -13,6 +13,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_Given_ErrorResponseFromDoAllMeasurmentsAPICall_And_StationNumberCorrect_When_ShowStationSensorCodesHandler_Then_Returns404(t *testing.T) {
+	exampleMockErrorText := "timeout expired"
+
+	sut := func() (*http.Request, error) {
+		return http.NewRequest("GET", "/stations/04/sensors", nil)
+	}
+
+	mock := setUpMock(t, nil, errors.New(exampleMockErrorText))
+
+	req, _ := sut()
+
+	rr := httptest.NewRecorder()
+	handler := http.Handler(MockableHTTPHandler{mockableDataFetcher: mock, methodToBeCalled: ShowStationSensorCodesHandler})
+	handler.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusNotFound, rr.Code, fmt.Sprintf("Got %v code, want %v", rr.Code, http.StatusNotFound))
+}
+
 func Test_Given_ErrorResponseFromDoAllMeasurmentsAPIcalll_When_GetAllStationsCapabilities_Then_Returns500WithErrorMessage(t *testing.T) {
 	exampleMockErrorText := "timeout expired"
 
@@ -147,5 +165,3 @@ func setUpMock(t *testing.T, mockedResponse []byte, mockedError error) (m *MockI
 
 	return
 }
-
-//correctResponse := []byte("{\"success\":true,\"totalCount\":1655,\"message\":\"\",\"data\": [	{\"id\":11,\"code\":\"01PM01A_4\",\"name\":\"PM01 z 7003 zew\",\"compound_type\":\"pm1\",\"start_date\":1521548606}, 	{\"id\":12,\"code\":\"01PM25A_4\",\"name\":\"PM2,5 z pms7003 zew\",\"compound_type\":\"pm2.5\",\"start_date\":1521549694}	]}")
