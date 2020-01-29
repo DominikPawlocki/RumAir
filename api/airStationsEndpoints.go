@@ -3,16 +3,17 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 
 	"github.com/dompaw/RumAir/airStations"
 )
 
 // ...stations/sensors/codes
-func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) {
+func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
 	var resultBytes []byte
 
-	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(f); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if len(result) > 0 {
@@ -26,21 +27,41 @@ func ShowAllStationsSensorsCodesHandler(w http.ResponseWriter, r *http.Request) 
 				w.Write(resultBytes)
 			}
 		} else {
-			http.Error(w, fmt.Sprintf("Empty result Sensors per stations, when stations seems fetched. \n %v", err.Error()), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("%s %v", emptySensorsPerStationError, err.Error()), http.StatusInternalServerError)
 			return
 		}
 	} else {
-		http.Error(w, fmt.Sprintf("Empty result Sensors per stations, when stations seems fetched. \n"), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("%s", emptySensorsPerStationError), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 // .../stations/sensors
-func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request) {
+func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
 	var resultBytes []byte
-	if result, err := airStations.GetAllStationsCapabilities(); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(f); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
+		return
+	} else if resultBytes, err = json.Marshal(result); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		//w.Write([]byte("Unsupported request method."))
+		return
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(resultBytes)
+	}
+}
+
+// .../stations/{id}/sensors
+func ShowStationSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+	var resultBytes []byte
+
+	//stationID := r.URL.Query()["message"][0]
+	vars := mux.Vars(r)
+	stationID := vars["id"]
+
+	if result, err := airStations.GetStationSensors(f, stationID); err != nil {
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusNotFound)
 		return
 	} else if resultBytes, err = json.Marshal(result); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -52,13 +73,6 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-func EchoHandleFunc(w http.ResponseWriter, r *http.Request) {
-	message := r.URL.Query()["message"][0]
-
-	w.Header().Add("Content-Type", "text/plain")
-	fmt.Fprintf(w, message)
-}
-
 func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	// get the body of our POST request
 	// return the string response containing the request body
@@ -83,15 +97,6 @@ func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Unsupported request method."))
-	}
-
-
-
-	func sendResponse(entry *Entry, w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json")
-	enc := json.NewEncoder(w)
-	if err := enc.Encode(entry); err != nil {
-		log.Printf("error encoding %+v - %s", entry, err)
 	}
 
 

@@ -17,6 +17,16 @@ import (
 	"strings"
 )
 
+type IStationsCapabiltiesFetcher interface {
+	DoAllMeasurmentsAPIcall() ([]byte, error)
+}
+type StationsCapabiltiesFetcher struct {
+}
+
+func (StationsCapabiltiesFetcher) DoAllMeasurmentsAPIcall() ([]byte, error) {
+	return DoAllMeasurmentsAPIcall()
+}
+
 var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 
 type AvailableMeasurmentsResponce struct {
@@ -94,17 +104,17 @@ type AirStation struct {
 
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
 //This method returns all station's Ids, information if station is geolocalizable and its sensors (capabilities)
-func GetAllStationsCapabilities() (result map[string]*AirStation, err error) {
+func GetAllStationsCapabilities(fetchData IStationsCapabiltiesFetcher) (result map[string]*AirStation, err error) {
 	allMeasurments := AvailableMeasurmentsSimpleResponce{}
 
-	bytesRead, err := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
 		return
 	}
 
 	err = DeserializeWithConsoleDots(json.Unmarshal, bytesRead, &allMeasurments)
 	if err != nil {
-		fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
+		fmt.Println("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is :", err)
 		return
 	}
 
@@ -131,17 +141,17 @@ func GetAllStationsCapabilities() (result map[string]*AirStation, err error) {
 	return
 }
 
-func GetStationCapabilities(stationID string) (result *AirStation) {
+func GetStationCapabilities(fetchData IStationsCapabiltiesFetcher, stationID string) (result *AirStation) {
 	var allMeasurments *AvailableMeasurmentsSimpleResponce
 
-	bytesRead, err := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
-		fmt.Printf("Error during getting data from `../table=Measurement&v=2`. Error is : %v", err)
+		fmt.Println("Error during getting data from `../table=Measurement&v=2`. Error is :", err)
 		return
 	}
 	err = json.Unmarshal(bytesRead, &allMeasurments)
 	if err != nil {
-		fmt.Printf("Error during deserializing: %v", err)
+		fmt.Println("Error during deserializing:", err)
 		return
 	}
 	result = createNewStation(stationID)
@@ -164,18 +174,18 @@ func GetStationCapabilities(stationID string) (result *AirStation) {
 
 //GetStationSensors - Returns station all sensors.
 //Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
-func getStationSensors(stationID string) (result []SensorMeasurmentType) {
+func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) (result []SensorMeasurmentType, err error) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
 	var allMeasurments *AvailableMeasurmentsResponce
 
-	bytesRead, err := DoHttpCallWithConsoleDots(doAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
-		fmt.Printf("Error during getting data from `../table=Measurement&v=2`. Error is : %v", err)
+		fmt.Println("Error during getting data from `../table=Measurement&v=2`. Error is :", err)
 		return
 	}
 	err = json.Unmarshal(bytesRead, &allMeasurments)
 	if err != nil {
-		fmt.Printf("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is : %v", err)
+		fmt.Println("Error during deserializing occured. Data from `../table=Measurement&v=2`. Error is :", err)
 		return
 	}
 
@@ -185,8 +195,11 @@ func getStationSensors(stationID string) (result []SensorMeasurmentType) {
 		}
 	}
 	fmt.Printf("Nr of results: %v", len(result))
+	if len(result) == 0 {
+		return nil, errors.New("Empty result Sensors per stations, when stations seems fetched. \n")
+	}
 
-	return result
+	return
 }
 
 func ShowStationsSensorsCodes(stations map[string]*AirStation) (result []string) {
@@ -204,7 +217,7 @@ func ShowStationsSensorsCodes(stations map[string]*AirStation) (result []string)
 
 func SaveJsonToFile(v interface{}, fileName string) (err error) {
 	if err != nil {
-		fmt.Printf("error: %s\n", err)
+		fmt.Println("error:", err)
 		return
 	}
 
@@ -225,7 +238,7 @@ func SaveJsonToFile(v interface{}, fileName string) (err error) {
 	return
 }
 
-func doAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
+func DoAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
 	var netResp *http.Response
 
 	netResp, err = http.Get(allStationsMeasurmentsURL)

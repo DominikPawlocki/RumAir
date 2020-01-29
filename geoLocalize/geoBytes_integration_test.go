@@ -57,6 +57,8 @@ var notLocalizableStation = &airStations.AirStation{
 
 var expected = map[string]*airStations.AirStation{"02": localizableStation, "021": notLocalizableStation}
 
+// 22/01/2020 - GeoBytes getNearbyCities seems not working !
+
 func Test_LocalizeStationsGeoBytes(t *testing.T) {
 	actual, _ := LocalizeStationsGeoBytes(expected)
 

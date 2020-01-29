@@ -1,6 +1,7 @@
 package airStations
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"sort"
@@ -10,21 +11,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// flag introduced, for possible distinguid differentciation from integration or unit tests. Not used right now.
+//usage like : go test -v .\airStations\stationSensors.go .\airStations\utils.go .\airStations\stationSensors_integration_test.go  -args -isIntegration=true
+var isIntegration = flag.Bool("isIntegration", false, "isIntegration")
 var stations map[string]*AirStation
 var err error
 
-func setup() {
-	stations, err = GetAllStationsCapabilities()
+func setupIntegrationTests() {
+	stations, err = GetAllStationsCapabilities(StationsCapabiltiesFetcher{})
 }
 
 func TestMain(m *testing.M) {
-	setup()
+	flag.Parse()
+	fmt.Println("Flag `isIntegration` set to : ", *isIntegration)
+
+	setupIntegrationTests()
 	code := m.Run()
 	//shutdown()
 	os.Exit(code)
 }
 
-func Test_GetAllStationsCapabilities(t *testing.T) {
+func Test_GetAllStationsCapabilities_ResponseContainsStation02(t *testing.T) {
 	assert.Nil(t, err, fmt.Sprintf("There is error %v: ", err))
 
 	assert.GreaterOrEqual(t, len(stations), 30, fmt.Sprintf("There should be minimum like 30 stations fetched. %v stations was fetched. ", len(stations)))
@@ -44,7 +51,7 @@ func Test_GetAllStationsCapabilities_StationShouldContainOnlyOwnSensorsOrHESwhat
 
 func Test_GetStationsCapabilities_StationShouldContainOnlyOwnSensors(t *testing.T) {
 	var stationID string = "04"
-	actual := GetStationCapabilities(stationID)
+	actual := GetStationCapabilities(StationsCapabiltiesFetcher{}, stationID)
 
 	assert.NotNil(t, actual)
 	assert.Equal(t, actual.ID, 4, fmt.Sprintf("Asking for %v stationID, got %v in result", stationID, actual.ID))
@@ -63,9 +70,10 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 	assert.Condition(t, func() (success bool) { return sort.StringsAreSorted(actual) }, fmt.Sprint("Should be sorted."))
 }
 
-//to do : spike mocking !
+func Test_Given_StationNumber04_When_GetStationSensors_Then_AnswerContainsMinimum25Sensors(t *testing.T) {
+	actual, err := GetStationSensors(StationsCapabiltiesFetcher{}, "04")
 
-//go:generate moq -out mocked_tests.go . IStationsCapabiltiesFetcher
-type IStationsCapabiltiesFetcher interface {
-	GetAllStationsCapabilities() (map[string]*AirStation, error)
+	assert.Nil(t, err)
+	assert.GreaterOrEqual(t, len(actual), 25, fmt.Sprintf("There should be minimum like 25 stations fetched. %v stations was fetched.", len(actual)))
+	assert.IsTypef(t, []SensorMeasurmentType{}, actual, fmt.Sprintf("Wrong return type !"))
 }
