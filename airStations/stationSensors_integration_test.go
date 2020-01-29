@@ -23,7 +23,7 @@ func setupIntegrationTests() {
 
 func TestMain(m *testing.M) {
 	flag.Parse()
-	fmt.Printf("Flag `isIntegration` set to : %v \n", *isIntegration)
+	fmt.Println("Flag `isIntegration` set to : ", *isIntegration)
 
 	setupIntegrationTests()
 	code := m.Run()

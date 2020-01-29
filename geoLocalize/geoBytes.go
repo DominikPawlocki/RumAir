@@ -2,8 +2,9 @@ package geolocalize
 
 import (
 	"fmt"
-	"github.com/dompaw/RumAir/airStations"
 	"strings"
+
+	"github.com/dompaw/RumAir/airStations"
 )
 
 var geobytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
@@ -33,7 +34,7 @@ func localizeStationGeoBytes(station *airStations.AirStation) (result *Localized
 func getReverseGeocodedCitiesGeoBytes(radius int, lat float64, lon float64) (bytesRead []byte, err error) {
 	// concat strings by + not efficient but doesnt matter here
 	citiesNearbyURL := geobytesBaseApiURL + fmt.Sprintf("?callback=RumAir&radius=%v&latitude=%f&longitude=%f", radius, lat, lon)
-	fmt.Printf("ENDPOINT : %s. \n", citiesNearbyURL)
+	fmt.Println("ENDPOINT :", citiesNearbyURL)
 
 	return doAPIGet(citiesNearbyURL)
 }
