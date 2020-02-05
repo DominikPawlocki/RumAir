@@ -13,7 +13,7 @@ variables:
       GOROOT: '/usr/local/go1.13' # Go installation path
       GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
       modulePath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
-      withIntegrationTests: true
+      #withIntegrationTests: true
     
 steps:
 - script: |
@@ -48,8 +48,8 @@ steps:
   
 - script: |
     echo 'MODULE PATH IS : $(modulePath)'
-    echo 'RUNNING TESTS WITH withIntegrationTests set to : $(withIntegrationTests)'
-    go test -v . -args -$(withIntegrationTests)
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
   workingDirectory: '$(modulePath)/airStations'
-  displayName: 'Run tests for airStations module'
+  displayName: 'Run TESTS for AIRSTATIONS module'
   
