@@ -46,7 +46,7 @@ steps:
   displayName: 'Building app.'
 
   
-- script: 
+- script: |
     $(modulePath)
     cd .\airStations\
     go test -v . -args -$(withIntegrationTests)
