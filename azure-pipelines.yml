@@ -47,9 +47,8 @@ steps:
 
   
 - script: |
-    $(modulePath)
-    cd .\airStations\
+    echo 'MODULE PATH IS : $(modulePath)' 
     go test -v . -args -$(withIntegrationTests)
-  workingDirectory: '$(modulePath)'
+  workingDirectory: '$(modulePath)\airStations\'
   displayName: 'Run tests for $(modulePath)'
   
