@@ -53,7 +53,7 @@ steps:
   workingDirectory: '$(modulePath)/airStations'
   displayName: 'Run TESTS for AIRSTATIONS module'
 
-  - script: |
+- script: |
     echo 'MODULE PATH IS : $(modulePath)/api'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)
