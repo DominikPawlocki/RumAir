@@ -13,6 +13,9 @@ import (
 )
 
 func Test_GivenStationNumber04_WhenShowStationSensorCodesHandler_ThenResponceIsCorrect(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	req, err := http.NewRequest("GET", "/stations/04/sensors", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -37,6 +40,9 @@ func Test_GivenStationNumber04_WhenShowStationSensorCodesHandler_ThenResponceIsC
 }
 
 func Test_GivenIncorrectStationNumber_WhenShowStationSensorCodesHandlerHandler_ThenResponceIs404(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	req, err := http.NewRequest("GET", "/stations/incorrect/sensors", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -55,6 +61,9 @@ func Test_GivenIncorrectStationNumber_WhenShowStationSensorCodesHandlerHandler_T
 }
 
 func Test_WhenShowAllStationsSensorsCodesHandler_ThenResponceIsCorrect(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	req, err := http.NewRequest("GET", "/stations/sensors/codes", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -77,6 +86,9 @@ func Test_WhenShowAllStationsSensorsCodesHandler_ThenResponceIsCorrect(t *testin
 }
 
 func Test_WhenGetAllStationsCapabilitiesHandler_ThenResponceIsCorrect(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	req, err := http.NewRequest("GET", "/stations/sensors", nil)
 	if err != nil {
 		t.Fatal(err)

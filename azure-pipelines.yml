@@ -47,9 +47,16 @@ steps:
 
   
 - script: |
-    echo 'MODULE PATH IS : $(modulePath)'
+    echo 'MODULE PATH IS : $(modulePath)/airStations'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)
   workingDirectory: '$(modulePath)/airStations'
   displayName: 'Run TESTS for AIRSTATIONS module'
+
+  - script: |
+    echo 'MODULE PATH IS : $(modulePath)/api'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
+  workingDirectory: '$(modulePath)/api'
+  displayName: 'Run TESTS for API module'
   
