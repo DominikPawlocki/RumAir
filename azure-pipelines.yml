@@ -45,7 +45,9 @@ steps:
 
   
 - script: 
-    go test -v ./...
+    go test -v .\airStations\stationSensors.go .\airStations\utils.go .\airStations\stationSensors_integration_test.go  -args -isIntegration=true
+
+    //go test -v ./...
   workingDirectory: '$(modulePath)'
   displayName: 'Run tests for $(modulePath)'
   
