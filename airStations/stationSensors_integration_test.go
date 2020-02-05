@@ -13,7 +13,7 @@ import (
 
 // flag introduced, for possible distinguid differentciation from integration or unit tests. Not used right now.
 //usage like : go test -v .\airStations\stationSensors.go .\airStations\utils.go .\airStations\stationSensors_integration_test.go  -args -isIntegration=true
-var isIntegration = flag.Bool("isIntegration", false, "isIntegration")
+var withIntegration = flag.Bool("withIntegrationTests", true, "withIntegrationTests")
 var stations map[string]*AirStation
 var err error
 
@@ -23,12 +23,13 @@ func setupIntegrationTests() {
 
 func TestMain(m *testing.M) {
 	flag.Parse()
-	fmt.Println("Flag `isIntegration` set to : ", *isIntegration)
+	fmt.Println("OMMITING tests in module `airStations`. Flag `withIntegrationTests` set to : ", *withIntegration)
 
-	setupIntegrationTests()
-	code := m.Run()
-	//shutdown()
-	os.Exit(code)
+	if *withIntegration {
+		setupIntegrationTests()
+		code := m.Run()
+		os.Exit(code)
+	}
 }
 
 func Test_GetAllStationsCapabilities_ResponseContainsStation02(t *testing.T) {

@@ -47,8 +47,9 @@ steps:
 
   
 - script: |
-    echo 'MODULE PATH IS : $(modulePath)' 
+    echo 'MODULE PATH IS : $(modulePath)'
+    echo 'RUNNING TESTS WITH withIntegrationTests set to : $(withIntegrationTests)'
     go test -v . -args -$(withIntegrationTests)
   workingDirectory: '$(modulePath)/airStations'
-  displayName: 'Run tests for $(modulePath)/airStations'
+  displayName: 'Run tests for airStations module'
   
