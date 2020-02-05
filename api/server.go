@@ -22,9 +22,11 @@ func Main() {
 	fmt.Println("Starting a server ..")
 	myRouter := mux.NewRouter().StrictSlash(true)
 
-	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)  //not mockable for unit testing
-	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler) //not mockable for unit testing
-	myRouter.HandleFunc("/stations/locate/geobytes", LocalizeAllStationsUsingGeoBytesHandler)      //not mockable for unit testing
+	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)      //not mockable for unit testing
+	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler)     //not mockable for unit testing
+	myRouter.HandleFunc("/stations/locate/geobytes", LocalizeAllStationsUsingGeoBytesHandler)          //not mockable for unit testing
+	myRouter.HandleFunc("/stations/locate/locationIQ/numbersPerCity", GetStationNumbersPerCityHandler) //not mockable for unit testing
+
 	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
 		methodToBeCalled:    ShowStationSensorCodesHandler}).Methods("GET")

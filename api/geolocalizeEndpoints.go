@@ -30,7 +30,7 @@ func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Requ
 	w.Write(resultBytes)
 }
 
-// .../stations/locate/locationIQ)
+// .../stations/locate/locationIQ
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
 	var resultBytes []byte
 
@@ -66,6 +66,31 @@ func LocalizeStationUsingLocationIQHandler(w http.ResponseWriter, r *http.Reques
 	} else if localized != nil {
 		if resultBytes, err = json.Marshal(localized); err != nil {
 			http.Error(w, fmt.Sprintf("%s %v", locationIQdeserializingError, err.Error()), http.StatusInternalServerError)
+		}
+	}
+	w.Header().Add("Content-Type", "application/json; charset=utf-8")
+	w.Write(resultBytes)
+}
+
+// .../stations/locate/locationIQ/numbersPerCity
+func GetStationNumbersPerCityHandler(w http.ResponseWriter, r *http.Request) {
+	var resultBytes []byte
+
+	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
+		return
+	} else if localized, err := geolocalize.LocalizeStationsGeoBytes(result); err != nil {
+		http.Error(w, fmt.Sprintf("%s %v", locationIQfetchingError, err.Error()), http.StatusInternalServerError)
+		return
+	} else if localized != nil {
+		cities := geolocalize.GetStationNrPerCity(localized)
+
+		dodaj to !!!!!!!!!!!
+		fmt.Printf("%v stations has been localized ! \n", len(localized))
+		fmt.Printf("%v stations are not localizable! \n", len(result)-len(localized))
+		if resultBytes, err = json.Marshal(cities); err != nil {
+			http.Error(w, fmt.Sprintf("%s %v", locationIQdeserializingError, err.Error()), http.StatusInternalServerError)
+			return
 		}
 	}
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")

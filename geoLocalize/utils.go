@@ -25,7 +25,16 @@ type stationsPerCity struct {
 	Count            int
 }
 
-func GetStationNrPerCity(localized map[string]*LocalizedAirStation) string {
+//-----
+type CitiesWithStations struct {
+	City                   string
+	StationIds             string
+	LocalizedCount         int
+	NotAbleToLocalizeCount int
+}
+
+//------
+func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (result []string) {
 	var strBldr strings.Builder
 
 	citiesNoDuplicates := orderStationsPerCity(localized)
@@ -37,18 +46,20 @@ func GetStationNrPerCity(localized map[string]*LocalizedAirStation) string {
 		itr++
 	}
 	sort.Strings(keys)
+	result = make([]string, len(keys))
 
-	for _, city := range keys {
+	for o, city := range keys {
 
 		strBldr.WriteString(city)
 		strBldr.WriteString(" with ")
 		strBldr.WriteString(strconv.Itoa(citiesNoDuplicates[city].Count))
 		strBldr.WriteString(" stations : ")
 		strBldr.WriteString(citiesNoDuplicates[city].StationIdsConcat)
-		strBldr.WriteString("\n")
+		result[o] = strBldr.String()
+		strBldr.Reset()
 	}
 
-	return strBldr.String()
+	return
 }
 
 func orderStationsPerCity(localized map[string]*LocalizedAirStation) (citiesNoDuplicates map[string]*stationsPerCity) {
@@ -60,7 +71,7 @@ func orderStationsPerCity(localized map[string]*LocalizedAirStation) (citiesNoDu
 				citiesNoDuplicates[city] = &stationsPerCity{StationIdsConcat: strconv.Itoa(sts.Station.ID), Count: 1}
 			} else {
 				spc.Count++
-				spc.StationIdsConcat += fmt.Sprintf("%s %s ", ",", strconv.Itoa(sts.Station.ID))
+				spc.StationIdsConcat += fmt.Sprintf("%s %s", ",", strconv.Itoa(sts.Station.ID))
 			}
 		}
 	}
