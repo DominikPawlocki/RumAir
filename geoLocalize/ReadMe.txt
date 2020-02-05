@@ -7,15 +7,11 @@ The question is : which stations are where ?
 
 This code answers this question, with usage of two public geocoding APIs.
 
-1)  from  Geobytes, entry : geoBytes.go LocalizeStationsGeoBytes
+1)  from  Geobytes, with : .../stations/locate/geobytes
 Their API is mostly used for geolocating IP adresses probably, but also has a possibility to find nearest city by latitutude/longitude .
 Its simply and just finds biggest cities nearby, no more details.
 
-2) from locationIQ, entry : locationIQ.go LocalizeStationsLocIQ
+2) from locationIQ, with : "/stations/locate/locationIQ", "/stations/{id}/locate/locationIQ", "/stations/locate/locationIQ/numbersPerCity"
 This API gives details about lon/lat provided like town, district, street, even nr of the building ...
 
-You can choose which one to use.
-Remember, most of the stations areny localizable (doesn't expose lat/lon)
-
-
-Thats it ! Now I know which stations nearby my place Im interrested in grabbing history from !
+Remember, most of the stations arent localizable (doesn't expose lat/lon)

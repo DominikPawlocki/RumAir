@@ -7,3 +7,9 @@ var locationIQdeserializingError = "Error during serializing response from geolo
 var geoBytesdeserializingError = "Error during serializing response from geolocalizing stations via GeoBytes API. \n"
 var locationIQfetchingError = "Cannnot fetch location from LocationIQ service. \n"
 var geoBytesfetchingError = "Cannnot fetch location from GeoByes service. \n"
+
+// Common errors
+/*var (
+	ErrNegSqrt    = errors.New("sqrt of negative number")
+	ErrNoSolution = errors.New("no solution found")
+)*/

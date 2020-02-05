@@ -20,15 +20,30 @@ type LocalizedAirStation struct {
 	CitiesNearby []string
 }
 
-type stationsPerCity struct {
-	StationIdsConcat string
+type CityWithStations struct {
+	City             string
 	Count            int
+	StationIdsConcat string
 }
 
-func GetStationNrPerCity(localized map[string]*LocalizedAirStation) string {
+func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (result []*CityWithStations) {
+	type stationsPerCity struct {
+		StationIdsConcat string
+		Count            int
+	}
 	var strBldr strings.Builder
+	citiesNoDuplicates := map[string]*stationsPerCity{}
 
-	citiesNoDuplicates := orderStationsPerCity(localized)
+	for _, sts := range localized {
+		for _, city := range sts.CitiesNearby {
+			if spc, ok := citiesNoDuplicates[city]; !ok {
+				citiesNoDuplicates[city] = &stationsPerCity{StationIdsConcat: strconv.Itoa(sts.Station.ID), Count: 1}
+			} else {
+				spc.Count++
+				spc.StationIdsConcat += fmt.Sprintf("%s %s", ",", strconv.Itoa(sts.Station.ID))
+			}
+		}
+	}
 
 	var keys []string = make([]string, len(citiesNoDuplicates))
 	itr := 0
@@ -37,33 +52,16 @@ func GetStationNrPerCity(localized map[string]*LocalizedAirStation) string {
 		itr++
 	}
 	sort.Strings(keys)
+	result = make([]*CityWithStations, len(keys))
 
-	for _, city := range keys {
-
-		strBldr.WriteString(city)
-		strBldr.WriteString(" with ")
-		strBldr.WriteString(strconv.Itoa(citiesNoDuplicates[city].Count))
-		strBldr.WriteString(" stations : ")
+	for o, city := range keys {
 		strBldr.WriteString(citiesNoDuplicates[city].StationIdsConcat)
-		strBldr.WriteString("\n")
+		result[o] = &CityWithStations{City: city,
+			Count:            citiesNoDuplicates[city].Count,
+			StationIdsConcat: strBldr.String()}
+		strBldr.Reset()
 	}
 
-	return strBldr.String()
-}
-
-func orderStationsPerCity(localized map[string]*LocalizedAirStation) (citiesNoDuplicates map[string]*stationsPerCity) {
-	citiesNoDuplicates = map[string]*stationsPerCity{}
-
-	for _, sts := range localized {
-		for _, city := range sts.CitiesNearby {
-			if spc, ok := citiesNoDuplicates[city]; !ok {
-				citiesNoDuplicates[city] = &stationsPerCity{StationIdsConcat: strconv.Itoa(sts.Station.ID), Count: 1}
-			} else {
-				spc.Count++
-				spc.StationIdsConcat += fmt.Sprintf("%s %s ", ",", strconv.Itoa(sts.Station.ID))
-			}
-		}
-	}
 	return
 }
 
