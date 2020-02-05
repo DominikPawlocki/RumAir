@@ -20,50 +20,19 @@ type LocalizedAirStation struct {
 	CitiesNearby []string
 }
 
-type stationsPerCity struct {
-	StationIdsConcat string
+type CityWithStations struct {
+	City             string
 	Count            int
+	StationIdsConcat string
 }
 
-//-----
-type CitiesWithStations struct {
-	City                   string
-	StationIds             string
-	LocalizedCount         int
-	NotAbleToLocalizeCount int
-}
-
-//------
-func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (result []string) {
+func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (result []*CityWithStations) {
+	type stationsPerCity struct {
+		StationIdsConcat string
+		Count            int
+	}
 	var strBldr strings.Builder
-
-	citiesNoDuplicates := orderStationsPerCity(localized)
-
-	var keys []string = make([]string, len(citiesNoDuplicates))
-	itr := 0
-	for i := range citiesNoDuplicates {
-		keys[itr] = i
-		itr++
-	}
-	sort.Strings(keys)
-	result = make([]string, len(keys))
-
-	for o, city := range keys {
-
-		strBldr.WriteString(city)
-		strBldr.WriteString(" with ")
-		strBldr.WriteString(strconv.Itoa(citiesNoDuplicates[city].Count))
-		strBldr.WriteString(" stations : ")
-		strBldr.WriteString(citiesNoDuplicates[city].StationIdsConcat)
-		result[o] = strBldr.String()
-		strBldr.Reset()
-	}
-
-	return
-}
-
-func orderStationsPerCity(localized map[string]*LocalizedAirStation) (citiesNoDuplicates map[string]*stationsPerCity) {
-	citiesNoDuplicates = map[string]*stationsPerCity{}
+	citiesNoDuplicates := map[string]*stationsPerCity{}
 
 	for _, sts := range localized {
 		for _, city := range sts.CitiesNearby {
@@ -75,6 +44,24 @@ func orderStationsPerCity(localized map[string]*LocalizedAirStation) (citiesNoDu
 			}
 		}
 	}
+
+	var keys []string = make([]string, len(citiesNoDuplicates))
+	itr := 0
+	for i := range citiesNoDuplicates {
+		keys[itr] = i
+		itr++
+	}
+	sort.Strings(keys)
+	result = make([]*CityWithStations, len(keys))
+
+	for o, city := range keys {
+		strBldr.WriteString(citiesNoDuplicates[city].StationIdsConcat)
+		result[o] = &CityWithStations{City: city,
+			Count:            citiesNoDuplicates[city].Count,
+			StationIdsConcat: strBldr.String()}
+		strBldr.Reset()
+	}
+
 	return
 }
 
