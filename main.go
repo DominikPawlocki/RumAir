@@ -12,12 +12,8 @@ import (
 func main() {
 	fmt.Printf("Starting ...")
 
-	//----------------------- showing stations shorthang capabilities -----------------------------------
-	//fmt.Printf("%s", airStations.ShowStationsSensorsCodes(sts))
-
-	//------------------------ mongo DB ----------------------------------
+	//------------------------ mongo DB simple check. to be deleted. ----------------------------------
 	db.PlayMongo()
-	// ----------------------------------------------
 
 	api.Main()
 }
