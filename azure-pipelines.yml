@@ -66,7 +66,7 @@ steps:
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     OverWrite: true/
   
- - task: PublishBuildArtifacts@1
+- task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     #Specify the name of the artifact that you want to create. It can be whatever you want. For example: drop
