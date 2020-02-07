@@ -85,15 +85,6 @@ steps:
     command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
     Dockerfile: $(modulePath)/Dockerfile
 
-- task: CopyFiles@1
-  inputs:
-    SourceFolder: '$(modulePath)'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    OverWrite: true/
-  
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'RumAirApp'
-    publishLocation: 'Container'
+    # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/docker?view=azure-devops
+    # https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml
+

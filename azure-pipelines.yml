@@ -60,15 +60,18 @@ steps:
   workingDirectory: '$(modulePath)/api'
   displayName: 'Run TESTS for API module'
 
-# - task: CopyFiles@1
-#   inputs:
-#     SourceFolder: '$(modulePath)'
-#     Contents: '**'
-#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
-#     OverWrite: true/
+- task: CopyFiles@1
+   inputs:
+     SourceFolder: '$(modulePath)'
+     Contents: '$(modulePath)/RumAir'
+     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+     OverWrite: true/
   
-# - task: PublishBuildArtifacts@1
-#   inputs:
-#     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#     ArtifactName: 'RumAirApp'
-#     publishLocation: 'Container'
+ - task: PublishBuildArtifacts@1
+   inputs:
+     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      #Specify the name of the artifact that you want to create. It can be whatever you want. For example: drop
+     ArtifactName: 'RumAir_LinuxApp'
+     # Choose whether to store the artifact in Azure Pipelines (Container), or to copy it to a file share (FilePath) that must be accessible from the build agent.
+     publishLocation: 'Container'
+     #targetPath: # Required when publishLocation == FilePath
