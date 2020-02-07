@@ -62,7 +62,7 @@ steps:
 - task: CopyFiles@1
   inputs:
     SourceFolder: '$(modulePath)'
-    Contents: '$(modulePath)/bin'
+    Contents: '$(modulePath)/_obj/exe/'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     OverWrite: true/
   
