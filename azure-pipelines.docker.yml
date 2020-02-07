@@ -58,13 +58,13 @@ steps:
 #   workingDirectory: '$(modulePath)'
 #   displayName: 'Get dependencies.'
 
-- script: |
-    echo 'MODULE PATH IS : $(modulePath)/api'
-    go build -v .
-  workingDirectory: '$(modulePath)'
-  displayName: 'Building app.'
+# - script: |
+#     echo 'MODULE PATH IS : $(modulePath)/api'
+#     go build -v .
+#   workingDirectory: '$(modulePath)'
+#   displayName: 'Building app.'
 
-  # this task runs a test also !
+  # this task consists of 16 steps on 02/2020. Step 6 runs a tests also !
 - task: Docker@2
   displayName: Build a Docker image
   inputs:
@@ -73,6 +73,6 @@ steps:
     command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
     Dockerfile: $(modulePath)/Dockerfile
 
-    # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/docker?view=azure-devops
-    # https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/docker?view=azure-devops
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml
 
