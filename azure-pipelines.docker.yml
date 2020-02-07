@@ -8,6 +8,10 @@ pool:
   
 variables:
     imageName: 'rumAir-$(build.buildId)'
+    GOBIN:  '$(GOPATH)/bin' # Go binaries path
+    GOROOT: '/usr/local/go1.13' # Go installation path
+    GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+    modulePath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
   
 # that works
 # steps:
@@ -34,6 +38,31 @@ variables:
 #     Dockerfile: app/Dockerfile
 
 steps:
+- script: |
+    mkdir -p '$(GOBIN)'
+    mkdir -p '$(GOPATH)/pkg'
+    mkdir -p '$(modulePath)'
+    shopt -s extglob
+    mv !(gopath) '$(modulePath)'
+    echo '##vso[task.prependpath]$(GOBIN)'
+    echo '##vso[task.prependpath]$(GOROOT)/bin'
+    echo 'MODULE PATH IS : $(modulePath)' 
+  displayName: 'Set up the Go workspace'
+
+# - script: |
+#     go get -v -t -d ./...
+#     if [ -f Gopkg.toml ]; then
+#         curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+#         dep ensure
+#     fi
+#   workingDirectory: '$(modulePath)'
+#   displayName: 'Get dependencies.'
+
+- script: |
+    go build -v .
+  workingDirectory: '$(modulePath)'
+  displayName: 'Building app.'
+
 - script: |
     echo 'MODULE PATH IS : $(modulePath)/airStations'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
