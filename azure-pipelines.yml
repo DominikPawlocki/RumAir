@@ -60,15 +60,15 @@ steps:
   workingDirectory: '$(modulePath)/api'
   displayName: 'Run TESTS for API module'
 
-- task: CopyFiles@1
-  inputs:
-    SourceFolder: '$(modulePath)'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    OverWrite: true/
+# - task: CopyFiles@1
+#   inputs:
+#     SourceFolder: '$(modulePath)'
+#     Contents: '**'
+#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+#     OverWrite: true/
   
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'RumAirApp'
-    publishLocation: 'Container'
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#     ArtifactName: 'RumAirApp'
+#     publishLocation: 'Container'
