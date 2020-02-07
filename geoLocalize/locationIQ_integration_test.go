@@ -9,6 +9,9 @@ import (
 )
 
 func Test_LocalizeStationsLocIQ(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	actual, _ := LocalizeStationsLocIQ(expected)
 
 	assert.Len(t, actual, 1, fmt.Sprintf("Station with id %v should be only localized, cause it has lat and lon 'sensors'.", localizableStation.ID))

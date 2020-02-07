@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// flag introduced, for possible distinguid differentciation from integration or unit tests. Not used right now.
+// flag set up in Azure Build pipeline.
 //usage like : go test -v .\airStations\stationSensors.go .\airStations\utils.go .\airStations\stationSensors_integration_test.go  -args -isIntegration=true
-var isIntegration = flag.Bool("isIntegration", false, "isIntegration")
+var withIntegration = flag.Bool("withIntegrationTests", true, "withIntegrationTests")
 var stations map[string]*AirStation
 var err error
 
@@ -23,15 +23,22 @@ func setupIntegrationTests() {
 
 func TestMain(m *testing.M) {
 	flag.Parse()
-	fmt.Println("Flag `isIntegration` set to : ", *isIntegration)
+	var msg string = "OMMITING"
 
-	setupIntegrationTests()
+	if *withIntegration {
+		msg = "RUNNING"
+		setupIntegrationTests()
+	}
+
+	fmt.Printf("%s integration tests in module `airStations`. Flag `withIntegrationTests` set to : %v", msg, *withIntegration)
 	code := m.Run()
-	//shutdown()
 	os.Exit(code)
 }
 
 func Test_GetAllStationsCapabilities_ResponseContainsStation02(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	assert.Nil(t, err, fmt.Sprintf("There is error %v: ", err))
 
 	assert.GreaterOrEqual(t, len(stations), 30, fmt.Sprintf("There should be minimum like 30 stations fetched. %v stations was fetched. ", len(stations)))
@@ -39,8 +46,10 @@ func Test_GetAllStationsCapabilities_ResponseContainsStation02(t *testing.T) {
 	assert.GreaterOrEqual(t, len(stations["02"].Sensors), 25, fmt.Sprintf("Station '02' had like 10 sensors minimum. Now it has %v", len(stations["02"].Sensors)))
 }
 
-/// This test fails right now, and its connected to a story with sensorID processing.
 func Test_GetAllStationsCapabilities_StationShouldContainOnlyOwnSensorsOrHESwhateverItIs(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	for idx, station := range stations {
 		for _, sensor := range station.Sensors {
 			assert.Truef(t, (strings.HasPrefix(sensor.Code, idx) || strings.HasPrefix(sensor.Code, fmt.Sprintf("HES%s", idx))),
@@ -50,6 +59,9 @@ func Test_GetAllStationsCapabilities_StationShouldContainOnlyOwnSensorsOrHESwhat
 }
 
 func Test_GetStationsCapabilities_StationShouldContainOnlyOwnSensors(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	var stationID string = "04"
 	actual := GetStationCapabilities(StationsCapabiltiesFetcher{}, stationID)
 
@@ -62,6 +74,9 @@ func Test_GetStationsCapabilities_StationShouldContainOnlyOwnSensors(t *testing.
 }
 
 func Test_ShowStationsSensorsCodes(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	actual := ShowStationsSensorsCodes(stations)
 
 	assert.GreaterOrEqual(t, len(actual), 30, fmt.Sprintf("There should be minimum like 30 stations fetched. %v stations was fetched.", len(actual)))
@@ -71,6 +86,9 @@ func Test_ShowStationsSensorsCodes(t *testing.T) {
 }
 
 func Test_Given_StationNumber04_When_GetStationSensors_Then_AnswerContainsMinimum25Sensors(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	actual, err := GetStationSensors(StationsCapabiltiesFetcher{}, "04")
 
 	assert.Nil(t, err)

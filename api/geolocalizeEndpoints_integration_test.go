@@ -5,24 +5,32 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-// flag introduced, for possible distinguid differentciation from integration or unit tests. Not used right now.
-//usage like : go test -v .\airStations\stationSensors.go .\airStations\utils.go .\airStations\stationSensors_integration_test.go  -args -isIntegration=true
-var withIntegrationTests = flag.Bool("isIntegration", false, "isIntegration")
+// flag set up in Azure Build pipeline.
+var withIntegration = flag.Bool("withIntegrationTests", false, "withIntegrationTests")
 
 func TestMain(m *testing.M) {
 	flag.Parse()
-	fmt.Println("Flag `withIntegrationTests` set to : ", *withIntegrationTests)
+	var msg string = "RUNNING"
+
+	if !*withIntegration {
+		msg = "OMMITING"
+	}
+
+	fmt.Printf("%s integration tests in module `api`. Flag `withIntegrationTests` set to : %v \n", msg, *withIntegration)
+	code := m.Run()
+	os.Exit(code)
 }
 
 func Test_GetStationNumbersPerCityHandler_ThenResponceIsCorrect(t *testing.T) {
-	if !*withIntegrationTests {
-		t.Skip("Takes about 1 min to pass..")
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
 	}
 	req, err := http.NewRequest("GET", "/stations/locate/locationIQ/numbersPerCity", nil)
 	if err != nil {

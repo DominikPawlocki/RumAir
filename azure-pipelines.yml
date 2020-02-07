@@ -12,7 +12,8 @@ variables:
       GOBIN:  '$(GOPATH)/bin' # Go binaries path
       GOROOT: '/usr/local/go1.13' # Go installation path
       GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-      modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
+      modulePath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
+      #withIntegrationTests: true
     
 steps:
 - script: |
@@ -23,6 +24,7 @@ steps:
     mv !(gopath) '$(modulePath)'
     echo '##vso[task.prependpath]$(GOBIN)'
     echo '##vso[task.prependpath]$(GOROOT)/bin'
+    echo 'MODULE PATH IS : $(modulePath)' 
   displayName: 'Set up the Go workspace'
   
 - script: |
@@ -43,9 +45,39 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Building app.'
 
+- script: |
+    echo 'MODULE PATH IS : $(modulePath)/airStations'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
+  workingDirectory: '$(modulePath)/airStations'
+  displayName: 'Run TESTS for AIRSTATIONS module'
+
+- script: |
+    echo 'MODULE PATH IS : $(modulePath)/api'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
+  workingDirectory: '$(modulePath)/api'
+  displayName: 'Run TESTS for API module'
+
+- script: |
+    echo 'MODULE PATH IS : $(modulePath)/geoLocalize'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)  
+  workingDirectory: '$(modulePath)/geoLocalize'
+  displayName: 'Run TESTS for GEOLOCALIZE module'
+
+# - task: CopyFiles@1
+#   inputs:
+#     SourceFolder: '$(modulePath)'
+#     Contents: '$(modulePath)/_obj/exe/'
+#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+#     OverWrite: true/
   
-- script: 
-    go test -v ./...
-  workingDirectory: '$(modulePath)'
-  displayName: 'Run tests for $(modulePath)'
-  
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#     #Specify the name of the artifact that you want to create. It can be whatever you want. For example: drop
+#     ArtifactName: 'RumAir_LinuxApp'
+#     # Choose whether to store the artifact in Azure Pipelines (Container), or to copy it to a file share (FilePath) that must be accessible from the build agent.
+#     publishLocation: 'Container'
+#     #targetPath: # Required when publishLocation == FilePath
