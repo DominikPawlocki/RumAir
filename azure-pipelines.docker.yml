@@ -59,24 +59,12 @@ steps:
 #   displayName: 'Get dependencies.'
 
 - script: |
+    echo 'MODULE PATH IS : $(modulePath)/api'
     go build -v .
   workingDirectory: '$(modulePath)'
   displayName: 'Building app.'
 
-- script: |
-    echo 'MODULE PATH IS : $(modulePath)/airStations'
-    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
-    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
-  workingDirectory: '$(modulePath)/airStations'
-  displayName: 'Run TESTS for AIRSTATIONS module'
-
-- script: |
-    echo 'MODULE PATH IS : $(modulePath)/api'
-    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
-    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
-  workingDirectory: '$(modulePath)/api'
-  displayName: 'Run TESTS for API module'
-
+  # this task runs a test also !
 - task: Docker@2
   displayName: Build a Docker image
   inputs:

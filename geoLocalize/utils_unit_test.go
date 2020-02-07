@@ -15,7 +15,8 @@ func Test_GetStationNrPerCity(t *testing.T) {
 
 	assert.Len(t, result, 3)
 	assert.Equal(t, "aaa", result[0].City)
-	assert.Equal(t, "2, 21", result[0].StationIdsConcat)
+	assert.Contains(t, result[0].StationIdsConcat, "2")
+	assert.Contains(t, result[0].StationIdsConcat, "21")
 
 	assert.Equal(t, "bbb", result[1].City)
 	assert.Equal(t, "2", result[1].StationIdsConcat)
