@@ -80,7 +80,7 @@ steps:
 - task: Docker@2
   displayName: Build a Docker image
   inputs:
-    containerRegistry: rumairstaging.azurecr.io
+    containerRegistry: Prywatny-AzureDockerRegistry
     repository: $(imageName)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
     command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
     Dockerfile: $(modulePath)/Dockerfile
