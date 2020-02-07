@@ -60,6 +60,9 @@ var expected = map[string]*airStations.AirStation{"02": localizableStation, "021
 // 22/01/2020 - GeoBytes getNearbyCities seems not working !
 
 func Test_LocalizeStationsGeoBytes(t *testing.T) {
+	if !*withIntegration {
+		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
+	}
 	actual, _ := LocalizeStationsGeoBytes(expected)
 
 	assert.Len(t, actual, 1, fmt.Sprintf("Station with id %v should be only localized, cause it has lat and lon 'sensors'.", localizableStation.ID))

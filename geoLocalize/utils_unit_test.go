@@ -1,10 +1,29 @@
 package geolocalize
 
 import (
+	"flag"
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+// flag set up in Azure Build pipeline.
+var withIntegration = flag.Bool("withIntegrationTests", false, "withIntegrationTests")
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	var msg string = "RUNNING"
+
+	if !*withIntegration {
+		msg = "OMMITING"
+	}
+
+	fmt.Printf("%s integration tests in module `geoLocalize`. Flag `withIntegrationTests` set to : %v \n", msg, *withIntegration)
+	code := m.Run()
+	os.Exit(code)
+}
 
 var localizedAirStationsMock = map[string]*LocalizedAirStation{
 	"02":  &LocalizedAirStation{Station: localizableStation, CitiesNearby: []string{"aaa", "bbb"}},

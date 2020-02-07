@@ -59,6 +59,13 @@ steps:
   workingDirectory: '$(modulePath)/api'
   displayName: 'Run TESTS for API module'
 
+- script: |
+  echo 'MODULE PATH IS : $(modulePath)/geoLocalize'
+  echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+  go test -v . -args -withIntegrationTests=$(withIntegrationTests)
+workingDirectory: '$(modulePath)/geoLocalize'
+displayName: 'Run TESTS for GEOLOCALIZE module'
+
 # - task: CopyFiles@1
 #   inputs:
 #     SourceFolder: '$(modulePath)'

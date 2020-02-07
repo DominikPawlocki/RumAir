@@ -49,22 +49,8 @@ steps:
     echo 'MODULE PATH IS : $(modulePath)' 
   displayName: 'Set up the Go workspace'
 
-# - script: |
-#     go get -v -t -d ./...
-#     if [ -f Gopkg.toml ]; then
-#         curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-#         dep ensure
-#     fi
-#   workingDirectory: '$(modulePath)'
-#   displayName: 'Get dependencies.'
 
-# - script: |
-#     echo 'MODULE PATH IS : $(modulePath)/api'
-#     go build -v .
-#   workingDirectory: '$(modulePath)'
-#   displayName: 'Building app.'
-
-  # this task consists of 16 steps on 02/2020. Step 6 runs a tests also !
+# this task consists of 16 steps on 02/2020. Step 6 runs a tests also !
 - task: Docker@2
   displayName: Build a Docker image
   inputs:
