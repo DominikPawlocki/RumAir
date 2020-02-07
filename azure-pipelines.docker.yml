@@ -7,12 +7,12 @@ pool:
     vmImage: 'ubuntu-latest'
   
 variables:
-    imageName: 'pipelines-go:$(build.buildId)'
+    imageName: 'rumAir-$(build.buildId)'
   
-steps:
-  - script: docker build -f Dockerfile -t $(imageName) .
-    displayName: 'docker build'
-
+# that works
+# steps:
+#   - script: docker build -f Dockerfile -t $(imageName) .
+#     displayName: 'docker build'
 
 # or, after https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/containers/build-image?view=azure-devops
 
@@ -32,3 +32,38 @@ steps:
 #     repository: $(imageName)
 #     command: build
 #     Dockerfile: app/Dockerfile
+
+steps:
+- script: |
+    echo 'MODULE PATH IS : $(modulePath)/airStations'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
+  workingDirectory: '$(modulePath)/airStations'
+  displayName: 'Run TESTS for AIRSTATIONS module'
+
+- script: |
+    echo 'MODULE PATH IS : $(modulePath)/api'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
+  workingDirectory: '$(modulePath)/api'
+  displayName: 'Run TESTS for API module'
+
+- task: Docker@2
+  displayName: Build a Docker image
+  inputs:
+    repository: $(imageName)
+    command: build
+    Dockerfile: Dockerfile
+
+- task: CopyFiles@1
+  inputs:
+    SourceFolder: '$(modulePath)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    OverWrite: true/
+  
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'RumAirApp'
+    publishLocation: 'Container'
