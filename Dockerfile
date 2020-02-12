@@ -1,22 +1,16 @@
-# FROM alpine:3.5
-
 # COPY ./Cloud-Native-Go /app/Cloud-Native-Go
 # RUN chmod +x /app/Cloud-Native-Go
 
-# ENV PORT 8080
-# EXPOSE 8080
-
 # ENTRYPOINT /app/Cloud-Native-Go
 
-
-# FROM
-# https://github.com/MicrosoftDocs/pipelines-go
-
-#FROM golang:latest ; golang:<version>-alpine ; golang:<version>-windowsservercore
+#FROM alpine:3.5 golang:latest ; golang:<version>-alpine ; golang:<version>-windowsservercore
 
 FROM golang:latest 
 
 WORKDIR /go/src/app
+
+ENV RUMAIR_DATABASE=hello 
+
 COPY . .
 
 RUN go get -d -v ./...

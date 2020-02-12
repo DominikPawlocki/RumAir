@@ -18,24 +18,8 @@ variables:
 #   - script: docker build -f Dockerfile -t $(imageName) .
 #     displayName: 'docker build'
 
-# or, after https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/containers/build-image?view=azure-devops
-
 # trigger:
 # - master
-
-# pool:
-#   vmImage: 'Ubuntu-16.04'
-
-# variables:
-#   imageName: 'pipelines-javascript-docker'
-
-# steps:
-# - task: Docker@2
-#   displayName: Build an image
-#   inputs:
-#     repository: $(imageName)
-#     command: build
-#     Dockerfile: app/Dockerfile
 
 steps:
 - script: |
