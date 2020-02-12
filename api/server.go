@@ -37,5 +37,5 @@ func Main() {
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8080", myRouter))
+	log.Fatal(http.ListenAndServe(":80", myRouter))
 }
