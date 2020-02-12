@@ -10,6 +10,7 @@ FROM golang:latest
 WORKDIR /go/src/app
 
 ENV RUMAIR_DATABASE=hello 
+ENV RUMAIR_DATABASE_PASSWORD = aaaa
 
 COPY . .
 
