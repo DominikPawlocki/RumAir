@@ -26,7 +26,7 @@ RUN set -ex && \
         -ldflags '-extldflags "-static"' && \
   mv ./RumAir /usr/bin/RumAir
 
-FROM busybox
+FROM gcc:latest
 
 # Retrieve the binary from the previous stage
 COPY --from=builder /usr/bin/RumAir /usr/local/bin/RumAir
