@@ -10,7 +10,7 @@
 # RUN go build -v ./...
 
 # -----------------------------------
-FROM golang:alpine AS builder
+FROM ubuntu:latest AS builder
 
 # Add all the source code (except what's ignored# under `.dockerignore`) to the build context.
 ADD ./ /go/src/github.com/DominikPawlocki/RumAir/
