@@ -28,8 +28,8 @@ RUN set -ex && \
         -ldflags '-extldflags "-static"' && \
   mv ./RumAir /usr/bin/RumAir
 
-FROM ubuntu:latest #BusyBox combines tiny versions of many common UNIX utilities into a single small executable.
-
+# BusyBox combines tiny versions of many common UNIX utilities into a single small executable.
+FROM ubuntu:latest
 # Retrieve the binary from the previous stage
 COPY --from=builder /usr/bin/RumAir /usr/local/bin/RumAir
 
