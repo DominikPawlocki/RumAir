@@ -26,7 +26,10 @@ RUN set -ex && \
         -ldflags '-extldflags "-static"' && \
   mv ./RumAir /usr/bin/RumAir
 
-FROM gcc:alpine
+#last FROM statement is the final base image
+FROM gcc:latest
+
+# RUN apk --no-cache add ca-certificates
 
 # Retrieve the binary from the previous stage
 COPY --from=builder /usr/bin/RumAir /usr/local/bin/RumAir
