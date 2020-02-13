@@ -26,6 +26,9 @@ FROM golang:alpine AS builder
 # Add all the source code (except what's ignored# under `.dockerignore`) to the build context.
 ADD ./ /go/src/github.com/DominikPawlocki/RumAir/
 
+ENV RUMAIR_DATABASE = 'hello'
+ENV RUMAIR_DATABASE_PASSWORD = 'aaaa'
+
 RUN set -ex && \
   cd /go/src/github.com/DominikPawlocki/RumAir && \       
   CGO_ENABLED=0 go build \

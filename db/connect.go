@@ -21,8 +21,11 @@ func init() {
 	database = os.Getenv("RUMAIR_DATABASE")
 	password = os.Getenv("RUMAIR_DATABASE_PASSWORD")
 
+	fmt.Println("RUMAIR_DATABASE", database)
+	fmt.Println("RUMAIR_DATABASE", database)
+
 	if database == "" || password == "" {
-		fmt.Printf("RUMAIR_DATABASE environment variable must be the name of the Cosmos DB database and RUMAIR_DATABASE_PASSWORD must be the primary password for that database.")
+		fmt.Println("RUMAIR_DATABASE environment variable must be the name of the Cosmos DB database and RUMAIR_DATABASE_PASSWORD must be the primary password for that database.")
 		os.Exit(1)
 	}
 }
