@@ -1,6 +1,6 @@
 The 'pmpro.dacsystem.pl' system has air monitoring stations in several cities all over a Poland.
 Cities which uses this system usually has webpages exposed like 'rumia.powietrze.eu', monitoring current air status with short (3 days) history.
-But there is no list of a pages like that, and a call 'https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2' reveals there are like 60 stations over the Poland.
+But there is no list of a pages like that, and a call 'http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2' reveals there are like 60 stations over the Poland.
 The question is : which stations are where ?
 
 

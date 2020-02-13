@@ -99,9 +99,9 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 	return
 }
 
-//'Pmpro' system stations has lat/long coordinates exposed ! https://pmpro.dacsystem.pl/webapp/data/averages?type=chart&start=1561939200&end=1561949200&vars=27LON
+//'Pmpro' system stations has lat/long coordinates exposed ! http://pmpro.dacsystem.pl/webapp/data/averages?type=chart&start=1561939200&end=1561949200&vars=27LON
 func getStationCoordinates(station *airStations.AirStation) (latitude float64, longitude float64, err error) {
-	var pmproSystemBaseAPIURL string = "https://pmpro.dacsystem.pl/webapp/data"
+	var pmproSystemBaseAPIURL string = "http://pmpro.dacsystem.pl/webapp/data"
 
 	curr, currMinus2h := nowAndMInus2hInUnixTimestamp()
 

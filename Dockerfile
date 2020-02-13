@@ -26,12 +26,10 @@ RUN set -ex && \
         -ldflags '-extldflags "-static"' && \
   mv ./RumAir /usr/bin/RumAir
 
-# BusyBox combines tiny versions of many common UNIX utilities into a single small executable.
-FROM ubuntu:latest
+FROM busybox
+
 # Retrieve the binary from the previous stage
 COPY --from=builder /usr/bin/RumAir /usr/local/bin/RumAir
-
-RUN sudo apt-get install ca-certificates
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT [ "RumAir" ]
