@@ -6,13 +6,14 @@ import (
 	airStations "github.com/dompaw/RumAir/airStations"
 	api "github.com/dompaw/RumAir/api"
 	dataFetcher "github.com/dompaw/RumAir/dataFetcher"
+	"github.com/dompaw/RumAir/db"
 )
 
 func main() {
 	fmt.Println("Starting ...")
 
 	//------------------------ mongo DB simple check. to be deleted. ----------------------------------
-	//db.PlayMongo()
+	db.PlayMongo()
 
 	api.Main()
 }
