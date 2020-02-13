@@ -31,7 +31,7 @@ RUN set -ex && \
 # FROM busybox BusyBox combines tiny versions of many common UNIX utilities into a single small executable.
 
 # Retrieve the binary from the previous stage
-COPY --from=builder /usr/bin/RumAir /usr/local/bin/RumAir
+COPY /usr/bin/RumAir /usr/local/bin/RumAir
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT [ "RumAir" ]
