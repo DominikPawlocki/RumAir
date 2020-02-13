@@ -18,7 +18,7 @@ ADD ./ /go/src/github.com/DominikPawlocki/RumAir/
 ENV RUMAIR_DATABASE = 'hello'
 ENV RUMAIR_DATABASE_PASSWORD = 'aaaa'
 
-RUN apt-get install ca-certificates
+RUN sudo apt-get install ca-certificates
 
 RUN set -ex && \
   cd /go/src/github.com/DominikPawlocki/RumAir && \       
