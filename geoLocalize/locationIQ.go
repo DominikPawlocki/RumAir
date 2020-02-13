@@ -8,7 +8,7 @@ import (
 	"github.com/dompaw/RumAir/airStations"
 )
 
-var locationiqBaseApiURL string = "https://locationiq.org/v1/reverse.php?key=e281731b38bb74"
+var locationiqBaseApiURL string = "http://locationiq.org/v1/reverse.php?key=e281731b38bb74"
 
 func LocalizeStationsLocIQ(stations map[string]*airStations.AirStation) (result map[string]*LocalizedAirStation, err error) {
 	result = map[string]*LocalizedAirStation{}
