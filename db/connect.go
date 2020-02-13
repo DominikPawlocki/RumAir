@@ -39,7 +39,7 @@ func PlayMongo() {
 	}
 
 	// Set a 5s timeout and ensure that it is called
-	context, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	context, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
 	// Establish a connection to Cosmos DB
