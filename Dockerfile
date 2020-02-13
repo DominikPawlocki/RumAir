@@ -18,8 +18,6 @@ ADD ./ /go/src/github.com/DominikPawlocki/RumAir/
 ENV RUMAIR_DATABASE = 'hello'
 ENV RUMAIR_DATABASE_PASSWORD = 'aaaa'
 
-# RUN sudo apt-get install ca-certificates
-
 RUN set -ex && \
   cd /go/src/github.com/DominikPawlocki/RumAir && \       
   CGO_ENABLED=0 go build \
@@ -32,6 +30,8 @@ RUN set -ex && \
 FROM ubuntu:latest
 # Retrieve the binary from the previous stage
 COPY --from=builder /usr/bin/RumAir /usr/local/bin/RumAir
+
+RUN sudo apt-get install ca-certificates
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT [ "RumAir" ]
