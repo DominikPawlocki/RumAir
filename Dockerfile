@@ -1,28 +1,28 @@
-# FROM alpine:3.5
+#FROM alpine:3.5 golang:latest ; golang:<version>-alpine ; golang:<version>-windowsservercore
+# -----------------------------------
+FROM golang:alpine AS builder
 
-# COPY ./Cloud-Native-Go /app/Cloud-Native-Go
-# RUN chmod +x /app/Cloud-Native-Go
+# Add all the source code (except what's ignored# under `.dockerignore`) to the build context.
+ADD ./ /go/src/github.com/DominikPawlocki/RumAir/
 
-# ENV PORT 8080
-# EXPOSE 8080
+ENV RUMAIR_DATABASE = 'hello'
+ENV RUMAIR_DATABASE_PASSWORD = 'aaaa'
 
-# ENTRYPOINT /app/Cloud-Native-Go
+RUN set -ex && \
+  cd /go/src/github.com/DominikPawlocki/RumAir && \       
+  CGO_ENABLED=0 go build \
+        -tags netgo \
+        -v -a \
+        -ldflags '-extldflags "-static"' && \
+  mv ./RumAir /usr/bin/RumAir
 
+#last FROM statement is the final base image. Unfortuneltely the MongoDB driver for CosmosDB needs GCC installed.. Image is pretty big then.. I will handle it later.
+FROM frolvlad/alpine-gxx
 
-# FROM
-# https://github.com/MicrosoftDocs/pipelines-go
+# RUN apk --no-cache add ca-certificates
 
-#FROM golang:latest ; golang:<version>-alpine ; golang:<version>-windowsservercore
+# Retrieve the binary from the previous stage
+COPY --from=builder /usr/bin/RumAir /usr/local/bin/RumAir
 
-FROM golang:latest 
-
-WORKDIR /go/src/app
-COPY . .
-
-RUN go get -d -v ./...
-# or go install might be faster in that case.
-RUN go build -v ./...
-
-RUN go test -v ./...
-
-CMD ["app"]
+# Set the binary as the entrypoint of the container
+ENTRYPOINT [ "RumAir" ]

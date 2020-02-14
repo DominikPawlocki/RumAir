@@ -27,7 +27,7 @@ func (StationsCapabiltiesFetcher) DoAllMeasurmentsAPIcall() ([]byte, error) {
 	return DoAllMeasurmentsAPIcall()
 }
 
-var allStationsMeasurmentsURL string = "https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
+var allStationsMeasurmentsURL string = "http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 
 type AvailableMeasurmentsResponce struct {
 	Success    bool                   `json:"success"`
