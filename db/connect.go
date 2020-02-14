@@ -21,12 +21,8 @@ func init() {
 	database = os.Getenv("RUMAIR_DATABASE")
 	password = os.Getenv("RUMAIR_DATABASE_PASSWORD")
 
-	fmt.Println("RUMAIR_DATABASE", database)
-	fmt.Println("RUMAIR_DATABASE_PASSWORD", password)
-
 	if database == "" || password == "" {
-		fmt.Println("RUMAIR_DATABASE environment variable must be the name of the Cosmos DB database and RUMAIR_DATABASE_PASSWORD must be the primary password for that database.")
-		os.Exit(1)
+		log.Fatalf("RUMAIR_DATABASE environment variable must be the name of the Cosmos DB database and RUMAIR_DATABASE_PASSWORD must be the primary password for that database.")
 	}
 }
 
@@ -91,5 +87,5 @@ func PlayMongo() {
 	}
 	fmt.Printf("Deleted this many records: %d\n", deleteResult.DeletedCount)
 
-	log.Println("Database was SUCESSFULLY contacted via MongoDB API. DB name is : ", database)
+	log.Println("Database was SUCESSFULLY contacted via MongoDB API. DB name is :", database)
 }

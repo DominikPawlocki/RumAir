@@ -17,8 +17,7 @@ RUN set -ex && \
   mv ./RumAir /usr/bin/RumAir
 
 #last FROM statement is the final base image. Unfortuneltely the MongoDB driver for CosmosDB needs GCC installed.. Image is pretty big then.. I will handle it later.
-#FROM frolvlad/alpine-gxx
-FROM gcc:latest
+FROM frolvlad/alpine-gxx
 
 # RUN apk --no-cache add ca-certificates
 
