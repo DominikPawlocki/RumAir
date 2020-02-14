@@ -90,4 +90,6 @@ func PlayMongo() {
 		log.Fatalf("Error deleting record: %v\n", err)
 	}
 	fmt.Printf("Deleted this many records: %d\n", deleteResult.DeletedCount)
+
+	log.Println("Database was SUCESSFULLY contacted via MongoDB API. DB name is : ", database)
 }

@@ -1,14 +1,4 @@
 #FROM alpine:3.5 golang:latest ; golang:<version>-alpine ; golang:<version>-windowsservercore
-
-# -------------------------------------------
-# WORKDIR /go/src/app
-
-# COPY . .
-
-# RUN go get -d -v ./...
-# # or go install might be faster in that case.
-# RUN go build -v ./...
-
 # -----------------------------------
 FROM golang:alpine AS builder
 
@@ -26,8 +16,9 @@ RUN set -ex && \
         -ldflags '-extldflags "-static"' && \
   mv ./RumAir /usr/bin/RumAir
 
-#last FROM statement is the final base image
-FROM gcc:latest
+#last FROM statement is the final base image. Unfortuneltely the MongoDB driver for CosmosDB needs GCC installed.. Image is pretty big then.. I will handle it later.
+FROM frolvlad/alpine-gxx
+#FROM gcc:latest
 
 # RUN apk --no-cache add ca-certificates
 
