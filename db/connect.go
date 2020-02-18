@@ -13,43 +13,48 @@ import (
 )
 
 var (
-	database string
-	password string
+	dbName    string
+	dbPass    string
+	dbUri     string
+	dbConnStr string
 )
 
 func init() {
-	database = os.Getenv("RUMAIR_DATABASE")
-	password = os.Getenv("RUMAIR_DATABASE_PASSWORD")
+	dbName = os.Getenv("RUMAIR_DATABASE")
+	dbPass = os.Getenv("RUMAIR_DATABASE_PASSWORD")
 
-	if database == "" || password == "" {
+	if dbName == "" || dbPass == "" {
 		log.Fatalf("RUMAIR_DATABASE environment variable must be the name of the Cosmos DB database and RUMAIR_DATABASE_PASSWORD must be the primary password for that database.")
 	}
+
+	dbUri = fmt.Sprintf("%s.documents.azure.com:10255", dbName)
+	dbConnStr = fmt.Sprintf("mongodb://%s:%s@%s/%s?ssl=true", dbName, dbPass, dbUri, dbName)
 }
 
-func PlayMongo() {
-	uri := fmt.Sprintf("mongodb://%s:%s@%s.documents.azure.com:10255/%s?ssl=true", database, password, database, database)
-
-	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
-	if err != nil {
+func CheckMongoDbConnection() {
+	var (
+		dbClient *mongo.Client
+		err      error
+	)
+	if dbClient, err = mongo.NewClient(options.Client().ApplyURI(dbConnStr)); err != nil {
 		log.Fatalf("Can't create mongodb client, go error %v\n", err)
 	}
 
-	// Set a 5s timeout and ensure that it is called
-	context, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	// Set a 7s timeout and ensure that it is called
+	context, cancel := context.WithTimeout(context.Background(), 7*time.Second)
 	defer cancel()
 
 	// Establish a connection to Cosmos DB
-	err = client.Connect(context)
-	if err != nil {
-		log.Fatalf("Can't connect to mongodb server %s, go error %v\n", uri, err)
+	if err = dbClient.Connect(context); err != nil {
+		log.Fatalf("Can't connect to mongodb on %s, go error %v\n", dbName, err)
 	}
 
 	// Retrieve a reference to the package collection in Cosmos DB
-	collection := client.Database(database).Collection("package")
+	collection := dbClient.Database(dbName).Collection("package")
 
 	// Write a single document into Cosmos DB
 	var insertResult *mongo.InsertOneResult
-	insertResult, err = collection.InsertOne(context,
+	if insertResult, err = collection.InsertOne(context,
 		bson.M{
 			"FullName":      "react",
 			"Description":   "A framework for building native apps with React.",
@@ -57,13 +62,12 @@ func PlayMongo() {
 			"StarsCount":    48794,
 			"LastUpdatedBy": "shergin",
 		},
-	)
-	if err != nil {
+	); err != nil {
 		log.Fatalf("Failed to insert record: %v\n", err)
 	}
 
 	id := insertResult.InsertedID
-	fmt.Printf("Inserted record id: %d\n", id)
+	fmt.Println("Inserted record id:", id)
 
 	// Update document
 	var updateResult *mongo.UpdateResult
@@ -73,19 +77,17 @@ func PlayMongo() {
 			"fullname": "react-native",
 		},
 	}
-	updateResult, err = collection.UpdateOne(context, filter, update)
-	if err != nil {
+	if updateResult, err = collection.UpdateOne(context, filter, update); err != nil {
 		log.Fatalf("Error updating record %v\n", err)
 	}
-	fmt.Printf("Updated this many records: %d\n", updateResult.ModifiedCount)
+	fmt.Println("Updated this many records:", updateResult.ModifiedCount)
 
 	// Delete document by id
 	var deleteResult *mongo.DeleteResult
-	deleteResult, err = collection.DeleteOne(context, filter)
-	if err != nil {
+	if deleteResult, err = collection.DeleteOne(context, filter); err != nil {
 		log.Fatalf("Error deleting record: %v\n", err)
 	}
-	fmt.Printf("Deleted this many records: %d\n", deleteResult.DeletedCount)
+	fmt.Println("Deleted this many records:", deleteResult.DeletedCount)
 
-	log.Println("Database was SUCESSFULLY contacted via MongoDB API. DB name is :", database)
+	log.Println("Database was SUCESSFULLY contacted via MongoDB API. DB name is :", dbName)
 }
