@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/dompaw/RumAir/airStations"
+	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 	"github.com/stretchr/testify/assert"
 )
 

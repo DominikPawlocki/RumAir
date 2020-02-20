@@ -7,7 +7,7 @@ pool:
     vmImage: 'ubuntu-latest'
   
 variables:
-    imageName: 'rumAir-$(build.buildId)'
+    imageName: 'RumAir_Pmpro_Sensors_API-$(build.buildId)'
     GOBIN:  '$(GOPATH)/bin' # Go binaries path
     GOROOT: '/usr/local/go1.13' # Go installation path
     GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path

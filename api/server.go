@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/dompaw/RumAir/airStations"
+	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 	"github.com/gorilla/mux"
 )
 

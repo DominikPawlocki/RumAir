@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dompaw/RumAir/airStations"
+	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 )
 
 var geobytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dompaw/RumAir/airStations"
+	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 )
 
 var locationiqBaseApiURL string = "http://locationiq.org/v1/reverse.php?key=e281731b38bb74"

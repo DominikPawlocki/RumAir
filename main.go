@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	airStations "github.com/dompaw/RumAir/airStations"
-	api "github.com/dompaw/RumAir/api"
+	airStations "github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
+	api "github.com/dompaw/RumAir_Pmpro_Sensors_API/api"
 )
 
 func main() {

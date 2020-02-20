@@ -1,4 +1,4 @@
-module github.com/dompaw/RumAir
+module github.com/dompaw/RumAir_Pmpro_Sensors_API
 
 go 1.13
 
