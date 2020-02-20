@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 
-	"github.com/dompaw/RumAir/airStations"
+	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 )
 
 // ...stations/sensors/codes

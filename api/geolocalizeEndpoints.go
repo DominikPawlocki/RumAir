@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dompaw/RumAir/airStations"
-	geolocalize "github.com/dompaw/RumAir/geoLocalize"
+	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
+	geolocalize "github.com/dompaw/RumAir_Pmpro_Sensors_API/geoLocalize"
 	"github.com/gorilla/mux"
 )
 

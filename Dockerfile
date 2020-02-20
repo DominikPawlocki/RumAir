@@ -3,26 +3,21 @@
 FROM golang:alpine AS builder
 
 # Add all the source code (except what's ignored# under `.dockerignore`) to the build context.
-ADD ./ /go/src/github.com/DominikPawlocki/RumAir/
-
-ENV RUMAIR_DATABASE = 'hello'
-ENV RUMAIR_DATABASE_PASSWORD = 'aaaa'
+ADD ./ /go/src/github.com/DominikPawlocki/RumAir_Pmpro_Sensors_API/
 
 RUN set -ex && \
-  cd /go/src/github.com/DominikPawlocki/RumAir && \       
+  cd /go/src/github.com/DominikPawlocki/RumAir_Pmpro_Sensors_API && \       
   CGO_ENABLED=0 go build \
         -tags netgo \
         -v -a \
         -ldflags '-extldflags "-static"' && \
-  mv ./RumAir /usr/bin/RumAir
+  mv ./RumAir_Pmpro_Sensors_API /usr/bin/RumAir_Pmpro_Sensors_API
 
-#last FROM statement is the final base image. Unfortuneltely the MongoDB driver for CosmosDB needs GCC installed.. Image is pretty big then.. I will handle it later.
-FROM frolvlad/alpine-gxx
-
-# RUN apk --no-cache add ca-certificates
+#last FROM statement is the final base image.
+FROM busybox
 
 # Retrieve the binary from the previous stage
-COPY --from=builder /usr/bin/RumAir /usr/local/bin/RumAir
+COPY --from=builder /usr/bin/RumAir_Pmpro_Sensors_API /usr/local/bin/RumAir_Pmpro_Sensors_API
 
 # Set the binary as the entrypoint of the container
-ENTRYPOINT [ "RumAir" ]
+ENTRYPOINT [ "RumAir_Pmpro_Sensors_API" ]
