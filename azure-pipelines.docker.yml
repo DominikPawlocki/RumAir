@@ -1,4 +1,3 @@
-# Docker image
 # Build a Docker image to run, deploy, or push to a container registry.
 # Add steps that use Docker Compose, tag images, push to a registry, run an image, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
@@ -11,37 +10,29 @@ variables:
     GOBIN:  '$(GOPATH)/bin' # Go binaries path
     GOROOT: '/usr/local/go1.13' # Go installation path
     GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-    modulePath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
-  
-# that works
-# steps:
-#   - script: docker build -f Dockerfile -t $(imageName) .
-#     displayName: 'docker build'
-
-# trigger:
-# - master
+    projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the repository
 
 steps:
 - script: |
     mkdir -p '$(GOBIN)'
     mkdir -p '$(GOPATH)/pkg'
-    mkdir -p '$(modulePath)'
+    mkdir -p '$(projectPath)'
     shopt -s extglob
-    mv !(gopath) '$(modulePath)'
+    mv !(gopath) '$(projectPath)'
     echo '##vso[task.prependpath]$(GOBIN)'
     echo '##vso[task.prependpath]$(GOROOT)/bin'
-    echo 'MODULE PATH IS : $(modulePath)' 
+    echo 'MODULE PATH IS : $(projectPath)' 
   displayName: 'Set up the Go workspace'
 
 
-# this task consists of 16 steps on 02/2020. Step 6 runs a tests also !
+# this task is MS defined. It pushes image to ACR also.
 - task: Docker@2
-  displayName: Build a Docker image
+  displayName: Build and push a Docker image to ACR
   inputs:
     containerRegistry: Epam-VS-AzureDockerRegistry
     repository: $(imageName)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
     command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
-    Dockerfile: $(modulePath)/Dockerfile
+    Dockerfile: $(projectPath)/Dockerfile
 
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/docker?view=azure-devops
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml
