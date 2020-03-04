@@ -1,10 +1,10 @@
-# NOT USED RIGHT NOW. 
+# ---------- NOT USED RIGHT NOW. -------------------
 
 version: '2'
 services: 
     microservice:
         build: .
-        image: cloud-native-go:1.0.1-alpine
+        image: RumAir_Pmpro_Sensors_API:latest
         environment: 
         - PORT=9090
         ports: 

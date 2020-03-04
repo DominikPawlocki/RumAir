@@ -12,19 +12,19 @@ variables:
       GOBIN:  '$(GOPATH)/bin' # Go binaries path
       GOROOT: '/usr/local/go1.13' # Go installation path
       GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-      modulePath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
+      projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
       #withIntegrationTests: true
     
 steps:
 - script: |
     mkdir -p '$(GOBIN)'
     mkdir -p '$(GOPATH)/pkg'
-    mkdir -p '$(modulePath)'
+    mkdir -p '$(projectPath)'
     shopt -s extglob
-    mv !(gopath) '$(modulePath)'
+    mv !(gopath) '$(projectPath)'
     echo '##vso[task.prependpath]$(GOBIN)'
     echo '##vso[task.prependpath]$(GOROOT)/bin'
-    echo 'MODULE PATH IS : $(modulePath)' 
+    echo 'MODULE PATH IS : $(projectPath)' 
   displayName: 'Set up the Go workspace'
   
 - script: |
@@ -37,39 +37,39 @@ steps:
         curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
         dep ensure
     fi
-  workingDirectory: '$(modulePath)'
+  workingDirectory: '$(projectPath)'
   displayName: 'Get dependencies.'
 
 - script: |
     go build -v .
-  workingDirectory: '$(modulePath)'
+  workingDirectory: '$(projectPath)'
   displayName: 'Building app.'
 
 - script: |
-    echo 'MODULE PATH IS : $(modulePath)/airStations'
+    echo 'MODULE PATH IS : $(projectPath)/airStations'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)
-  workingDirectory: '$(modulePath)/airStations'
+  workingDirectory: '$(projectPath)/airStations'
   displayName: 'Run TESTS for AIRSTATIONS module'
 
 - script: |
-    echo 'MODULE PATH IS : $(modulePath)/api'
+    echo 'MODULE PATH IS : $(projectPath)/api'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)
-  workingDirectory: '$(modulePath)/api'
+  workingDirectory: '$(projectPath)/api'
   displayName: 'Run TESTS for API module'
 
 - script: |
-    echo 'MODULE PATH IS : $(modulePath)/geoLocalize'
+    echo 'MODULE PATH IS : $(projectPath)/geoLocalize'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)  
-  workingDirectory: '$(modulePath)/geoLocalize'
+  workingDirectory: '$(projectPath)/geoLocalize'
   displayName: 'Run TESTS for GEOLOCALIZE module'
 
 # - task: CopyFiles@1
 #   inputs:
-#     SourceFolder: '$(modulePath)'
-#     Contents: '$(modulePath)/_obj/exe/'
+#     SourceFolder: '$(projectPath)'
+#     Contents: '$(projectPath)/_obj/exe/'
 #     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 #     OverWrite: true/
   
