@@ -87,3 +87,31 @@ func Test_Given_StationNumber04_And_ErrorResponseFromDoAllMeasurmentsAPIcall_Whe
 	assert.NotNil(t, err)
 	assert.Equal(t, exampleMockErrorText, err.Error(), fmt.Sprintf("Expected error like %s,but got %s in result", exampleMockErrorText, err.Error()))
 }
+
+func Test_Given_StationNumber04_And_Sensor041_DoesSensorBelongsToStation_ReturnsFalse(t *testing.T) {
+	var smt = SensorMeasurmentType{Code: "01"}
+	result := doesSensorBelongsToStation(smt, "04")
+
+	assert.False(t, result)
+}
+
+func Test_Given_StationNumber041_And_Sensor04_DoesSensorBelongsToStation_ReturnsFalse(t *testing.T) {
+	var smt = SensorMeasurmentType{Code: "01"}
+	result := doesSensorBelongsToStation(smt, "04")
+
+	assert.False(t, result)
+}
+
+func Test_Given_StationNumber07_And_Sensor07_DoesSensorBelongsToStation_ReturnsTrue(t *testing.T) {
+	var smt = SensorMeasurmentType{Code: "07"}
+	result := doesSensorBelongsToStation(smt, "07")
+
+	assert.True(t, result)
+}
+
+func Test_Given_StationNumber07_And_SensorWithLettersOnly_DoesSensorBelongsToStation_ReturnsFalse(t *testing.T) {
+	var smt = SensorMeasurmentType{Code: "blaBla"}
+	result := doesSensorBelongsToStation(smt, "07")
+
+	assert.False(t, result)
+}

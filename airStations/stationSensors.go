@@ -15,6 +15,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type IStationsCapabiltiesFetcher interface {
@@ -46,38 +47,54 @@ type AvailableMeasurmentsSimpleResponce struct {
 // Lets have one structure for both Unmarshall API responce and Marshall when saving to file.
 // The station id field is : Code. If same first 2 letters then it means same station.
 type SensorMeasurmentType struct {
-	ID                 int     `json:"id"`
-	Code               string  `json:"code"`
-	Name               string  `json:"name"`
-	CompoundType       string  `json:"compound_type"`
-	PhysicalDeviceID   int     `json:"physical_device_id"`
-	PhysicalDeviceSlot string  `json:"physical_device_slot"`
-	UnitID             string  `json:"unit_id"`
-	CoefA              float32 `json:"coef_a"`
-	CoefB              float32 `json:"coef_b"`
-	TechnicalP         int     `json:"technical_p"`
-	VirtualP           int     `json:"virtual_p"`
-	AnalogP            int     `json:"analog_p"`
-	AnalogChan         int     `json:"analog_chan"`
-	BinaryP            int     `json:"binary_p"`
-	BinaryChan         int     `json:"binary_chan"`
-	BinaryCounter      int     `json:"binary_counter"`
-	CoverageRate       int     `json:"coverage_rate"`
-	AggUnit            string  `json:"agg_unit"`
-	Fconv              float32 `json:"fconv"`
-	Decimals           int     `json:"decimals"`
-	Format             string  `json:"format"`
-	SampleType         string  `json:"sample_type"`
-	AverageType        string  `json:"average_type"`
-	Averages           string  `json:"averages"`
-	HighAverages       string  `json:"high_averages"`
-	Expression         string  `json:"expression"`
-	FinishDate         string  `json:"finish_date"`
-	IsPublished        int     `json:"is_published"`
-	Timeshift          int     `json:"timeshift"`
-	ManualP            int     `json:"manual_p"`
-	PassiveP           int     `json:"passive_p"`
-	StartDate          int     `json:"start_date"`
+	ID                 int       `json:"id"`
+	Code               string    `json:"code"`
+	Name               string    `json:"name"`
+	CompoundType       string    `json:"compound_type"`
+	PhysicalDeviceID   int       `json:"physical_device_id"`
+	PhysicalDeviceSlot string    `json:"physical_device_slot"`
+	UnitID             string    `json:"unit_id"`
+	CoefA              float32   `json:"coef_a"`
+	CoefB              float32   `json:"coef_b"`
+	TechnicalP         int       `json:"technical_p"`
+	VirtualP           int       `json:"virtual_p"`
+	AnalogP            int       `json:"analog_p"`
+	AnalogChan         int       `json:"analog_chan"`
+	BinaryP            int       `json:"binary_p"`
+	BinaryChan         int       `json:"binary_chan"`
+	BinaryCounter      int       `json:"binary_counter"`
+	CoverageRate       int       `json:"coverage_rate"`
+	AggUnit            string    `json:"agg_unit"`
+	Fconv              float32   `json:"fconv"`
+	Decimals           int       `json:"decimals"`
+	Format             string    `json:"format"`
+	SampleType         string    `json:"sample_type"`
+	AverageType        string    `json:"average_type"`
+	Averages           string    `json:"averages"`
+	HighAverages       string    `json:"high_averages"`
+	Expression         string    `json:"expression"`
+	FinishDate         string    `json:"finish_date"`
+	IsPublished        int       `json:"is_published"`
+	Timeshift          int       `json:"timeshift"`
+	ManualP            int       `json:"manual_p"`
+	PassiveP           int       `json:"passive_p"`
+	StartDate          time.Time `json:"start_date"`
+}
+
+//UnmarshalJSON - is called when json.Unmarshal method executes on main type. It changes Unix timestamp from db to time.time.
+func (smt *SensorMeasurmentType) UnmarshalJSON(data []byte) error {
+	type Alias SensorMeasurmentType
+	aux := struct {
+		StartedAt int64 `json:"start_date"`
+		*Alias
+	}{
+		Alias: (*Alias)(smt),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	smt.StartDate = time.Unix(aux.StartedAt, 0)
+	return nil
 }
 
 // Same like above, but simpler one
@@ -190,7 +207,7 @@ func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) 
 	}
 
 	for _, measurmentType := range allMeasurments.Data {
-		if strings.HasPrefix(measurmentType.Code, stationID) {
+		if doesSensorBelongsToStation(measurmentType, stationID) {
 			result = append(result, measurmentType)
 		}
 	}
@@ -287,4 +304,14 @@ func createNewStation(stationID string) (result *AirStation) {
 		result = &AirStation{ID: int(99999)}
 	}
 	return result
+}
+
+func doesSensorBelongsToStation(measurmentType SensorMeasurmentType, stationID string) bool {
+	if strings.HasPrefix(measurmentType.Code, stationID) {
+		re := regexp.MustCompile("[0-9]+")
+		if re.FindAllString(measurmentType.Code, 1)[0] == stationID {
+			return true
+		}
+	}
+	return false
 }
