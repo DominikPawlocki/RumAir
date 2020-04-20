@@ -18,11 +18,18 @@ func (m MockableHTTPHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.methodToBeCalled(w, r, m.mockableDataFetcher)
 }
 
+var orig http.Handler
+
 func Main() {
 	fmt.Println("Starting a server ..")
 	myRouter := mux.NewRouter().StrictSlash(true)
-	fs := http.FileServer(http.Dir("./swaggerui/"))
-	myRouter.PathPrefix("/swaggerui/").Handler(http.StripPrefix("/swaggerui/", fs))
+	fs := http.FileServer(http.Dir("./swagger/")) //maybe jednak separated would be better, security
+	orig = http.StripPrefix("/swagger/", fs)
+
+	//myRouter.PathPrefix("/swagger/").HandlerFunc()
+	//myRouter.PathPrefix("/swagger/").Handler(fs).Methods("GET")
+
+	myRouter.HandleFunc("/swagger/swagger.json", aa) //not mockable for unit testing
 
 	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)      //not mockable for unit testing
 	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler)     //not mockable for unit testing
@@ -52,5 +59,22 @@ func Main() {
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":80", myRouter))
+	log.Fatal(http.ListenAndServe(":81", myRouter))
+}
+
+// ..
+func aa(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Content-Type", "application/json; charset=utf-8")
+	fmt.Println("Fiel server !  ..")
+
+	//fs := http.FileServer(http.Dir("./swagger/")) //maybe jednak separated would be better, security
+	orig.ServeHTTP(w, r)
+}
+
+func addDefaultHeaders(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		fn(w, r)
+	}
 }
