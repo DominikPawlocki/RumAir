@@ -1,39 +1,38 @@
-# ---------- NOT USED RIGHT NOW. -------------------
 version: "3.7"      
 services:
-    rumair_pmpro_sensor_api:
+    sensors_api:
+        image: sensors_api:rc2
+        container_name: sensor_api
         build:
             context: ./
             cache_from:
                 - golang:alpine:latest
                 - quay.io/goswagger/swagger:latest
-            #args:   //from dockerFile !
-                #buildno: 1
+            args:
+                BUILD_NR: docker compose
             # 3.8 -> If you specify image as well as build, then Compose names the built image with the webapp and optional tag specified in image:
-            #image: sensor_api:latest
-            labels:
-                com.example.description: "Accounting webapp"
-            #container_name: sensor_api:latest
         volumes:
-          #  - "/tmp:/usr/local/bin/RumAir_Pmpro_Sensors_API/swagger.json:ro"
-            #- "C:/Users/dominik_pawlocki/compose:/usr/local/bin/RumAir_Pmpro_Sensors_API:ro"
-            # - /c/Users/dominik_pawlocki/compose/:/home/
+        # dockerfile build copies swagger.json there
             - "swaggerDefFile:/home"
         ports:
             - "5000:81"
     swagger:
         image: swaggerapi/swagger-ui:latest
+        container_name: swaggerUI_sensors_api
         depends_on:
-            - rumair_pmpro_sensor_api
+            - sensors_api
         ports:
             - "80:8080"
+        environment:
+            - BASE_URL=/swagger 
+            - SWAGGER_JSON=/etc/swagger/swagger.json
         volumes:
             - type: volume
               source: swaggerDefFile
               target: /etc/swagger
               volume:
                 nocopy: true
-# for sharing a file swagger.json made by build of api container !
+# for sharing a file swagger.json made by build of api container
 volumes:
     swaggerDefFile:
 

@@ -2,6 +2,11 @@
 # -----------------------------------
 FROM golang:alpine AS golang_builder
 
+ARG BUILD_NR=docker_build_directly
+RUN set -ex && echo "--------------- Build triggered by: $BUILD_NR -----------------"
+
+# RUN $time=$(date +”%d-%b-%Y_%H:%M:%S”) && echo $time 
+
 # Add all the source code (except what's ignored# under `.dockerignore`) to the build context.
 COPY ./ /go/src/github.com/DominikPawlocki/RumAir_Pmpro_Sensors_API/
 
@@ -41,7 +46,6 @@ COPY --from=swagger_spec_builder /usr/local/golangSourcesForSwagger/swagger.json
 
 # Retrieve the binary from the previous stage
 COPY --from=golang_builder /usr/bin/RumAir_Pmpro_Sensors_API /usr/local/bin/RumAir_Pmpro_Sensors_API
-
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT [ "RumAir_Pmpro_Sensors_API" ]
