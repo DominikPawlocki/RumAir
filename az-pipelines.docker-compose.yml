@@ -18,7 +18,7 @@ steps:
     action: Run services
     dockerComposeFileArgs: 
         BUILD_TYPE='triggered by Azure Pipelines dockerCompose@0 task'
-    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureSubscriptionEndpoint: EPAM-MSDN-VS-Azure Resource Manager connection.
     azureContainerRegistry: Epam-VS-AzureDockerRegistry
     dockerComposeFile: docker-compose.yml
     projectName: $(Build.Repository.Name)
