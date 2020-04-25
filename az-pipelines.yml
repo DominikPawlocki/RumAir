@@ -65,19 +65,3 @@ steps:
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)  
   workingDirectory: '$(projectPath)/geoLocalize'
   displayName: 'Run TESTS for GEOLOCALIZE module'
-
-# - task: CopyFiles@1
-#   inputs:
-#     SourceFolder: '$(projectPath)'
-#     Contents: '$(projectPath)/_obj/exe/'
-#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
-#     OverWrite: true/
-  
-# - task: PublishBuildArtifacts@1
-#   inputs:
-#     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#     #Specify the name of the artifact that you want to create. It can be whatever you want. For example: drop
-#     ArtifactName: 'RumAir_LinuxApp'
-#     # Choose whether to store the artifact in Azure Pipelines (Container), or to copy it to a file share (FilePath) that must be accessible from the build agent.
-#     publishLocation: 'Container'
-#     #targetPath: # Required when publishLocation == FilePath

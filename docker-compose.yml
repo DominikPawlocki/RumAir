@@ -2,15 +2,14 @@ version: "3.7"
 services:
     sensors_api:
         image: sensors_api:rc2
-        container_name: sensor_api
+        container_name: sensors_api
         build:
             context: ./
             cache_from:
                 - golang:alpine:latest
                 - quay.io/goswagger/swagger:latest
             args:
-                BUILD_NR: docker compose
-            # 3.8 -> If you specify image as well as build, then Compose names the built image with the webapp and optional tag specified in image:
+                BUILD_TYPE: called from docker compose
         volumes:
         # dockerfile build copies swagger.json there
             - "swaggerDefFile:/home"

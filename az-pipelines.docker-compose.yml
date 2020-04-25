@@ -1,0 +1,24 @@
+# This pipeline builds two docker images (this golang api and swaggerUI from dockerhub )
+# It pushes it to Azure ACR and runs it both. 
+# CD
+
+# this task is MS defined. Use this task to build, push or run multi-container Docker applications. 
+
+#variables:
+    #imageName: 'RumAir_Pmpro_Sensors_API-$(build.buildId)'
+
+- task: DockerCompose@0
+  displayName: handle docker compose process like 'docker-compose up --build -d'. Continious delivery.
+  inputs:
+    action: Run services
+    dockerComposeFileArgs: 
+        BUILD_TYPE='triggered by Azure Pipelines dockerCompose@0 task'
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: Epam-VS-AzureDockerRegistry
+    dockerComposeFile: docker-compose.yml
+    projectName: $(Build.Repository.Name)
+    qualifyImageNames: true
+    additionalImageTags: $(Build.BuildId)
+    buildImages: true
+    abortOnContainerExit: true
+    detached: false

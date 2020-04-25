@@ -25,7 +25,8 @@ steps:
   displayName: 'Set up the Go workspace'
 
 
-# this task is MS defined. It pushes image to ACR also.
+# this task is MS defined. It pushes image to ACR, but doesnt run it. CI not CD. 
+# It only covers single (this) service, doesnt handle swaggerUI container, even when it generates swagger.json by dockerfile..
 - task: Docker@2
   displayName: Build and push a Docker image to ACR
   inputs:
