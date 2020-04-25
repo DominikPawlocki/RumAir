@@ -7,6 +7,11 @@
 #variables:
     #imageName: 'RumAir_Pmpro_Sensors_API-$(build.buildId)'
 
+
+pool:
+    vmImage: 'ubuntu-latest'
+      
+steps:
 - task: DockerCompose@0
   displayName: handle docker compose process like 'docker-compose up --build -d'. Continious delivery.
   inputs:
