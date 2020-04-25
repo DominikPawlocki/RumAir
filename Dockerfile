@@ -2,7 +2,7 @@
 # -----------------------------------
 FROM golang:alpine AS golang_builder
 
-ARG BUILD_TYPE="called from docker build command, without compose"
+ARG BUILD_TYPE="manually triggered from docker build command, without compose"
 RUN set -ex && echo "--------------- Build triggered by: $BUILD_TYPE -----------------"
 
 # RUN $time=$(date +”%d-%b-%Y_%H:%M:%S”) && echo $time 

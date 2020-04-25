@@ -9,7 +9,7 @@ services:
                 - golang:alpine:latest
                 - quay.io/goswagger/swagger:latest
             args:
-                BUILD_TYPE: called from docker compose
+                BUILD_TYPE: manually triggered by docker compose up command
         volumes:
         # dockerfile build copies swagger.json there
             - "swaggerDefFile:/home"
