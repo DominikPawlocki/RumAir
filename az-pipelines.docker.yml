@@ -12,6 +12,7 @@ variables:
     GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
     projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the repository
 
+  # is it needed at all ??
 steps:
 - script: |
     mkdir -p '$(GOBIN)'
@@ -27,14 +28,31 @@ steps:
 
 # this task is MS defined. It pushes image to ACR, but doesnt run it. CI not CD. 
 # It only covers single (this) service, doesnt handle swaggerUI container, even when it generates swagger.json by dockerfile..
+# - task: Docker@2
+#   displayName: Build and push a Docker image to ACR
+#   inputs:
+#     containerRegistry: Epam-VS-AzureDockerRegistry
+#     repository: $(imageName)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
+#     command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
+#     Dockerfile: $(projectPath)/Dockerfile
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/docker?view=azure-devops
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml
+
 - task: Docker@2
-  displayName: Build and push a Docker image to ACR
+  displayName: Build
   inputs:
     containerRegistry: Epam-VS-AzureDockerRegistry
     repository: $(imageName)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
     command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
     Dockerfile: $(projectPath)/Dockerfile
+    arguments: --BUILD_TYPE $(BUILD_TYPE)
 
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/docker?view=azure-devops
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml
+- task: Docker@2
+  displayName: Push
+  inputs:
+    containerRegistry: Epam-VS-AzureDockerRegistry
+    repository: $(imageName)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
+    command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
+    Dockerfile: $(projectPath)/Dockerfile
 
