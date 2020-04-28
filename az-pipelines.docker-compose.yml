@@ -19,7 +19,7 @@ steps:
     dockerComposeFileArgs: 
         BUILD_TYPE='triggered by Azure Pipelines dockerCompose@0 task'
     azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
-    azureContainerRegistry: RumAirStaging
+    azureContainerRegistry: rumairstaging.azurecr.io
     dockerComposeFile: docker-compose.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true
