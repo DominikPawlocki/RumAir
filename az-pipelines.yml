@@ -2,6 +2,8 @@
 # this is NON-CONTENERIZED (NON-DOCKERIZE) build version. 
 # https://aka.ms/yaml
 
+# there is also Microsoft defined go step prepared already! https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/go?view=azure-devops
+
 trigger:
   - master
   
