@@ -15,7 +15,6 @@ variables:
       GOROOT: '/usr/local/go1.13' # Go installation path
       GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
       projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
-      #withIntegrationTests: true
     
 steps:
 - script: |
@@ -47,6 +46,7 @@ steps:
   workingDirectory: '$(projectPath)'
   displayName: 'Building app.'
 
+# flag withIntegrationTests is injected from Azure DevOps, and then used as regular boolean variable in the code.
 - script: |
     echo 'MODULE PATH IS : $(projectPath)/airStations'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
