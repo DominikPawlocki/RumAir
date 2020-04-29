@@ -23,8 +23,8 @@ var orig http.Handler
 func Main() {
 	fmt.Println("Starting a server ..")
 	myRouter := mux.NewRouter().StrictSlash(true)
-	fs := http.FileServer(http.Dir("./swagger/")) //maybe jednak separated would be better, security
-	orig = http.StripPrefix("/swagger/", fs)
+	//fs := http.FileServer(http.Dir("./swagger/")) //maybe jednak separated would be better, security
+	//orig = http.StripPrefix("/swagger/", fs)
 
 	//myRouter.PathPrefix("/swagger/").HandlerFunc()
 	//myRouter.PathPrefix("/swagger/").Handler(fs).Methods("GET")
@@ -59,7 +59,7 @@ func Main() {
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":81", myRouter))
+	log.Fatal(http.ListenAndServe(":5000", myRouter))
 }
 
 // ..
