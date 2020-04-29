@@ -23,6 +23,6 @@ steps:
     projectName: $(Build.Repository.Name)
     # qualifyImageNames: true
     additionalImageTags: $(Build.BuildId)
-    # buildImages: true
+    buildImages: true
     # abortOnContainerExit: true
     # detached: false
