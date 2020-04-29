@@ -44,13 +44,13 @@ steps:
   inputs:
     containerRegistry: Epam-VS-AzureDockerRegistry
     repository: $(imageName)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
-    command: build           #(Required) Acceptable values: buildAndPush/build/push/login/logout
+    command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
     Dockerfile: $(projectPath)/Dockerfile
     arguments: --build-arg BUILD_TYPE=$(BUILD_TYPE)
 
-- task: Docker@2
-  displayName: Push
-  inputs:
-    containerRegistry: Epam-VS-AzureDockerRegistry
-    repository: $(imageName)
-    command: push
+# - task: Docker@2
+#   displayName: Push
+#   inputs:
+#     containerRegistry: Epam-VS-AzureDockerRegistry
+#     repository: $(imageName)
+#     command: push
