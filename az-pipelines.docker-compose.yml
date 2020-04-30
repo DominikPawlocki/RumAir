@@ -28,10 +28,10 @@ steps:
 - task: DockerCompose@0
   displayName: Push services
   inputs:
-      action: Push services
-      azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
-      azureContainerRegistry: rumairstaging.azurecr.io
-      dockerComposeFile: docker-compose.yml
-      projectName: $(Build.Repository.Name)
-      qualifyImageNames: true
-      additionalImageTags: $(Build.BuildId)
+    action: Push services
+    azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
+    azureContainerRegistry: rumairstaging.azurecr.io
+    dockerComposeFile: docker-compose.yml
+    projectName: $(Build.Repository.Name)
+    qualifyImageNames: true
+    additionalImageTags: $(Build.BuildId)
