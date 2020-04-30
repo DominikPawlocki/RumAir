@@ -25,7 +25,7 @@ steps:
     additionalImageTags: $(Build.BuildId)
     buildImages: true
     #abortOnContainerExit: true
-    - task: DockerCompose@0
+- task: DockerCompose@0
     displayName: Push services
     inputs:
       action: Push services
