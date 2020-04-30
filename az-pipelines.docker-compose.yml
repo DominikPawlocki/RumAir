@@ -15,23 +15,23 @@ steps:
 - task: DockerCompose@0
   displayName: handle docker compose process like 'docker-compose up --build -d'. Continious delivery.
   inputs:
-    action: Run services
+    action: Build services
     dockerComposeFileArgs: BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE)
     azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
     azureContainerRegistry: rumairstaging.azurecr.io
     dockerComposeFile: docker-compose.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true
-    additionalImageTags: $(Build.BuildId)
+    #additionalImageTags: $(Build.BuildId)
     buildImages: true
     #abortOnContainerExit: true
-# - task: DockerCompose@0
-#   displayName: Run services
-#   inputs:
-#     action: Run services #Push Services, Run services
-#     azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
-#     azureContainerRegistry: rumairstaging.azurecr.io
-#     dockerComposeFile: docker-compose.yml
-#     projectName: $(Build.Repository.Name)
-#     qualifyImageNames: true
-#     additionalImageTags: $(Build.BuildId)
+- task: DockerCompose@0
+  displayName: Push services
+  inputs:
+    action: Push services
+    azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
+    azureContainerRegistry: rumairstaging.azurecr.io
+    dockerComposeFile: docker-compose.yml
+    projectName: $(Build.Repository.Name)
+    qualifyImageNames: true
+    #additionalImageTags: $(Build.BuildId)

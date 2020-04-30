@@ -52,7 +52,6 @@ ENTRYPOINT [ "RumAir_Pmpro_Sensors_API" ]
 
 
 
-
 # LABEL "com.example.vendor"="ACME Incorporated"
 # LABEL com.example.label-with-value="foo"
 # LABEL version="1.0"
