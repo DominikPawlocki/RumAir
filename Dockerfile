@@ -32,20 +32,22 @@ WORKDIR /usr/local/golangSourcesForSwagger
 RUN set -ex && \
   swagger generate spec -o swagger.json
 
-# validate a generated file
+# validate a generated file and show whats inside directory
 RUN set -ex && \
-    swagger validate --stop-on-error swagger.json 
-RUN pwd
+    swagger validate --stop-on-error swagger.json && \
+    pwd && ls -lt
 #-----------------------------------------------------------------------------------------------------
 
 #last FROM statement is the final base image.
 FROM busybox
 
 # first copy the swagger.json from previous stage to the image for different docker container usage (swaggerui)
-COPY --from=swagger_spec_builder /usr/local/golangSourcesForSwagger/swagger.json /home
+COPY --from=swagger_spec_builder /usr/local/golangSourcesForSwagger/swagger.json /home/swagger/swagger.json
 
 # Retrieve the binary from the previous stage
 COPY --from=golang_builder /usr/bin/RumAir_Pmpro_Sensors_API /usr/local/bin/RumAir_Pmpro_Sensors_API
+
+RUN cd home && ls -lt
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT [ "RumAir_Pmpro_Sensors_API" ]
