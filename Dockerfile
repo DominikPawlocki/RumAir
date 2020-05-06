@@ -42,12 +42,12 @@ RUN set -ex && \
 FROM busybox
 
 # first copy the swagger.json from previous stage to the image for different docker container usage (swaggerui)
-COPY --from=swagger_spec_builder /usr/local/golangSourcesForSwagger/swagger.json /home/swagger/swagger.json
+COPY --from=swagger_spec_builder /usr/local/golangSourcesForSwagger/swagger.json /home/swagger/
 
 # Retrieve the binary from the previous stage
 COPY --from=golang_builder /usr/bin/RumAir_Pmpro_Sensors_API /usr/local/bin/RumAir_Pmpro_Sensors_API
 
-RUN cd home && ls -lt
+RUN cd /home/swagger && ls -lt
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT [ "RumAir_Pmpro_Sensors_API" ]
