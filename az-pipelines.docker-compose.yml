@@ -1,6 +1,5 @@
 # This pipeline builds two docker images (this golang api and swaggerUI from dockerhub )
-# It pushes it to Azure ACR and runs it both. 
-# CD
+# It pushes it to Azure ACR 
 
 # this task is MS defined. Use this task to build, push or run multi-container Docker applications. 
 
@@ -19,10 +18,11 @@ steps:
     dockerComposeFileArgs: BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE)
     azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
     azureContainerRegistry: rumairstaging.azurecr.io
-    dockerComposeFile: docker-compose.yml
+    #additionalDockerComposeFiles: 
+    dockerComposeFile: docker-compose.azure.prod.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true
-    #additionalImageTags: $(Build.BuildId)
+    additionalImageTags: $(Build.BuildId)
     buildImages: true
     #abortOnContainerExit: true
 - task: DockerCompose@0
@@ -31,7 +31,7 @@ steps:
     action: Push services
     azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
     azureContainerRegistry: rumairstaging.azurecr.io
-    dockerComposeFile: docker-compose.yml
+    dockerComposeFile: docker-compose.azure.prod.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true
     #additionalImageTags: $(Build.BuildId)

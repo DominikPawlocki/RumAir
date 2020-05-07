@@ -1,5 +1,5 @@
 # this file is merged with a docker-compose file when just run manually via 'docker-compose up --build -d' command
-#it will be ommited when run in Azure DevOps pipelines, cause that uses docker-compose.yml literally
+# it will/should be ommited when run in Azure DevOps pipelines
 version: "3.7"
 volumes:
     swaggerDefFile:

@@ -1,7 +1,6 @@
-# for sharing a file swagger.json made during build docker image of sensors_api
+# right now this file is totally independent. Probably it can use docker-compose combining files feature and contains only differences then.
 # VERY IMPORTANT - it uses a volume witch is persisted. 
-# Remember to delete this volume before new build, otherwise docker is not copying already existing swagger.json from container to host !
-# command is 'docker volume rm rumair_pmpro_sensors_api_swaggerDefFile' or docker volume prune.
+# Remember to delete volume in Azure ? Like 'docker volume rm rumair_pmpro_sensors_api_swaggerDefFile' or 'docker volume prune'.
 version: "3.7"
 services:
     sensors_api:

@@ -29,7 +29,7 @@ steps:
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml
 
 - task: Docker@2
-  displayName: Build Go code, generate swagger.json file, create Docker image and push it to ACR
+  displayName: Build Go code, generate swagger.json file, create Docker image and push it to ACR. Single container, no swaggerUI.
   inputs:
     containerRegistry: Epam-VS-AzureDockerRegistry
     repository: $(imageName)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
