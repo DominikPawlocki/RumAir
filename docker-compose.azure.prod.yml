@@ -15,8 +15,8 @@ services:
                 BUILD_TYPE: Build from AzureDevOps
         volumes:
             - ${WEBAPP_STORAGE_HOME}/site/wwwroot/swagger:/home/swagger/
-        ports:
-            - "5000:5000"
+        # ports:
+        #     - "5000:5000"
     swagger:
         image: swaggerapi/swagger-ui:latest
         container_name: swaggerUI_sensors_api
@@ -28,7 +28,7 @@ services:
             - BASE_URL=/swagger 
             - SWAGGER_JSON=/etc/swagger/swagger.json
         volumes:
-            - ${WEBAPP_STORAGE_HOME}/site/wwwroot/swagger:/etc/swagger/
+            - ${WEBAPP_STORAGE_HOME}/site/wwwroot/swagger:/etc/swagger/:ro
 
 # How to run swagger spec generator locally 
 #You can put the following in a file called swagger.bat and include it in your path environment variable to act as an alias.
