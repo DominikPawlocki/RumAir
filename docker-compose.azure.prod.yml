@@ -14,7 +14,7 @@ services:
             args:
                 BUILD_TYPE: Build from AzureDevOps
         volumes:
-            - ${WEBAPP_STORAGE_HOME}/site/wwwroot/swagger:/home/swagger/
+            - ${WEBAPP_STORAGE_HOME}/site/wwwroot/swagger:/tmp/swagger/
         # ports:
         #     - "5000:5000"
     swagger:
