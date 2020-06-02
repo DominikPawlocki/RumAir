@@ -49,6 +49,12 @@ COPY --from=golang_builder /usr/bin/RumAir_Pmpro_Sensors_API /usr/local/bin/RumA
 
 RUN cd /tmp/swagger && ls -lt
 
+# Busybox is minimal. Really. Doesnt have 'apk' command even.. Need to copy it from previous stage
+# COPY --from=golang_builder /etc/ssl/certs /etc/ssl/certs
+
+ENV LISTEN_PORT=5000
+EXPOSE 5000
+
 # Set the binary as the entrypoint of the container
 ENTRYPOINT [ "RumAir_Pmpro_Sensors_API" ]
 

@@ -1,21 +1,29 @@
-// Package classification RumAir API.
+// Package classification AbaxTest..
 //
-// the purpose of this application is to provide an application
-// that is using plain go code to define an API
+// Hi !
 //
-// This should demonstrate all the possible comment annotations
-// that are available to turn go code into a fully compliant swagger 2.0 spec
+// Please take a look at this app as a Hackerrank task done little bit wider.
 //
-// Terms Of Service:
+// It is contenerized application, consist of two containers, public swaggerUI (pulled from DockerHub) and custom AbaxTestApi one.
+// Both are deployed on Azure Docker Instances service.
 //
-// there are no TOS at this moment, use at your own risk we take no responsibility
+// My container (AbaxTestApi) is build via Dockerfile and then its pushed to my private Azure Docker Container by Azure DevOps pipeline YML (./'az-pipelines.docker.yml )
+// During this Docker build, there is a 'swagger.json' artifact produced also, validated and stored to be static hosted at /swagger/swagger.json endpoint.
+//
+// The app is in Golang, which I am into intesively last times, but it doesnt matter. I just wanted to practice it, I could do it in C# also.
+//
+// Still almost non of Unit tests, some parts are fixed instead to be injected during deploy, and it wasnt done in 1 hour :-) but ...
+// at least I learnt a lot, and I hope you like it.
 //
 //	Schemes: http
-//	BasePath: /v2
-//	Version: 1.0.1
+//	BasePath:
+//	Version: new attempt :-)
 //	License: MIT http://opensource.org/licenses/MIT
-//	Contact: Dmnk <domin@wp.eu> https://githublink.com
-//	Host: rumair.azurewebsites.net
+//	Contact: Dominik Pawlocki <d.pawlocki@onet.pl> https://github.com/DominikPawlocki/AbaxTest1
+//	Host: abaxtestapi.northeurope.azurecontainer.io:5000
+//	Description: Abax test
+//
+// Still - good task! Thx and have a good day !
 //
 //	Consumes:
 //		- application/json

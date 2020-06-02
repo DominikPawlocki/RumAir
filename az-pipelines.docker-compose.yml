@@ -1,11 +1,7 @@
 # This pipeline builds two docker images (this golang api and swaggerUI from dockerhub )
 # It pushes it to Azure ACR 
 
-# this task is MS defined. Use this task to build, push or run multi-container Docker applications. 
-
-#variables:
-    #imageName: 'RumAir_Pmpro_Sensors_API-$(build.buildId)'
-
+# NOT USED RIGHT NOW. Regular az-pipelines.docker.yml used.
 
 pool:
     vmImage: 'ubuntu-latest'

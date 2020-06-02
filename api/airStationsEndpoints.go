@@ -3,8 +3,9 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 )
@@ -52,8 +53,30 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 	}
 }
 
-// .../stations/{id}/sensors
-func ShowStationSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+	// swagger:operation GET /stations/{id}/sensors tag12345 sensorsFetching
+	// Returns something
+	// summary:
+	// - A short summary of what the operation does. For maximum readability in the swagger-ui, this field SHOULD be less than 120 characters.
+	// description:
+	// - A verbose explanation of the operation behavior. GFM syntax can be used for rich text representation.
+	// ---
+	// produces:
+	// - application/json
+	// parameters:
+	// - name: id
+	//   in: path
+	//   description: id of device parent
+	//   required: true
+	//   type: string
+	//   # format: string should be like 02, 04 etc
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/sensorsResponse"
+	//   "404":
+	//     "$ref": "#/responses/notFound"
+	//   "500":
+	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
 	//stationID := r.URL.Query()["message"][0]

@@ -8,19 +8,5 @@ services:
         build:
             args:
                 BUILD_TYPE: localhost manually triggered build by docker-compose up --build -d command like
-        volumes:
-            - type: volume # the mount type volume, bind, tmpfs or npipe
-              source: swaggerDefFile # the source of the mount, a path on the host for a bind mount, or the name of a volume defined in the top-level volumes key.
-              target: /home/swagger # the path in the container where the volume is mounted
-              read_only: false #flag to set the volume as read-only
         ports:
             - "5000:5000"
-
-    swagger:
-        volumes:
-            - type: volume
-              source: swaggerDefFile
-              target: /etc/swagger
-              read_only: true
-              volume:
-                nocopy: false # flag to disable copying of data from a container when a volume is created

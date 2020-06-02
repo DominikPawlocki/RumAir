@@ -42,10 +42,9 @@ type AvailableMeasurmentsSimpleResponce struct {
 	Data       []SensorMeasurmentSimpleType `json:"data"`
 }
 
-// SensorMeasurmentType - describes the type of stations sensor is capable to measure with its Units, name and so on.
-// The first two letters of `Code` is the station Id ! There is no specific call to fetch station Ids, so I have to deduct it from this call.
-// Lets have one structure for both Unmarshall API responce and Marshall when saving to file.
-// The station id field is : Code. If same first 2 letters then it means same station.
+// SensorMeasurmentType - describes the type of sensor , with its Units, name and so on.
+// The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.
+// There is no specific call to fetch station Id's, so I have to deduct it from this call.
 type SensorMeasurmentType struct {
 	ID                 int       `json:"id"`
 	Code               string    `json:"code"`

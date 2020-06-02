@@ -1,6 +1,4 @@
-# right now this file is totally independent. Probably it can use docker-compose combining files feature and contains only differences then.
-# VERY IMPORTANT - it uses a volume witch is persisted. 
-# Remember to delete volume in Azure ? Like 'docker volume rm rumair_pmpro_sensors_api_swaggerDefFile' or 'docker volume prune'.
+# NOT USED RIGHT NOW.
 version: "3.7"
 services:
     sensors_api:
@@ -10,13 +8,9 @@ services:
             context: ./
             cache_from:
                 - golang:alpine:latest
-                - quay.io/goswagger/swagger:latest
-            args:
-                BUILD_TYPE: Build from AzureDevOps
-        volumes:
-            - ${WEBAPP_STORAGE_HOME}/site/wwwroot/swagger:/tmp/swagger/
-        # ports:
-        #     - "5000:5000"
+                - quay.io/goswagger/swagg
+        ports:
+            - "80:5000"
     swagger:
         image: swaggerapi/swagger-ui:latest
         container_name: swaggerUI_sensors_api
