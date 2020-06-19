@@ -27,7 +27,7 @@ func Test_GivenStationNumber04_WhenShowStationSensorCodesHandler_ThenResponceIsC
 
 	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
-		methodToBeCalled:    ShowStationSensorCodesHandler}).Methods("GET")
+		methodToBeCalled:    GetStationSensorsHandler}).Methods("GET")
 	myRouter.ServeHTTP(rr, req)
 
 	assert.Equal(t, rr.Code, http.StatusOK, fmt.Sprintf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK))
@@ -54,7 +54,7 @@ func Test_GivenIncorrectStationNumber_WhenShowStationSensorCodesHandlerHandler_T
 
 	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
-		methodToBeCalled:    ShowStationSensorCodesHandler}).Methods("GET")
+		methodToBeCalled:    GetStationSensorsHandler}).Methods("GET")
 	myRouter.ServeHTTP(rr, req)
 
 	assert.Equal(t, rr.Code, http.StatusNotFound, fmt.Sprintf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusNotFound))
