@@ -20,10 +20,23 @@ type LocalizedAirStation struct {
 	CitiesNearby []string
 }
 
+type LocalizedAirStationSimplified struct {
+	Station      *airStations.AirStationSimplified
+	Lat          float64
+	Lon          float64
+	CitiesNearby []string
+}
+
 type CityWithStations struct {
 	City             string
 	Count            int
 	StationIdsConcat string
+}
+
+type CitiesWithStations struct {
+	Localized              []*CityWithStations
+	WereLocalizedCount     int
+	NotAbleToLocalizeCount int
 }
 
 func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (result []*CityWithStations) {

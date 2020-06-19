@@ -37,19 +37,19 @@ func Test_Given_ErrorResponseFromDoAllMeasurmentsAPIcall_When_GetAllStationsCapa
 func Test_GivenTwoStations_When_ShowStationsSensorsCodes_Then_AnswerIsCorrect(t *testing.T) {
 	var localizableStation = &AirStation{
 		ID: 2,
-		Sensors: []SensorMeasurmentSimpleType{
-			SensorMeasurmentSimpleType{
+		Sensors: []SensorSimplified{
+			SensorSimplified{
 				ID:   1760,
 				Code: "Sensor02_AA"},
-			SensorMeasurmentSimpleType{
+			SensorSimplified{
 				ID:   1760,
 				Code: "Sensor02_BB"}},
 		SensorsCount: 2}
 
 	var notLocalizableStation = &AirStation{
 		ID: 21,
-		Sensors: []SensorMeasurmentSimpleType{
-			SensorMeasurmentSimpleType{
+		Sensors: []SensorSimplified{
+			SensorSimplified{
 				ID:   1760,
 				Code: "HES21_PA"}},
 		SensorsCount: 1}
@@ -90,28 +90,28 @@ func Test_Given_StationNumber04_And_ErrorResponseFromDoAllMeasurmentsAPIcall_Whe
 }
 
 func Test_Given_StationNumber04_And_Sensor041_DoesSensorBelongsToStation_ReturnsFalse(t *testing.T) {
-	var smt = SensorMeasurmentType{Code: "01"}
+	var smt = Sensor{Code: "01"}
 	result := doesSensorBelongsToStation(smt, "04")
 
 	assert.False(t, result)
 }
 
 func Test_Given_StationNumber041_And_Sensor04_DoesSensorBelongsToStation_ReturnsFalse(t *testing.T) {
-	var smt = SensorMeasurmentType{Code: "01"}
+	var smt = Sensor{Code: "01"}
 	result := doesSensorBelongsToStation(smt, "04")
 
 	assert.False(t, result)
 }
 
 func Test_Given_StationNumber07_And_Sensor07_DoesSensorBelongsToStation_ReturnsTrue(t *testing.T) {
-	var smt = SensorMeasurmentType{Code: "07"}
+	var smt = Sensor{Code: "07"}
 	result := doesSensorBelongsToStation(smt, "07")
 
 	assert.True(t, result)
 }
 
 func Test_Given_StationNumber07_And_SensorWithLettersOnly_DoesSensorBelongsToStation_ReturnsFalse(t *testing.T) {
-	var smt = SensorMeasurmentType{Code: "blaBla"}
+	var smt = Sensor{Code: "blaBla"}
 	result := doesSensorBelongsToStation(smt, "07")
 
 	assert.False(t, result)

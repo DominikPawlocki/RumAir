@@ -9,13 +9,19 @@ import (
 
 var geobytesBaseApiURL string = "http://getnearbycities.geobytes.com/GetNearbyCities"
 
-func LocalizeStationsGeoBytes(stations map[string]*airStations.AirStation) (result map[string]*LocalizedAirStation, err error) {
-	result = map[string]*LocalizedAirStation{}
+func LocalizeStationsGeoBytes(stations map[string]*airStations.AirStation) (result map[string]*LocalizedAirStationSimplified, err error) {
+	result = map[string]*LocalizedAirStationSimplified{}
 
 	for id, station := range stations {
 		if station.LatitudeSensor != "" && station.LongitudeSensor != "" {
 			if localizedStation, err := localizeStationGeoBytes(station); err == nil {
-				result[id] = localizedStation
+				result[id] = &LocalizedAirStationSimplified{
+					Station: &airStations.AirStationSimplified{
+						ID:           localizedStation.Station.ID,
+						SensorsCount: localizedStation.Station.SensorsCount},
+					Lat:          localizedStation.Lat,
+					Lon:          localizedStation.Lon,
+					CitiesNearby: localizedStation.CitiesNearby}
 			}
 		}
 	}

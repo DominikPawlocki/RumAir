@@ -2,6 +2,7 @@ package swagger
 
 import (
 	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
+	geolocalize "github.com/dompaw/RumAir_Pmpro_Sensors_API/geoLocalize"
 )
 
 // No Content 204 response
@@ -20,9 +21,9 @@ type swaggNotFoundResp struct {
 
 // Success response is a list of station sensors with all the properties
 // swagger:response sensorsResponse
-type swaggShowStationSensorCodesHandlerSuccessResp struct {
+type swaggGetStationSensorCodesHandlerSuccessResp struct {
 	// in: body
-	Body []airStations.SensorMeasurmentType
+	Body []airStations.Sensor
 }
 
 // Uuuuupss response
@@ -30,4 +31,18 @@ type swaggShowStationSensorCodesHandlerSuccessResp struct {
 type swaggInternalSrvErrResp struct {
 	// in: body
 	Body string
+}
+
+// Success response
+// swagger:response geolocatingByGeobytesResponse
+type swaggGeolocateUsingGeoBytesHandlerSuccessResp struct {
+	// in: body
+	Body map[string]*geolocalize.LocalizedAirStationSimplified
+}
+
+// Success response
+// swagger:response geolocatingCitiesWithStationsResponse
+type swaggGeolocateStationsByCitiesHandlerSuccessResp struct {
+	// in: body
+	Body map[string]*geolocalize.CitiesWithStations
 }

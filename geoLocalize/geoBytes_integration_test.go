@@ -12,8 +12,8 @@ var localizableStation = &airStations.AirStation{
 	ID:              2,
 	LatitudeSensor:  "04LAT",
 	LongitudeSensor: "04LON",
-	Sensors: []airStations.SensorMeasurmentSimpleType{
-		airStations.SensorMeasurmentSimpleType{
+	Sensors: []airStations.SensorSimplified{
+		airStations.SensorSimplified{
 			ID:           1760,
 			Code:         "HES00_PA",
 			Name:         "PA HES061",
@@ -24,7 +24,7 @@ var localizableStation = &airStations.AirStation{
 			AverageType:  "arithmetic",
 			Averages:     "A10m,A30m,A1h",
 			HighAverages: "A24h,A1M,A1Y"},
-		airStations.SensorMeasurmentSimpleType{
+		airStations.SensorSimplified{
 			ID:           1760,
 			Code:         "HES00_PA",
 			Name:         "PA HES061",
@@ -41,8 +41,8 @@ var notLocalizableStation = &airStations.AirStation{
 	ID:              21,
 	LatitudeSensor:  "",
 	LongitudeSensor: "",
-	Sensors: []airStations.SensorMeasurmentSimpleType{
-		airStations.SensorMeasurmentSimpleType{
+	Sensors: []airStations.SensorSimplified{
+		airStations.SensorSimplified{
 			ID:           1760,
 			Code:         "HES00_PA",
 			Name:         "PA HES061",

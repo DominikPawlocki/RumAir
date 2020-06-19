@@ -4,7 +4,7 @@ package airStations
 But which data every station is able to collect? Does all the stations collects same data ? Does station with id X collects NO2?
 The call : 'https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2' answers this question,but it returns all Poland stations in one Json file.
 
-This code filters this huge response nicely, and it outputs to the file: which stations has which capability reported */
+*/
 
 import (
 	"encoding/json"
@@ -31,19 +31,19 @@ func (StationsCapabiltiesFetcher) DoAllMeasurmentsAPIcall() ([]byte, error) {
 var allStationsMeasurmentsURL string = "http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 
 type SensorsResponse struct {
-	Success    bool                   `json:"success"`
-	TotalCount int                    `json:"totalCount"`
-	Message    string                 `json:"message"`
-	Data       []SensorMeasurmentType `json:"data"`
+	Success    bool     `json:"success"`
+	TotalCount int      `json:"totalCount"`
+	Message    string   `json:"message"`
+	Data       []Sensor `json:"data"`
 }
 
 type SensorsSimplifiedResponse struct {
-	TotalCount int                          `json:"totalCount"`
-	Data       []SensorMeasurmentSimpleType `json:"data"`
+	TotalCount int                `json:"totalCount"`
+	Data       []SensorSimplified `json:"data"`
 }
 
 // The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.
-type SensorMeasurmentType struct {
+type Sensor struct {
 	ID                 int       `json:"id"`
 	Code               string    `json:"code"`
 	Name               string    `json:"name"`
@@ -79,8 +79,8 @@ type SensorMeasurmentType struct {
 }
 
 //UnmarshalJSON - is called when json.Unmarshal method executes on main type. It changes Unix timestamp from db to time.time.
-func (smt *SensorMeasurmentType) UnmarshalJSON(data []byte) error {
-	type Alias SensorMeasurmentType
+func (smt *Sensor) UnmarshalJSON(data []byte) error {
+	type Alias Sensor
 	aux := struct {
 		StartedAt int64 `json:"start_date"`
 		*Alias
@@ -95,7 +95,7 @@ func (smt *SensorMeasurmentType) UnmarshalJSON(data []byte) error {
 }
 
 // Same like above, but simpler one
-type SensorMeasurmentSimpleType struct {
+type SensorSimplified struct {
 	ID           int    `json:"id"`
 	Code         string `json:"code"`
 	Name         string `json:"name"`
@@ -112,8 +112,13 @@ type AirStation struct {
 	ID              int //ID as int doesnt make sense here, cause of eg 004
 	LatitudeSensor  string
 	LongitudeSensor string
-	Sensors         []SensorMeasurmentSimpleType
+	Sensors         []SensorSimplified
 	SensorsCount    int
+}
+
+type AirStationSimplified struct {
+	ID           int //ID as int doesnt make sense here, cause of eg 004
+	SensorsCount int
 }
 
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
@@ -187,8 +192,8 @@ func GetStationCapabilities(fetchData IStationsCapabiltiesFetcher, stationID str
 }
 
 //GetStationSensors - Returns station all sensors.
-//Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
-func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) (result []SensorMeasurmentType, err error) {
+//Returns richer sensor objects (Sensor) instead simpler one returned by GetAllStationsCapabilities() ...
+func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) (result []Sensor, err error) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
 	var allMeasurments *SensorsResponse
 
@@ -239,10 +244,10 @@ func SaveJsonToFile(v interface{}, fileName string) (err error) {
 
 	// pattern called:  Type Assertion
 	switch v.(type) {
-	case []SensorMeasurmentSimpleType:
-		bytesToFile, _ = json.MarshalIndent(v.([]SensorMeasurmentSimpleType), "", "\t")
-	case []SensorMeasurmentType:
-		bytesToFile, _ = json.MarshalIndent(v.([]SensorMeasurmentType), "", "\t")
+	case []SensorSimplified:
+		bytesToFile, _ = json.MarshalIndent(v.([]SensorSimplified), "", "\t")
+	case []Sensor:
+		bytesToFile, _ = json.MarshalIndent(v.([]Sensor), "", "\t")
 	case map[string]*AirStation:
 		bytesToFile, _ = json.MarshalIndent(v.(map[string]*AirStation), "", "\t")
 	default:
@@ -264,8 +269,8 @@ func DoAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
 
 	// allMeasurments slice contains whole system capability. Pretty big JSON (ca 1800 objects).
 	//SLICE INITIALIZATIONS !
-	//allMeasurments := make([]SensorMeasurmentType, 2)
-	//var allMeasurments *[]SensorMeasurmentType = &[]SensorMeasurmentType{}
+	//allMeasurments := make([]Sensor, 2)
+	//var allMeasurments *[]Sensor = &[]Sensor{}
 
 	bytesRead, err = ioutil.ReadAll(netResp.Body)
 	if err != nil {
@@ -303,7 +308,7 @@ func createNewStation(stationID string) (result *AirStation) {
 	return result
 }
 
-func doesSensorBelongsToStation(measurmentType SensorMeasurmentType, stationID string) bool {
+func doesSensorBelongsToStation(measurmentType Sensor, stationID string) bool {
 	if strings.HasPrefix(measurmentType.Code, stationID) {
 		re := regexp.MustCompile("[0-9]+")
 		if re.FindAllString(measurmentType.Code, 1)[0] == stationID {

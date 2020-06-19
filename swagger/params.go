@@ -8,12 +8,3 @@ type stationId struct {
 	// required: true
 	ID string
 }
-
-// swagger:parameters sensorsFetching
-type deviceParentId struct {
-	// The ID of the station
-	//
-	// in: query
-	// required: false
-	ID int32
-}
