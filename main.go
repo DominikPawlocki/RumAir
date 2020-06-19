@@ -1,19 +1,11 @@
 // Package classification RumAir..
 //
-// Hi !
+// PMPRO system API
 //
-// Please take a look at this app as a Hackerrank task done little bit wider.
-//
-// It is contenerized application, consist of two containers, public swaggerUI (pulled from DockerHub) and custom AbaxTestApi one.
+// It is contenerized application, consist of two containers, public swaggerUI (pulled from DockerHub) and custom Golang API one.
 // Both are deployed on Azure Docker Instances service.
 //
-// My container (AbaxTestApi) is build via Dockerfile and then its pushed to my private Azure Docker Container by Azure DevOps pipeline YML (./'az-pipelines.docker.yml )
-// During this Docker build, there is a 'swagger.json' artifact produced also, validated and stored to be static hosted at /swagger/swagger.json endpoint.
-//
-// The app is in Golang, which I am into intesively last times, but it doesnt matter. I just wanted to practice it, I could do it in C# also.
-//
-// Still almost non of Unit tests, some parts are fixed instead to be injected during deploy, and it wasnt done in 1 hour :-) but ...
-// at least I learnt a lot, and I hope you like it.
+// SKDHFKJSDHFKJSFDHKJSFHKS
 //
 //	Schemes: http
 //	Version: Beta
@@ -21,7 +13,7 @@
 //	Contact: Dominik Pawlocki <d.pawlocki@onet.pl> https://github.com/DominikPawlocki/AbaxTest1
 //	Description: RumAir API
 //
-// Still - good task! Thx and have a good day !
+// aaaaaaaaaaaaaaaaaaaa------------AAAAAAAAAAAAAAAAAAAAAAssss
 //
 //	Consumes:
 //		- application/json

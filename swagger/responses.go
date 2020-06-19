@@ -18,14 +18,14 @@ type swaggNotFoundResp struct {
 	Body string
 }
 
-// Success response
+// Success response is a list of station sensors with all the properties
 // swagger:response sensorsResponse
 type swaggShowStationSensorCodesHandlerSuccessResp struct {
 	// in: body
 	Body []airStations.SensorMeasurmentType
 }
 
-// InternalServerError response
+// Uuuuupss response
 // swagger:response internalServerError
 type swaggInternalSrvErrResp struct {
 	// in: body

@@ -1,4 +1,4 @@
-# This pipeline builds two docker images (this golang api and swaggerUI from dockerhub )
+# This pipeline builds two docker images (the golang api and swaggerUI from dockerhub )
 # It pushes it to Azure ACR 
 
 # NOT USED RIGHT NOW. Regular az-pipelines.docker.yml used.

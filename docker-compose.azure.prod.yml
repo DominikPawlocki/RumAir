@@ -1,4 +1,7 @@
 # NOT USED RIGHT NOW.
+# VERY IMPORTANT - it uses a volume witch is persisted. 
+# Remember to delete this volume before new build, otherwise docker is not copying already existing swagger.json from container to host !
+# command is 'docker volume rm rumair_pmpro_sensors_api_swaggerDefFile' or 'docker volume prune'.
 version: "3.7"
 services:
     sensors_api:

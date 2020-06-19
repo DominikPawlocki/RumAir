@@ -54,29 +54,21 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 }
 
 func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
-	// swagger:operation GET /stations/{id}/sensors tag12345 sensorsFetching
-	// Returns something
-	// summary:
-	// - A short summary of what the operation does. For maximum readability in the swagger-ui, this field SHOULD be less than 120 characters.
-	// description:
-	// - A verbose explanation of the operation behavior. GFM syntax can be used for rich text representation.
+	// swagger:operation GET /stations/{id}/sensors stationsAndSensors sensorsFetching
+	// Gets a list of sensors belonging to given station, with all the (sensors) properties.
 	// ---
 	// produces:
 	// - application/json
 	// parameters:
 	// - name: id
 	//   in: path
-	//   description: id of device parent
+	//   description: weather station id
 	//   required: true
 	//   type: string
 	//   # format: string should be like 02, 04 etc
 	// responses:
 	//   "200":
-	//     "description": "Succeyyss"
-	//     "content":
-	//       "application/json":
-	//         "schema":
-	//           "$ref": "#/responses/sensorsResponse"
+	//     "$ref": "#/responses/sensorsResponse"
 	//   "404":
 	//     "$ref": "#/responses/notFound"
 	//   "500":
