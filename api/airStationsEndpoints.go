@@ -54,18 +54,18 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 }
 
 func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
-	// swagger:operation GET /stations/{id}/sensors stationsAndSensors sensorsFetching
+	// swagger:operation GET /stations/{stationId}/sensors stationsAndSensors sensorsFetching
 	// Gets a list of sensors belonging to given station, with all the (sensors) properties.
 	// ---
 	// produces:
 	// - application/json
 	// parameters:
-	// - name: id
+	// - name: stationId
 	//   in: path
 	//   description: weather station id
 	//   required: true
 	//   type: string
-	//   # format: string should be like 02, 04 etc
+	//   format: should be like 02, 04 etc
 	// responses:
 	//   "200":
 	//     "$ref": "#/responses/sensorsResponse"

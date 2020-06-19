@@ -1,7 +1,7 @@
 package swagger
 
 // swagger:parameters sensorsFetching
-type id struct {
+type stationId struct {
 	// The ID of the station
 	//
 	// in: path
