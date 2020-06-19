@@ -30,21 +30,19 @@ func (StationsCapabiltiesFetcher) DoAllMeasurmentsAPIcall() ([]byte, error) {
 
 var allStationsMeasurmentsURL string = "http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 
-type AvailableMeasurmentsResponce struct {
+type SensorsResponse struct {
 	Success    bool                   `json:"success"`
 	TotalCount int                    `json:"totalCount"`
 	Message    string                 `json:"message"`
 	Data       []SensorMeasurmentType `json:"data"`
 }
 
-type AvailableMeasurmentsSimpleResponce struct {
+type SensorsSimplifiedResponse struct {
 	TotalCount int                          `json:"totalCount"`
 	Data       []SensorMeasurmentSimpleType `json:"data"`
 }
 
-// SensorMeasurmentType - describes the type of sensor , with its Units, name and so on.
 // The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.
-// There is no specific call to fetch station Id's, so I have to deduct it from this call.
 type SensorMeasurmentType struct {
 	ID                 int       `json:"id"`
 	Code               string    `json:"code"`
@@ -121,7 +119,7 @@ type AirStation struct {
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
 //This method returns all station's Ids, information if station is geolocalizable and its sensors (capabilities)
 func GetAllStationsCapabilities(fetchData IStationsCapabiltiesFetcher) (result map[string]*AirStation, err error) {
-	allMeasurments := AvailableMeasurmentsSimpleResponce{}
+	allMeasurments := SensorsSimplifiedResponse{}
 
 	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
@@ -158,7 +156,7 @@ func GetAllStationsCapabilities(fetchData IStationsCapabiltiesFetcher) (result m
 }
 
 func GetStationCapabilities(fetchData IStationsCapabiltiesFetcher, stationID string) (result *AirStation) {
-	var allMeasurments *AvailableMeasurmentsSimpleResponce
+	var allMeasurments *SensorsSimplifiedResponse
 
 	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
@@ -192,7 +190,7 @@ func GetStationCapabilities(fetchData IStationsCapabiltiesFetcher, stationID str
 //Returns richer sensor objects (SensorMeasurmentType) instead simpler one returned by GetAllStationsCapabilities() ...
 func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) (result []SensorMeasurmentType, err error) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
-	var allMeasurments *AvailableMeasurmentsResponce
+	var allMeasurments *SensorsResponse
 
 	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
 	if err != nil {
