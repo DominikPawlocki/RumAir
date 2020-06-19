@@ -1,4 +1,4 @@
-// Package classification AbaxTest..
+// Package classification RumAir..
 //
 // Hi !
 //
@@ -16,12 +16,10 @@
 // at least I learnt a lot, and I hope you like it.
 //
 //	Schemes: http
-//	BasePath:
-//	Version: new attempt :-)
+//	Version: Beta
 //	License: MIT http://opensource.org/licenses/MIT
 //	Contact: Dominik Pawlocki <d.pawlocki@onet.pl> https://github.com/DominikPawlocki/AbaxTest1
-//	Host: abaxtestapi.northeurope.azurecontainer.io:5000
-//	Description: Abax test
+//	Description: RumAir API
 //
 // Still - good task! Thx and have a good day !
 //

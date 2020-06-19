@@ -72,7 +72,11 @@ func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStati
 	//   # format: string should be like 02, 04 etc
 	// responses:
 	//   "200":
-	//     "$ref": "#/responses/sensorsResponse"
+	//     "description": "Succeyyss"
+	//     "content":
+	//       "application/json":
+	//         "schema":
+	//           "$ref": "#/responses/sensorsResponse"
 	//   "404":
 	//     "$ref": "#/responses/notFound"
 	//   "500":

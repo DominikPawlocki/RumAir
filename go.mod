@@ -20,6 +20,7 @@ require (
 	github.com/matryer/moq v0.0.0-20200106131100-75d0ddfc0007 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/pdrum/swagger-automation v0.0.0-20190629163613-c8c7c80ba858
+	github.com/rs/cors v1.7.0
 	github.com/stretchr/testify v1.4.0
 	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.3.1 // indirect

@@ -7,6 +7,7 @@ import (
 
 	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type MockableHTTPHandler struct {
@@ -25,7 +26,7 @@ func Main() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	fileServerHandler = http.StripPrefix("/swagger/", http.FileServer(http.Dir("/tmp/swagger/")))
-	myRouter.HandleFunc("/swagger/swagger.json", addCorsHeadersToSwaggerJsonFileCall) //not mockable for unit testing
+	myRouter.HandleFunc("/swagger/swagger.json", fileServerHandler.ServeHTTP) //not mockable for unit testing
 
 	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)      //not mockable for unit testing
 	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler)     //not mockable for unit testing
@@ -42,13 +43,8 @@ func Main() {
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":5000", myRouter))
-}
+	// all origins accepted with simple methods (GET, POST). Security antipattern, will look there later.
+	handlerWithAllCorsEnabled := cors.Default().Handler(myRouter)
 
-func addCorsHeadersToSwaggerJsonFileCall(w http.ResponseWriter, r *http.Request) {
-	// star here is antipattern. It should be the known SwaggerUI path only .
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Content-Type", "application/json; charset=utf-8")
-
-	fileServerHandler.ServeHTTP(w, r)
+	log.Fatal(http.ListenAndServe(":5000", handlerWithAllCorsEnabled))
 }

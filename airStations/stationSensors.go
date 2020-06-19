@@ -212,7 +212,7 @@ func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) 
 	}
 	fmt.Println("Nr of results:", len(result))
 	if len(result) == 0 {
-		return nil, errors.New("Empty result Sensors per stations, when stations seems fetched. \n")
+		return nil, fmt.Errorf("No sensors for station %s found. Probably station %s doesnt exist. \n", stationID, stationID)
 	}
 
 	return
