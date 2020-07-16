@@ -13,6 +13,12 @@ import (
 	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 )
 
+type LocalizedAirStationsResponse struct {
+	Localized              map[string]*LocalizedAirStationSimplified
+	WereLocalizedCount     int
+	NotAbleToLocalizeCount int
+}
+
 type LocalizedAirStation struct {
 	Station      *airStations.AirStation
 	Lat          float64
@@ -39,7 +45,7 @@ type CitiesWithStations struct {
 	NotAbleToLocalizeCount int
 }
 
-func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (result []*CityWithStations) {
+func GetStationNrPerCity(localized map[string]*LocalizedAirStationSimplified) (result []*CityWithStations) {
 	type stationsPerCity struct {
 		StationIdsConcat string
 		Count            int

@@ -37,6 +37,7 @@ type swaggInternalSrvErrResp struct {
 // swagger:response geolocatingByGeobytesResponse
 type swaggGeolocateUsingGeoBytesHandlerSuccessResp struct {
 	// in: body
+	//Body geolocalize.CitiesWithStations
 	Body map[string]*geolocalize.LocalizedAirStationSimplified
 }
 

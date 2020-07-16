@@ -32,7 +32,12 @@ func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("%s %v", geoBytesfetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if localized != nil {
-		if resultBytes, err = json.Marshal(localized); err != nil {
+		result := geolocalize.LocalizedAirStationsResponse{
+			Localized:              localized,
+			WereLocalizedCount:     len(localized),
+			NotAbleToLocalizeCount: len(result) - len(localized)}
+
+		if resultBytes, err = json.Marshal(result); err != nil {
 			http.Error(w, fmt.Sprintf("%s %v", geoBytesdeserializingError, err.Error()), http.StatusInternalServerError)
 			return
 		}
@@ -42,6 +47,18 @@ func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
+	// swagger:operation GET /stations/locate/locationIQ geolocating geolocatingByLocIQResponse
+	// Gets a list of sensors belonging to given station, with all the (sensors) properties.
+	// ---
+	// produces:
+	// - application/json
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/geolocatingByGeobytesResponse"
+	//   "404":
+	//     "$ref": "#/responses/notFound"
+	//   "500":
+	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
 	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
@@ -51,7 +68,12 @@ func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Re
 		http.Error(w, fmt.Sprintf("%s %v", locationIQfetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if localized != nil {
-		if resultBytes, err = json.Marshal(localized); err != nil {
+		result := geolocalize.LocalizedAirStationsResponse{
+			Localized:              localized,
+			WereLocalizedCount:     len(localized),
+			NotAbleToLocalizeCount: len(result) - len(localized)}
+
+		if resultBytes, err = json.Marshal(result); err != nil {
 			http.Error(w, fmt.Sprintf("%s %v", locationIQdeserializingError, err.Error()), http.StatusInternalServerError)
 			return
 		}
