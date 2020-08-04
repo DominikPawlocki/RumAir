@@ -10,9 +10,9 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-    GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-    projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
+# variables:
+#     GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+#     projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
 
 steps:
 - task: GoTool@0
@@ -20,13 +20,14 @@ steps:
     version: '1.13.5'
 - script: |
     go version
-    echo 'MODULE PATH IS : $(projectPath)' 
+    echo 'MODULE PATH IS : $(System.DefaultWorkingDirectory)'
   displayName: 'Show GO version used.'
 - task: Go@0
   inputs:
     command: 'get'
     arguments: '-d'
-    workingDirectory: '$(projectPath)'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    displayName: 'Go get -d'
 - task: Go@0
   inputs:
     command: 'build'
