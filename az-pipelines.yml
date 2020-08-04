@@ -19,9 +19,9 @@ steps:
   inputs:
     version: '1.13.5'
 - script: |
-  go version
-  echo 'MODULE PATH IS : $(projectPath)' 
-  displayName: 'Show GO version used.'
+    go version
+    echo 'MODULE PATH IS : $(projectPath)' 
+    displayName: 'Show GO version used.'
 - task: Go@0
   inputs:
     command: 'get'
