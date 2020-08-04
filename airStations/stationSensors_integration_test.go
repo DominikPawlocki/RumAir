@@ -13,7 +13,7 @@ import (
 
 // flag set up in Azure Build pipeline.
 //usage like : go test -v .\airStations\stationSensors.go .\airStations\utils.go .\airStations\stationSensors_integration_test.go  -args -isIntegration=true
-var withIntegration = flag.Bool("withIntegrationTests", true, "withIntegrationTests")
+var withIntegration = flag.Bool("withIntegrationTests", false, "withIntegrationTests")
 var stations map[string]*AirStation
 var err error
 
@@ -93,5 +93,5 @@ func Test_Given_StationNumber04_When_GetStationSensors_Then_AnswerContainsMinimu
 
 	assert.Nil(t, err)
 	assert.GreaterOrEqual(t, len(actual), 25, fmt.Sprintf("There should be minimum like 25 stations fetched. %v stations was fetched.", len(actual)))
-	assert.IsTypef(t, []SensorMeasurmentType{}, actual, fmt.Sprintf("Wrong return type !"))
+	assert.IsTypef(t, []Sensor{}, actual, fmt.Sprintf("Wrong return type !"))
 }

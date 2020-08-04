@@ -1,0 +1,14 @@
+pool:
+  vmImage: 'ubuntu-latest'
+     
+steps:
+  # this task is MS defined. It pushes image to ACR also.
+  - task: Docker@2
+    displayName: Build and push a Docker image to ACR
+    inputs:
+      # should be injected via Azure Dev Ops variable !
+      containerRegistry: Epam-VS-AzureDockerRegistry #DomPaw-AzureContainerRegistry
+      repository: $(Build.Repository.Name)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
+      command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
+      Dockerfile: ./Dockerfile
+      arguments: BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE) #--build-arg BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE)

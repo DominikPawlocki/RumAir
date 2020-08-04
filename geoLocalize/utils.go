@@ -13,8 +13,21 @@ import (
 	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 )
 
+type LocalizedAirStationsResponse struct {
+	Localized              map[string]*LocalizedAirStationSimplified
+	WereLocalizedCount     int
+	NotAbleToLocalizeCount int
+}
+
 type LocalizedAirStation struct {
 	Station      *airStations.AirStation
+	Lat          float64
+	Lon          float64
+	CitiesNearby []string
+}
+
+type LocalizedAirStationSimplified struct {
+	Station      *airStations.AirStationSimplified
 	Lat          float64
 	Lon          float64
 	CitiesNearby []string
@@ -26,7 +39,13 @@ type CityWithStations struct {
 	StationIdsConcat string
 }
 
-func GetStationNrPerCity(localized map[string]*LocalizedAirStation) (result []*CityWithStations) {
+type CitiesWithStations struct {
+	Localized              []*CityWithStations
+	WereLocalizedCount     int
+	NotAbleToLocalizeCount int
+}
+
+func GetStationNrPerCity(localized map[string]*LocalizedAirStationSimplified) (result []*CityWithStations) {
 	type stationsPerCity struct {
 		StationIdsConcat string
 		Count            int
@@ -94,8 +113,13 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 
 	if resp.Values[0] != nil && len(resp.Values[0]) > 0 && resp.Values[0][0].V != 0 {
 		result = resp.Values[0][0].V
-		fmt.Printf(" %v for : %s. \n", result, sensorCallURI)
+		//fmt.Printf(" %v for : %s. \n", result, sensorCallURI)
 	}
+	//else {
+	//	result = 0
+	// technically, its not an error. Its a data case. No sensor for this station available.
+	//err = fmt.Errorf("No lat/lon recieved. Probably, the station doesnt have this sensor anyore. URI is : %s ", sensorCallURI)
+	//}
 	return
 }
 

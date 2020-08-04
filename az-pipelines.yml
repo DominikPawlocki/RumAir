@@ -1,0 +1,58 @@
+# starting point https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/go?view=azure-devops
+# this is NON-CONTENERIZED (NON-DOCKERIZE) build version. 
+# https://aka.ms/yaml
+
+# there is also Microsoft defined go step prepared already! https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/go?view=azure-devops
+
+trigger:
+  - master
+  
+pool:
+  vmImage: 'ubuntu-latest'
+
+# variables:
+#     GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+#     projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
+
+steps:
+- task: GoTool@0
+  inputs:
+    version: '1.13.5'
+- script: |
+    go version
+    echo 'MODULE PATH IS : $(System.DefaultWorkingDirectory)'
+  displayName: 'Show GO version used.'
+- task: Go@0
+  inputs:
+    command: 'get'
+    arguments: '-d'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+  displayName: 'Go get -d'
+- task: Go@0
+  inputs:
+    command: 'build'
+    arguments: '-v'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+  displayName: 'Building app.'
+
+# flag withIntegrationTests is injected from Azure DevOps, and then used as regular boolean variable in the code.
+- script: |
+    echo 'MODULE PATH IS : $(System.DefaultWorkingDirectory)/airStations'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
+  workingDirectory: '$(System.DefaultWorkingDirectory)/airStations'
+  displayName: 'Run TESTS for AIRSTATIONS module'
+
+- script: |
+    echo 'MODULE PATH IS : $(System.DefaultWorkingDirectory)/api'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)
+  workingDirectory: '$(System.DefaultWorkingDirectory)/api'
+  displayName: 'Run TESTS for API module'
+
+- script: |
+    echo 'MODULE PATH IS : $(System.DefaultWorkingDirectory)/geoLocalize'
+    echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
+    go test -v . -args -withIntegrationTests=$(withIntegrationTests)  
+  workingDirectory: '$(System.DefaultWorkingDirectory)/geoLocalize'
+  displayName: 'Run TESTS for GEOLOCALIZE module'

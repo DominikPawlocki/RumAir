@@ -1,0 +1,9 @@
+*.exe
+.git
+ReadMe.txt
+swagger.json
+LICENSE
+VERSION.txt
+# yml's are for Azure DevOps, not for docker or compose itself
+*.yml 
+/notebooks/*

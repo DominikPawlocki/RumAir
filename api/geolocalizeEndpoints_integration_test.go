@@ -43,8 +43,9 @@ func Test_GetStationNumbersPerCityHandler_ThenResponceIsCorrect(t *testing.T) {
 
 	var strigifiedResponse = rr.Body.String()
 	assert.Equal(t, rr.Code, http.StatusOK, fmt.Sprintf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK))
+	fmt.Printf(strigifiedResponse)
 
-	assert.True(t, strings.Contains(strigifiedResponse, "Gdynia"), fmt.Sprintln("Should contain \"Gdansk with \" string."))
-	assert.True(t, strings.Contains(strigifiedResponse, "Rumia"), fmt.Sprintln("Should contain \"Gdynia with \" string."))
-	assert.True(t, strings.Contains(strigifiedResponse, "Płock"), fmt.Sprintln("Should contain \"Plock with \" string."))
+	assert.True(t, strings.Contains(strigifiedResponse, "Gdynia"), fmt.Sprintln("Should contain \"Gdynia\" string."))
+	assert.True(t, strings.Contains(strigifiedResponse, "Rumia"), fmt.Sprintln("Should contain \"Rumia\" string."))
+	assert.True(t, strings.Contains(strigifiedResponse, "Płock"), fmt.Sprintln("Should contain \"Plock\" string."))
 }

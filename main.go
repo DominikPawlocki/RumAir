@@ -1,3 +1,27 @@
+// Package classification RumAir..
+//
+// PMPRO system API
+//
+// It is contenerized application, consist of two containers, public swaggerUI (pulled from DockerHub) and custom Golang API one.
+// Both are deployed on Azure Docker Instances service.
+//
+// SKDHFKJSDHFKJSFDHKJSFHKS
+//
+//	Schemes: http
+//	Version: Beta
+//	License: MIT http://opensource.org/licenses/MIT
+//	Contact: Dominik Pawlocki <d.pawlocki@onet.pl> https://github.com/DominikPawlocki/AbaxTest1
+//	Description: RumAir API
+//
+// aaaaaaaaaaaaaaaaaaaa------------AAAAAAAAAAAAAAAAAAAAAAssss
+//
+//	Consumes:
+//		- application/json
+//
+//	Produces:
+//		- application/json
+//
+// swagger:meta
 package main
 
 import (
@@ -5,6 +29,8 @@ import (
 
 	airStations "github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 	api "github.com/dompaw/RumAir_Pmpro_Sensors_API/api"
+
+	_ "github.com/dompaw/RumAir_Pmpro_Sensors_API/swagger"
 )
 
 func main() {

@@ -3,8 +3,9 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 )
@@ -52,8 +53,26 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 	}
 }
 
-// .../stations/{id}/sensors
-func ShowStationSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+	// swagger:operation GET /stations/{stationId}/sensors stationsAndSensors sensorsFetching
+	// Gets a list of sensors belonging to given station, with all the (sensors) properties.
+	// ---
+	// produces:
+	// - application/json
+	// parameters:
+	// - name: stationId
+	//   in: path
+	//   description: weather station id
+	//   required: true
+	//   type: string
+	//   format: should be like 02, 04 etc
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/sensorsResponse"
+	//   "404":
+	//     "$ref": "#/responses/notFound"
+	//   "500":
+	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
 	//stationID := r.URL.Query()["message"][0]

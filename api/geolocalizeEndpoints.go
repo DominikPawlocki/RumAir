@@ -10,8 +10,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// .../stations/locate/geobytes
 func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Request) {
+	// swagger:operation GET /stations/locate/geobytes geolocating geolocatingByGeobytesResponse
+	// Gets a list of stations geolocalized, with a nearby cities, using 3rd part service called GeoBytes.
+	// ---
+	// produces:
+	// - application/json
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/geolocatingByGeobytesResponse"
+	//   "404":
+	//     "$ref": "#/responses/notFound"
+	//   "500":
+	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
 	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
@@ -21,7 +32,12 @@ func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("%s %v", geoBytesfetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if localized != nil {
-		if resultBytes, err = json.Marshal(localized); err != nil {
+		result := geolocalize.LocalizedAirStationsResponse{
+			Localized:              localized,
+			WereLocalizedCount:     len(localized),
+			NotAbleToLocalizeCount: len(result) - len(localized)}
+
+		if resultBytes, err = json.Marshal(result); err != nil {
 			http.Error(w, fmt.Sprintf("%s %v", geoBytesdeserializingError, err.Error()), http.StatusInternalServerError)
 			return
 		}
@@ -30,8 +46,19 @@ func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Requ
 	w.Write(resultBytes)
 }
 
-// .../stations/locate/locationIQ
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
+	// swagger:operation GET /stations/locate/locationIQ geolocating geolocatingByLocIQResponse
+	// Gets a list of stations geolocalized, with a nearby cities, using 3rd part service called LocationIQ.
+	// ---
+	// produces:
+	// - application/json
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/geolocatingByGeobytesResponse"
+	//   "404":
+	//     "$ref": "#/responses/notFound"
+	//   "500":
+	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
 	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
@@ -41,7 +68,12 @@ func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Re
 		http.Error(w, fmt.Sprintf("%s %v", locationIQfetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if localized != nil {
-		if resultBytes, err = json.Marshal(localized); err != nil {
+		result := geolocalize.LocalizedAirStationsResponse{
+			Localized:              localized,
+			WereLocalizedCount:     len(localized),
+			NotAbleToLocalizeCount: len(result) - len(localized)}
+
+		if resultBytes, err = json.Marshal(result); err != nil {
 			http.Error(w, fmt.Sprintf("%s %v", locationIQdeserializingError, err.Error()), http.StatusInternalServerError)
 			return
 		}
@@ -72,13 +104,19 @@ func LocalizeStationUsingLocationIQHandler(w http.ResponseWriter, r *http.Reques
 	w.Write(resultBytes)
 }
 
-// .../stations/locate/locationIQ/numbersPerCity
 func GetStationNumbersPerCityHandler(w http.ResponseWriter, r *http.Request) {
-	type CitiesWithStations struct {
-		Localized              []*geolocalize.CityWithStations
-		WereLocalizedCount     int
-		NotAbleToLocalizeCount int
-	}
+	// swagger:operation GET /stations/locate/locationIQ/numbersPerCity geolocating geolocatingCitiesWithStationsResponse
+	// Gets a list of geolocalized station IDs, groupped by nearby city(ies), using 3rd part service called LocationIQ.
+	// ---
+	// produces:
+	// - application/json
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/geolocatingCitiesWithStationsResponse"
+	//   "404":
+	//     "$ref": "#/responses/notFound"
+	//   "500":
+	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
 	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
@@ -89,7 +127,7 @@ func GetStationNumbersPerCityHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	} else if localized != nil {
 		citiesWithStations := geolocalize.GetStationNrPerCity(localized)
-		result := CitiesWithStations{
+		result := geolocalize.CitiesWithStations{
 			Localized:              citiesWithStations,
 			WereLocalizedCount:     len(localized),
 			NotAbleToLocalizeCount: len(result) - len(localized)}

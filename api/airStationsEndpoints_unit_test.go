@@ -25,7 +25,7 @@ func Test_Given_ErrorResponseFromDoAllMeasurmentsAPICall_And_StationNumberCorrec
 	req, _ := sut()
 
 	rr := httptest.NewRecorder()
-	handler := http.Handler(MockableHTTPHandler{mockableDataFetcher: mock, methodToBeCalled: ShowStationSensorCodesHandler})
+	handler := http.Handler(MockableHTTPHandler{mockableDataFetcher: mock, methodToBeCalled: GetStationSensorsHandler})
 	handler.ServeHTTP(rr, req)
 
 	assert.Equal(t, http.StatusNotFound, rr.Code, fmt.Sprintf("Got %v code, want %v", rr.Code, http.StatusNotFound))
