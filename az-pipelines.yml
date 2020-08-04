@@ -9,42 +9,30 @@ trigger:
   
 pool:
   vmImage: 'ubuntu-latest'
-  
+
 variables:
-      GOBIN:  '$(GOPATH)/bin' # Go binaries path
-      GOROOT: '/usr/local/go1.13' # Go installation path
-      GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-      projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
-    
+    GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+    projectPath: $(GOPATH)/src/github.com/$(build.repository.name) # Path to the module's code
+
 steps:
+- task: GoTool@0
+  inputs:
+    version: '1.13.5'
 - script: |
-    mkdir -p '$(GOBIN)'
-    mkdir -p '$(GOPATH)/pkg'
-    mkdir -p '$(projectPath)'
-    shopt -s extglob
-    mv !(gopath) '$(projectPath)'
-    echo '##vso[task.prependpath]$(GOBIN)'
-    echo '##vso[task.prependpath]$(GOROOT)/bin'
-    echo 'MODULE PATH IS : $(projectPath)' 
-  displayName: 'Set up the Go workspace'
-  
-- script: |
-    go version
+  go version
+  echo 'MODULE PATH IS : $(projectPath)' 
   displayName: 'Show GO version used.'
-
-- script: |
-    go get -v -t -d ./...
-    if [ -f Gopkg.toml ]; then
-        curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-        dep ensure
-    fi
-  workingDirectory: '$(projectPath)'
-  displayName: 'Get dependencies.'
-
-- script: |
-    go build -v .
-  workingDirectory: '$(projectPath)'
-  displayName: 'Building app.'
+- task: Go@0
+  inputs:
+    command: 'get'
+    arguments: '-d'
+    workingDirectory: '$(projectPath)'
+- task: Go@0
+  inputs:
+    command: 'build'
+    arguments: '-v'
+    workingDirectory: '$(projectPath)'
+    displayName: 'Building app.'
 
 # flag withIntegrationTests is injected from Azure DevOps, and then used as regular boolean variable in the code.
 - script: |
