@@ -44,15 +44,15 @@ steps:
   displayName: 'Run TESTS for AIRSTATIONS module'
 
 - script: |
-    echo 'MODULE PATH IS : $(projectPath)/api'
+    echo 'MODULE PATH IS : $(System.DefaultWorkingDirectory)/api'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)
-  workingDirectory: '$(projectPath)/api'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/api'
   displayName: 'Run TESTS for API module'
 
 - script: |
-    echo 'MODULE PATH IS : $(projectPath)/geoLocalize'
+    echo 'MODULE PATH IS : $(System.DefaultWorkingDirectory)/geoLocalize'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)  
-  workingDirectory: '$(projectPath)/geoLocalize'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/geoLocalize'
   displayName: 'Run TESTS for GEOLOCALIZE module'
