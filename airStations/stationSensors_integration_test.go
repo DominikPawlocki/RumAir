@@ -13,7 +13,7 @@ import (
 
 // flag set up in Azure Build pipeline.
 //usage like : go test -v .\airStations\stationSensors.go .\airStations\utils.go .\airStations\stationSensors_integration_test.go  -args -isIntegration=true
-var withIntegration = flag.Bool("withIntegrationTests", true, "withIntegrationTests")
+var withIntegration = flag.Bool("withIntegrationTests", false, "withIntegrationTests")
 var stations map[string]*AirStation
 var err error
 

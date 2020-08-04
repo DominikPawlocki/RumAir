@@ -60,6 +60,7 @@ func getCitiesNearbyLocIQ(lat float64, lon float64) (citiesNearby []string, err 
 			State        string `json:"state"`
 			Suburb       string `json:"suburb"`
 			Town         string `json:"town"`
+			City         string `json:"city"`
 		} `json:"address"`
 		DisplayName string `json:"display_name"`
 		Lat         string `json:"lat"`
@@ -82,12 +83,14 @@ func getCitiesNearbyLocIQ(lat float64, lon float64) (citiesNearby []string, err 
 			return
 		}
 
-		cityOrTown := result.Address.Town
-		if cityOrTown == "" {
-			cityOrTown = result.Address.County
+		cityTownOrCounty := result.Address.City
+		if cityTownOrCounty == "" {
+			cityTownOrCounty = result.Address.Town
+		} else if cityTownOrCounty == "" {
+			cityTownOrCounty = result.Address.County
 		}
 
-		citiesNearby = append(citiesNearby, fmt.Sprintf("%s, %s", cityOrTown, result.Address.Suburb))
+		citiesNearby = append(citiesNearby, fmt.Sprintf("%s, %s", cityTownOrCounty, result.Address.Suburb))
 	}
 	return
 }
