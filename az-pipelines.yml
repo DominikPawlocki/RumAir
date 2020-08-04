@@ -27,20 +27,20 @@ steps:
     command: 'get'
     arguments: '-d'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
-    displayName: 'Go get -d'
+  displayName: 'Go get -d'
 - task: Go@0
   inputs:
     command: 'build'
     arguments: '-v'
-    workingDirectory: '$(projectPath)'
-    displayName: 'Building app.'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+  displayName: 'Building app.'
 
 # flag withIntegrationTests is injected from Azure DevOps, and then used as regular boolean variable in the code.
 - script: |
-    echo 'MODULE PATH IS : $(projectPath)/airStations'
+    echo 'MODULE PATH IS : $(System.DefaultWorkingDirectory)/airStations'
     echo 'RUNNING TESTS WITH `withIntegrationTests` flag set to : $(withIntegrationTests)'
     go test -v . -args -withIntegrationTests=$(withIntegrationTests)
-  workingDirectory: '$(projectPath)/airStations'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/airStations'
   displayName: 'Run TESTS for AIRSTATIONS module'
 
 - script: |
