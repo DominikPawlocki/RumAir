@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,9 +26,17 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-var localizedAirStationsMock = map[string]*LocalizedAirStation{
-	"02":  &LocalizedAirStation{Station: localizableStation, CitiesNearby: []string{"aaa", "bbb"}},
-	"021": &LocalizedAirStation{Station: notLocalizableStation, CitiesNearby: []string{"aaa", "ccc"}}}
+var localizableStationSimplified = &airStations.AirStationSimplified{
+	ID:           2,
+	SensorsCount: 2}
+
+var notLocalizableStationSimplified = &airStations.AirStationSimplified{
+	ID:           21,
+	SensorsCount: 1}
+
+var localizedAirStationsMock = map[string]*LocalizedAirStationSimplified{
+	"02":  &LocalizedAirStationSimplified{Station: localizableStationSimplified, CitiesNearby: []string{"aaa", "bbb"}},
+	"021": &LocalizedAirStationSimplified{Station: notLocalizableStationSimplified, CitiesNearby: []string{"aaa", "ccc"}}}
 
 func Test_GetStationNrPerCity(t *testing.T) {
 	result := GetStationNrPerCity(localizedAirStationsMock)

@@ -10,8 +10,8 @@ import (
 
 var localizableStation = &airStations.AirStation{
 	ID:              2,
-	LatitudeSensor:  "04LAT",
-	LongitudeSensor: "04LON",
+	LatitudeSensor:  "05LAT",
+	LongitudeSensor: "05LON",
 	Sensors: []airStations.SensorSimplified{
 		airStations.SensorSimplified{
 			ID:           1760,

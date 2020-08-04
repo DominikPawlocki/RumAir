@@ -12,7 +12,7 @@ import (
 
 func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Request) {
 	// swagger:operation GET /stations/locate/geobytes geolocating geolocatingByGeobytesResponse
-	// Gets a list of sensors belonging to given station, with all the (sensors) properties.
+	// Gets a list of stations geolocalized, with a nearby cities, using 3rd part service called GeoBytes.
 	// ---
 	// produces:
 	// - application/json
@@ -48,7 +48,7 @@ func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Requ
 
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
 	// swagger:operation GET /stations/locate/locationIQ geolocating geolocatingByLocIQResponse
-	// Gets a list of sensors belonging to given station, with all the (sensors) properties.
+	// Gets a list of stations geolocalized, with a nearby cities, using 3rd part service called LocationIQ.
 	// ---
 	// produces:
 	// - application/json
@@ -106,7 +106,7 @@ func LocalizeStationUsingLocationIQHandler(w http.ResponseWriter, r *http.Reques
 
 func GetStationNumbersPerCityHandler(w http.ResponseWriter, r *http.Request) {
 	// swagger:operation GET /stations/locate/locationIQ/numbersPerCity geolocating geolocatingCitiesWithStationsResponse
-	// Gets a list of sensors belonging to given station, with all the (sensors) properties.
+	// Gets a list of geolocalized station IDs, groupped by nearby city(ies), using 3rd part service called LocationIQ.
 	// ---
 	// produces:
 	// - application/json

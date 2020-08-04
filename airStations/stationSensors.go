@@ -3,7 +3,6 @@ package airStations
 /* The 'pmpro.dacsystem.pl' stations has sensors which collects different air measurments data - nothing unusual, uh?
 But which data every station is able to collect? Does all the stations collects same data ? Does station with id X collects NO2?
 The call : 'https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2' answers this question,but it returns all Poland stations in one Json file.
-
 */
 
 import (
@@ -42,7 +41,7 @@ type SensorsSimplifiedResponse struct {
 	Data       []SensorSimplified `json:"data"`
 }
 
-// The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.
+/* The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.*/
 type Sensor struct {
 	ID                 int       `json:"id"`
 	Code               string    `json:"code"`
