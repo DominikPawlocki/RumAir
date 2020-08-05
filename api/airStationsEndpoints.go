@@ -10,7 +10,16 @@ import (
 	"github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 )
 
-// ...stations/sensors/codes
+// swagger:operation GET /stations/sensors/codes stationsAndSensors allSensorsCodesStringified
+// Gets a list of sensors per station, stringified. Describes briefly which capability (sensors) has the particular station.
+// ---
+// produces:
+// - application/json
+// responses:
+//   "200":
+//     "$ref": "#/responses/allStationsSensorCodesStringifiedResponse"
+//   "500":
+//     "$ref": "#/responses/internalServerError"
 func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
 	var resultBytes []byte
 
@@ -22,11 +31,11 @@ func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f
 			if resultBytes, err = json.Marshal(sensorsPerStation); err != nil {
 				http.Error(w, fmt.Sprintf("%s %v", deserializingSensorsPerStationError, err.Error()), http.StatusInternalServerError)
 				return
-			} else {
-				//w.WriteHeader(200)is called automatically
-				w.Header().Add("Content-Type", "application/json; charset=utf-8")
-				w.Write(resultBytes)
 			}
+			//w.WriteHeader(200)is called automatically
+			w.Header().Add("Content-Type", "application/json; charset=utf-8")
+			w.Write(resultBytes)
+
 		} else {
 			http.Error(w, fmt.Sprintf("%s %v", emptySensorsPerStationError, err.Error()), http.StatusInternalServerError)
 			return
@@ -37,7 +46,16 @@ func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f
 	}
 }
 
-// .../stations/sensors
+// swagger:operation GET /stations/sensors stationsAndSensors stationsFetching
+// Gets a list of all system's (air)stations, with all its sensors (simplified model).
+// ---
+// produces:
+// - application/json
+// responses:
+//   "200":
+//     "$ref": "#/responses/stationsResponse"
+//   "500":
+//     "$ref": "#/responses/internalServerError"
 func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
 	var resultBytes []byte
 	if result, err := airStations.GetAllStationsCapabilities(f); err != nil {
@@ -45,7 +63,6 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 		return
 	} else if resultBytes, err = json.Marshal(result); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		//w.Write([]byte("Unsupported request method."))
 		return
 	} else {
 		w.Header().Set("Content-Type", "application/json")
@@ -55,7 +72,7 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 
 func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
 	// swagger:operation GET /stations/{stationId}/sensors stationsAndSensors sensorsFetching
-	// Gets a list of sensors belonging to given station, with all the (sensors) properties.
+	// Gets a list of sensors belonging to given station, with all the (sensors) properties (extended model).
 	// ---
 	// produces:
 	// - application/json

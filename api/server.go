@@ -28,10 +28,10 @@ func Main() {
 	fileServerHandler = http.StripPrefix("/swagger/", http.FileServer(http.Dir("/tmp/swagger/")))
 	myRouter.HandleFunc("/swagger/swagger.json", fileServerHandler.ServeHTTP) //not mockable for unit testing
 
-	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler)      //not mockable for unit testing
-	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler)     //not mockable for unit testing
-	myRouter.HandleFunc("/stations/locate/geobytes", LocalizeAllStationsUsingGeoBytesHandler)          //not mockable for unit testing
-	myRouter.HandleFunc("/stations/locate/locationIQ/numbersPerCity", GetStationNumbersPerCityHandler) //not mockable for unit testing
+	myRouter.HandleFunc("/stations/locate/locationIQ", LocalizeAllStationsUsingLocationIQHandler).Methods("GET")     //not mockable for unit testing
+	myRouter.HandleFunc("/stations/{id}/locate/locationIQ", LocalizeStationUsingLocationIQHandler).Methods("GET")      //not mockable for unit testing
+	myRouter.HandleFunc("/stations/locate/geobytes", LocalizeAllStationsUsingGeoBytesHandler).Methods("GET")       //not mockable for unit testing
+	myRouter.HandleFunc("/stations/locate/locationIQ/numbersPerCity", GetStationNumbersPerCityHandler).Methods("GET")  //not mockable for unit testing
 
 	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
@@ -43,8 +43,24 @@ func Main() {
 		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
 
+	myRouter.HandleFunc("/healthCheck", healthCheck).Methods("GET")
+	
 	// all origins accepted with simple methods (GET, POST). Security antipattern, will look there later.
 	handlerWithAllCorsEnabled := cors.Default().Handler(myRouter)
 
 	log.Fatal(http.ListenAndServe(":5000", handlerWithAllCorsEnabled))
+}
+
+
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+	// swagger:operation GET /healthCheck healthCheck basicPingPongHealthCheck
+	// Ping ? Pong .
+	// ---
+	// produces:
+	// - application/json
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/healthCheckResponse"
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Welcome to Rumia air monitoring system.")
 }

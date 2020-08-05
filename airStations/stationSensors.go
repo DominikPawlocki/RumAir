@@ -41,10 +41,9 @@ type SensorsSimplifiedResponse struct {
 	Data       []SensorSimplified `json:"data"`
 }
 
-/* The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.*/
 type Sensor struct {
 	ID                 int       `json:"id"`
-	Code               string    `json:"code"`
+	Code               string    `json:"code"` //The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.
 	Name               string    `json:"name"`
 	CompoundType       string    `json:"compound_type"`
 	PhysicalDeviceID   int       `json:"physical_device_id"`
