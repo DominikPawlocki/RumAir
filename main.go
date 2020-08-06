@@ -5,15 +5,13 @@
 // It is contenerized application, consist of two containers, public swaggerUI (pulled from DockerHub) and custom Golang API one.
 // Both are deployed on Azure Docker Instances service.
 //
-// SKDHFKJSDHFKJSFDHKJSFHKS
 //
 //	Schemes: http
-//	Version: Beta
+//	Version: 1.0
 //	License: MIT http://opensource.org/licenses/MIT
-//	Contact: Dominik Pawlocki <d.pawlocki@onet.pl> https://github.com/DominikPawlocki/AbaxTest1
+//	Contact: Dominik Pawlocki <d.pawlocki@onet.pl> https://github.com/DominikPawlocki
 //	Description: RumAir API
 //
-// aaaaaaaaaaaaaaaaaaaa------------AAAAAAAAAAAAAAAAAAAAAAssss
 //
 //	Consumes:
 //		- application/json

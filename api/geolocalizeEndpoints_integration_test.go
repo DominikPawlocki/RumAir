@@ -13,7 +13,7 @@ import (
 )
 
 // flag set up in Azure Build pipeline.
-var withIntegration = flag.Bool("withIntegrationTests", false, "withIntegrationTests")
+var withIntegration = flag.Bool("withIntegrationTests", true, "withIntegrationTests")
 
 func TestMain(m *testing.M) {
 	flag.Parse()
