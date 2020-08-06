@@ -5,6 +5,9 @@
 
 pool:
     vmImage: 'ubuntu-latest'
+
+variables:
+- group: BuildVars # that group exists in Azure DevOps, contains eg AZDEVOPS_COMPOSE_BUILDTYPE variable
       
 steps:
 - task: DockerCompose@0
