@@ -7,11 +7,10 @@ volumes:
     swaggerDefFile:
 services:
     sensors_api:
+        image: rumair.local.container.storage/sensors_api:latest
         build:
             args:
                 BUILD_TYPE: localhost manually triggered build by docker-compose up --build -d command like
-        ports:
-            - "5000:5000"
     swagger:
             environment:
                 - API_URL=http://localhost:5000/swagger/swagger.json

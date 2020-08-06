@@ -1,14 +1,20 @@
+# Its used in one of the pipelines in Azure DevOps 
+# It builds and pushes only one container to ACR, without swaggerUI.
+# Thx to the (dockerfile) build a new swagger.json file is produced.
+
 pool:
   vmImage: 'ubuntu-latest'
-     
+
+variables:
+  - group: DeploymentVars # that group exists in Azure DevOps, contains eg AZDEVOPS_COMPOSE_BUILDTYPE variable
+
 steps:
-  # this task is MS defined. It pushes image to ACR also.
+  # this task is MS defined.
   - task: Docker@2
     displayName: Build and push a Docker image to ACR
     inputs:
-      # should be injected via Azure Dev Ops variable !
-      containerRegistry: Epam-VS-AzureDockerRegistry #DomPaw-AzureContainerRegistry
+      containerRegistry: $(AZ_CONTAINER_REGISTRY)
       repository: $(Build.Repository.Name)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
       command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
       Dockerfile: ./Dockerfile
-      arguments: BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE) #--build-arg BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE)
+      arguments: BUILD_TYPE=Build from AzureDevOps, single file, without Compose, by az-pipelines.docker.yml file.

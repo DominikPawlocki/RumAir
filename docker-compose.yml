@@ -1,13 +1,14 @@
 version: "3.7"
 services:
     sensors_api:
-        image: rumairstaging.azurecr.io/sensors_api:latest
         container_name: sensors_api
         build:
             context: ./
             cache_from:
                 - golang:alpine:latest
                 - quay.io/goswagger/swagger:latest
+        ports:
+            - "5000:5000"
     swagger:
         image: swaggerapi/swagger-ui:latest
         container_name: swaggerUI_sensors_api
@@ -16,8 +17,7 @@ services:
         ports:
             - "80:8080"
         environment:
-            - BASE_URL=/swagger 
-            - API_URL=http://someURIInAzure:5000/swagger/swagger.json
+            - BASE_URL=/swagger
 
 # How to run swagger spec generator locally 
 #You can put the following in a file called swagger.bat and include it in your path environment variable to act as an alias.
