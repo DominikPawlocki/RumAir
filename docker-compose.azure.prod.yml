@@ -9,7 +9,7 @@ services:
         container_name: sensors_api
         build:
             args:
-                BUILD_TYPE=injected
+                BUILD_TYPE: injected
             context: ./
             cache_from:
                 - golang:alpine:latest
