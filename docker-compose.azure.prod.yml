@@ -8,10 +8,12 @@ services:
         image: rumairstaging.azurecr.io/sensors_api:latest
         container_name: sensors_api
         build:
+            args:
+                BUILD_TYPE=injected
             context: ./
             cache_from:
                 - golang:alpine:latest
-                - quay.io/goswagger/swagg
+                - quay.io/goswagger/swagg   
         ports:
             - "80:5000"
     swagger:
