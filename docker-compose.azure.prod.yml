@@ -5,7 +5,7 @@
 version: "3.7"
 services:
     sensors_api:
-        image: $(AZ_CONTAINER_REGISTRY)/sensors_api:latest
+        image: $(ContainerRegistry)/sensors_api:latest
         build:
             args:
                 BUILD_TYPE: Build from AzureDevOps, by docker-compose.azure.prod.yml

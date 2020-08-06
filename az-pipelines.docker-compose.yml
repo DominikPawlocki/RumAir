@@ -13,7 +13,7 @@ steps:
   displayName: build Golang app to Docker Image and produce swagger.json
   inputs:
     action: Build services
-    #dockerComposeFileArgs: BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE)
+    dockerComposeFileArgs: ContainerRegistry=$(AZ_CONTAINER_REGISTRY)
     azureSubscriptionEndpoint: $(AZ_SUBSCRIPTION_ENDPOINT)
     azureContainerRegistry: $(AZ_CONTAINER_REGISTRY)
     additionalDockerComposeFiles: docker-compose.yml
