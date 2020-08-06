@@ -17,7 +17,6 @@ steps:
     azureSubscriptionEndpoint: $(AZ_SUBSCRIPTION_ENDPOINT)
     azureContainerRegistry: $(AZ_CONTAINER_REGISTRY)
     additionalDockerComposeFiles: docker-compose.azure.prod.yml
-    #dockerComposeFile: docker-compose.azure.prod.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true
     additionalImageTags: $(Build.BuildId)
@@ -27,10 +26,10 @@ steps:
   displayName: Push services
   inputs:
     action: Push services
+    dockerComposeFileArgs: ContainerRegistry=$(AZ_CONTAINER_REGISTRY)
     azureSubscriptionEndpoint: $(AZ_SUBSCRIPTION_ENDPOINT)
     azureContainerRegistry: $(AZ_CONTAINER_REGISTRY)
     additionalDockerComposeFiles: docker-compose.azure.prod.yml
-    #dockerComposeFile: docker-compose.azure.prod.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true
     #additionalImageTags: $(Build.BuildId)
