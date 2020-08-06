@@ -5,13 +5,6 @@ import (
 	geolocalize "github.com/dompaw/RumAir_Pmpro_Sensors_API/geoLocalize"
 )
 
-// No Content 204 response
-// swagger:response noContent
-type swaggNoContentResp struct {
-	// in: body
-	Body string
-}
-
 // Not Found 404 response
 // swagger:response notFound
 type swaggNotFoundResp struct {
@@ -72,5 +65,6 @@ type swaggGeolocateParticularStationUsingLocationIQHandlerSuccessResp struct {
 // swagger:response allStationsSensorCodesStringifiedResponse
 type swaggShowAllStationsSensorCodesHandlerSuccessResp struct {
 	// in: body
+	// Example: [Station : 12 can : 12HUMID_F 12HUMID_O 12PRESS_F 12PM10A]
 	Body []string
 }

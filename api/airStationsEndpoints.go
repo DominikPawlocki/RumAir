@@ -18,6 +18,8 @@ import (
 // responses:
 //   "200":
 //     "$ref": "#/responses/allStationsSensorCodesStringifiedResponse"
+//   "204":
+//     "description": "It seems none of the stations has sensors. Probably some error occured ?"
 //   "500":
 //     "$ref": "#/responses/internalServerError"
 func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
@@ -37,7 +39,7 @@ func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f
 			w.Write(resultBytes)
 
 		} else {
-			http.Error(w, fmt.Sprintf("%s %v", emptySensorsPerStationError, err.Error()), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("%s %v", emptySensorsPerStationError, err.Error()), http.StatusNoContent)
 			return
 		}
 	} else {
