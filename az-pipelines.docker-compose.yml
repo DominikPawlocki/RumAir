@@ -7,16 +7,16 @@ pool:
     vmImage: 'ubuntu-latest'
 
 variables:
-- group: BuildVars # that group exists in Azure DevOps, contains eg AZDEVOPS_COMPOSE_BUILDTYPE variable
+- group: DeploymentVars # that group exists in Azure DevOps, contains eg AZDEVOPS_COMPOSE_BUILDTYPE variable
       
 steps:
 - task: DockerCompose@0
   displayName: build Golang app to Docker Image and produce swagger.json
   inputs:
     action: Build services
-    dockerComposeFileArgs: BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE)
+    #dockerComposeFileArgs: BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE)
     azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
-    azureContainerRegistry: rumairstaging.azurecr.io
+    azureContainerRegistry: $(AZ_CONTAINER_REGISTRY)
     #additionalDockerComposeFiles: 
     dockerComposeFile: docker-compose.azure.prod.yml
     projectName: $(Build.Repository.Name)
@@ -29,7 +29,7 @@ steps:
   inputs:
     action: Push services
     azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
-    azureContainerRegistry: rumairstaging.azurecr.io
+    azureContainerRegistry: $(AZ_CONTAINER_REGISTRY)
     dockerComposeFile: docker-compose.azure.prod.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true

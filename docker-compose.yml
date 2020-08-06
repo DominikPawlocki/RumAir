@@ -8,8 +8,6 @@ services:
             cache_from:
                 - golang:alpine:latest
                 - quay.io/goswagger/swagger:latest
-            args:
-                BUILD_TYPE: Build from AzureDevOps
     swagger:
         image: swaggerapi/swagger-ui:latest
         container_name: swaggerUI_sensors_api
