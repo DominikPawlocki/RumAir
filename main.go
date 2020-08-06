@@ -7,7 +7,7 @@
 //
 //
 //	Schemes: http
-//	Version: Beta
+//	Version: 1.0
 //	License: MIT http://opensource.org/licenses/MIT
 //	Contact: Dominik Pawlocki <d.pawlocki@onet.pl> https://github.com/DominikPawlocki
 //	Description: RumAir API
