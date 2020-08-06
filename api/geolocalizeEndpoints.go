@@ -12,13 +12,13 @@ import (
 
 func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Request) {
 	// swagger:operation GET /stations/locate/geobytes geolocating geolocatingByGeobytesResponse
-	// Gets a list of stations geolocalized, with a nearby cities, using 3rd part service called GeoBytes.
+	// Gets a list of stations geolocalized (has CitiesNearby and Lat/Lon), with a nearby cities, using 3rd part service called GeoBytes.
 	// ---
 	// produces:
 	// - application/json
 	// responses:
 	//   "200":
-	//     "$ref": "#/responses/geolocatingByGeobytesResponse"
+	//     "$ref": "#/responses/geolocatingStationsResponse"
 	//   "404":
 	//     "$ref": "#/responses/notFound"
 	//   "500":
@@ -48,13 +48,13 @@ func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Requ
 
 func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
 	// swagger:operation GET /stations/locate/locationIQ geolocating geolocatingByLocIQResponse
-	// Gets a list of stations geolocalized, with a nearby cities, using 3rd part service called LocationIQ.
+	// Gets a list of stations geolocalized (has CitiesNearby and Lat/Lon), with a nearby cities, using 3rd part service called LocationIQ.
 	// ---
 	// produces:
 	// - application/json
 	// responses:
 	//   "200":
-	//     "$ref": "#/responses/geolocatingByGeobytesResponse"
+	//     "$ref": "#/responses/geolocatingStationsResponse"
 	//   "404":
 	//     "$ref": "#/responses/notFound"
 	//   "500":
@@ -82,15 +82,33 @@ func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Re
 	w.Write(resultBytes)
 }
 
-// .../stations/{id}/locate/locationIQ"
 func LocalizeStationUsingLocationIQHandler(w http.ResponseWriter, r *http.Request) {
+	// swagger:operation GET /stations/{stationId}/locate/locationIQ geolocating geolocateParticularStation
+	// Geolocalize (finds CitiesNearby and Lat/Lon) one particular station by 3rd party service 'LocationIQ', and returns it with its sensors simplified model also.
+	// ---
+	// produces:
+	// - application/json
+	// parameters:
+	// - name: stationId
+	//   in: path
+	//   description: weather station id
+	//   required: true
+	//   type: string
+	//   format: should be like 02, 04 etc
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/geolocatingParticularStationResponse"
+	//   "404":
+	//     "$ref": "#/responses/notFound"
+	//   "500":
+	//     "$ref": "#/responses/internalServerError"
 	vars := mux.Vars(r)
 	stationID := vars["id"]
 
 	var resultBytes []byte
 
 	if result := airStations.GetStationCapabilities(airStations.StationsCapabiltiesFetcher{}, stationID); len(result.Sensors) <= 0 {
-		http.Error(w, fmt.Sprintf("Cannot fectch station with ID %s", stationID), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Cannot fetch station with ID %s", stationID), http.StatusNotFound)
 		return
 	} else if localized, err := geolocalize.LocalizeStationLocIQ(result); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", locationIQfetchingError, err.Error()), http.StatusInternalServerError)
@@ -140,9 +158,4 @@ func GetStationNumbersPerCityHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.Write(resultBytes)
-}
-
-func index(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Welcome to Rumia air monitoring system.")
 }

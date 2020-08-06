@@ -50,17 +50,19 @@ func getReverseGeocodedCitiesLocIQ(lat float64, lon float64) (bytesRead []byte, 
 func getCitiesNearbyLocIQ(lat float64, lon float64) (citiesNearby []string, err error) {
 	type LocationIQReverseGeoResponse struct {
 		Address struct {
-			CityDistrict string `json:"city_district"`
-			Country      string `json:"country"`
-			CountryCode  string `json:"country_code"`
-			County       string `json:"county"`
-			HouseNumber  string `json:"house_number"`
-			Postcode     string `json:"postcode"`
-			Road         string `json:"road"`
-			State        string `json:"state"`
-			Suburb       string `json:"suburb"`
-			Town         string `json:"town"`
-			City         string `json:"city"`
+			Amenity       string `json:"amenity"`       // like : "Szko\u0142a Podstawowa nr 8 im. Martyrologii Pia\u015bnicy w Wejherowie",
+			Neighbourhood string `json:"neighbourhood"` // like "Osiedle Fryderyka Chopina",
+			CityDistrict  string `json:"city_district"`
+			Country       string `json:"country"`
+			CountryCode   string `json:"country_code"`
+			County        string `json:"county"`
+			HouseNumber   string `json:"house_number"`
+			Postcode      string `json:"postcode"`
+			Road          string `json:"road"`
+			State         string `json:"state"`
+			Suburb        string `json:"suburb"`
+			Town          string `json:"town"`
+			City          string `json:"city"`
 		} `json:"address"`
 		DisplayName string `json:"display_name"`
 		Lat         string `json:"lat"`
