@@ -5,10 +5,11 @@
 version: "3.7"
 services:
     sensors_api:
-        image: $(ContainerRegistry)/sensors_api:latest
+        image: $ContainerRegistry/sensors_api:latest
         build:
             args:
-                BUILD_TYPE: Build from AzureDevOps, by docker-compose.azure.prod.yml
+                - BUILD_TYPE: Build from AzureDevOps, by docker-compose.azure.prod.yml
+                - site_title: $SITE_TITLE
     swagger:
         environment:
             - API_URL=http://somehostInAzure:5000/swagger/swagger.json
