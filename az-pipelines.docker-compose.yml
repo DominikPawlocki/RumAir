@@ -17,7 +17,7 @@ steps:
     azureSubscriptionEndpoint: $(AZ_SUBSCRIPTION_ENDPOINT)
     azureContainerRegistry: $(AZ_CONTAINER_REGISTRY)
     additionalDockerComposeFiles: docker-compose.azure.prod.yml
-    projectName: $(Build.Repository.Name)
+    projectName: aaaaaaaaaaaaaaaaa
     qualifyImageNames: true
     additionalImageTags: $(Build.BuildId)
     buildImages: true
