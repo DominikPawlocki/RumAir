@@ -23,8 +23,6 @@
 package main
 
 import (
-	"fmt"
-
 	airStations "github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations"
 	api "github.com/dompaw/RumAir_Pmpro_Sensors_API/api"
 
@@ -32,7 +30,6 @@ import (
 )
 
 func main() {
-	fmt.Println("Starting ...")
 	api.Main()
 }
 

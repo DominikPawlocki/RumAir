@@ -1,10 +1,6 @@
 # this file is merged with a docker-compose file when just run manually via 'docker-compose up --build -d' command
-# it will/should be ommited when run in Azure DevOps pipelines
-# Actually this compose file is used only for localhost now. For Azure deployment, there are two manually deployed containter insances.
 
 version: "3.7"
-volumes:
-    swaggerDefFile:
 services:
     sensors_api:
         image: rumair.local.container.storage/sensors_api:latest
