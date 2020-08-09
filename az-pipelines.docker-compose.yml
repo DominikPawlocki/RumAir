@@ -13,7 +13,7 @@ steps:
   displayName: build Golang app to Docker Image and produce swagger.json
   inputs:
     action: Build services
-    dockerComposeFileArgs: ContainerRegistry=$(AZ_CONTAINER_REGISTRY)
+    dockerComposeFileArgs: ContainerRegistry=$(DOCKER_CONTAINER_ REGISTRY)
     azureSubscriptionEndpoint: $(AZ_SUBSCRIPTION_ENDPOINT)
     azureContainerRegistry: $(AZ_CONTAINER_REGISTRY)
     additionalDockerComposeFiles: docker-compose.azure.prod.yml
@@ -26,7 +26,7 @@ steps:
   displayName: Push services
   inputs:
     action: Push services
-    dockerComposeFileArgs: ContainerRegistry=$(AZ_CONTAINER_REGISTRY)
+    dockerComposeFileArgs: ContainerRegistry=$(DOCKER_CONTAINER_ REGISTRY)
     azureSubscriptionEndpoint: $(AZ_SUBSCRIPTION_ENDPOINT)
     azureContainerRegistry: $(AZ_CONTAINER_REGISTRY)
     additionalDockerComposeFiles: docker-compose.azure.prod.yml
