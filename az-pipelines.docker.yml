@@ -13,8 +13,8 @@ steps:
   - task: Docker@2
     displayName: Build and push a Docker image to ACR
     inputs:
-      containerRegistry: $(AZ_CONTAINER_REGISTRY)
+      containerRegistry: $(AZ_CONTAINER_REGISTRY) #Name of the Docker registry service connection
       repository: $(Build.Repository.Name)        #(Optional) Name of repository within the container registry corresponding to the Docker registry service connection specified as input for containerRegistry
       command: buildAndPush           #(Required) Acceptable values: buildAndPush/build/push/login/logout
       Dockerfile: ./Dockerfile
-      arguments: BUILD_TYPE=Build from AzureDevOps, single file, without Compose, by az-pipelines.docker.yml file.
+      arguments: BUILD_TYPE=Build from AzureDevOps, single container mode, without Compose, by az-pipelines.docker.yml file. #Be aware that if you use value 'buildandPush' for the command parameter, then the arguments property will be ignored.

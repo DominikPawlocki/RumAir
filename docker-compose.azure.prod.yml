@@ -1,14 +1,10 @@
-# VERY IMPORTANT - it uses a volume witch is persisted. 
-# Remember to delete this volume before new build, otherwise docker is not copying already existing swagger.json from container to host !
-# command is 'docker volume rm rumair_pmpro_sensors_api_swaggerDefFile' or 'docker volume prune'.
-
 version: "3.7"
 services:
     sensors_api:
         image: $ContainerRegistry/sensors_api:latest
         build:
             args:
-                BUILD_TYPE: Build from AzureDevOps, by docker-compose.azure.prod.yml
+                BUILD_TYPE: Docker Compose build from AzureDevOps, by docker-compose.azure.prod.yml
     swagger:
         environment:
             - API_URL=http://somehostInAzure:5000/swagger/swagger.json
