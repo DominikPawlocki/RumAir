@@ -1,21 +1,22 @@
 # This pipeline builds two docker images (the golang api and swaggerUI from dockerhub )
-# It pushes it to Azure ACR 
-
-# NOT USED RIGHT NOW. Regular az-pipelines.docker.yml used.
+# It pushes it to Azure ACR
+# Its used in one of the pipelines in Azure DevOps 
 
 pool:
     vmImage: 'ubuntu-latest'
+
+variables:
+- group: DeploymentVars # that group exists in Azure DevOps, contains eg AZDEVOPS_COMPOSE_BUILDTYPE variable
       
 steps:
 - task: DockerCompose@0
   displayName: build Golang app to Docker Image and produce swagger.json
   inputs:
     action: Build services
-    dockerComposeFileArgs: BUILD_TYPE=$(AZDEVOPS_COMPOSE_BUILDTYPE)
-    azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
-    azureContainerRegistry: rumairstaging.azurecr.io
-    #additionalDockerComposeFiles: 
-    dockerComposeFile: docker-compose.azure.prod.yml
+    dockerComposeFileArgs: ContainerRegistry=$(DOCKER_CONTAINER_ REGISTRY)
+    azureSubscriptionEndpoint: $(AZ_SUBSCRIPTION_ENDPOINT)
+    azureContainerRegistry: $(DOCKER_CONTAINER_ REGISTRY)
+    additionalDockerComposeFiles: docker-compose.azure.prod.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true
     additionalImageTags: $(Build.BuildId)
@@ -25,9 +26,10 @@ steps:
   displayName: Push services
   inputs:
     action: Push services
-    azureSubscriptionEndpoint: EPAM-Visual Studio Professional-Azure Resource Manager connection.
-    azureContainerRegistry: rumairstaging.azurecr.io
-    dockerComposeFile: docker-compose.azure.prod.yml
+    dockerComposeFileArgs: ContainerRegistry=$(DOCKER_CONTAINER_ REGISTRY)
+    azureSubscriptionEndpoint: $(AZ_SUBSCRIPTION_ENDPOINT)
+    azureContainerRegistry: $(DOCKER_CONTAINER_ REGISTRY)
+    additionalDockerComposeFiles: docker-compose.azure.prod.yml
     projectName: $(Build.Repository.Name)
     qualifyImageNames: true
     #additionalImageTags: $(Build.BuildId)

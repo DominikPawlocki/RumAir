@@ -1,38 +1,12 @@
-# NOT USED RIGHT NOW.
-# VERY IMPORTANT - it uses a volume witch is persisted. 
-# Remember to delete this volume before new build, otherwise docker is not copying already existing swagger.json from container to host !
-# command is 'docker volume rm rumair_pmpro_sensors_api_swaggerDefFile' or 'docker volume prune'.
 version: "3.7"
 services:
     sensors_api:
-        image: rumairstaging.azurecr.io/sensors_api:latest
-        container_name: sensors_api
+        image: $ContainerRegistry/sensors_api:latest
         build:
-            context: ./
-            cache_from:
-                - golang:alpine:latest
-                - quay.io/goswagger/swagg
-        ports:
-            - "80:5000"
+            args:
+                BUILD_TYPE: Docker Compose build from AzureDevOps, by docker-compose.azure.prod.yml
     swagger:
-        image: swaggerapi/swagger-ui:latest
-        container_name: swaggerUI_sensors_api
-        depends_on:
-            - sensors_api
-        ports:
-            - "80:8080"
         environment:
-            - BASE_URL=/swagger 
-            - SWAGGER_JSON=/etc/swagger/swagger.json
-        volumes:
-            - ${WEBAPP_STORAGE_HOME}/site/wwwroot/swagger:/etc/swagger/:ro
-
-# How to run swagger spec generator locally 
-#You can put the following in a file called swagger.bat and include it in your path environment variable to act as an alias.
-# echo off
-# echo.
-# docker run --rm -it --env GOPATH=/go -v %CD%:/go/src -w /go/src quay.io/goswagger/swagger %*
-
-#then run :
-#swagger generate .\swagger generate spec -o ./swagger.json
-#swagger validate --stop-on-error ./swagger.json 
+            - API_URL=http://somehostInAzure:5000/swagger/swagger.json
+        #volumes:
+         #   - ${WEBAPP_STORAGE_HOME}/site/wwwroot/swagger:/etc/swagger/:ro
