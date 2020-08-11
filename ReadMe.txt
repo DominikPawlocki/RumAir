@@ -1,3 +1,3 @@
-Setting up local environment:
+Deployed : http://rumair.northeurope.azurecontainer.io:8080/swagger/#/
 
-PS > go run main.go
+How to run locally : 'docker-compose up --build -d'
