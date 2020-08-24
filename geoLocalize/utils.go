@@ -93,7 +93,7 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 			V float64 `json:"v"`
 		} `json:"values"`
 		Vars []string `json:"vars"`
-	}
+	} change name!!!!
 
 	resp := &LimitedOneValueResponse{}
 	bytesRead, err := doAPIGet(sensorCallURI)

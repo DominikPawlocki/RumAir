@@ -76,22 +76,6 @@ type Sensor struct {
 	StartDate          time.Time `json:"start_date"`
 }
 
-//UnmarshalJSON - is called when json.Unmarshal method executes on main type. It changes Unix timestamp from db to time.time.
-func (smt *Sensor) UnmarshalJSON(data []byte) error {
-	type Alias Sensor
-	aux := struct {
-		StartedAt int64 `json:"start_date"`
-		*Alias
-	}{
-		Alias: (*Alias)(smt),
-	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-	smt.StartDate = time.Unix(aux.StartedAt, 0)
-	return nil
-}
-
 // Same like above, but simpler one
 type SensorSimplified struct {
 	ID           int    `json:"id"`

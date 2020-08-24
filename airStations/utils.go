@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+// func DoHttpCallIn(fn func() ([]byte, error)) (bytesRead []byte, err error) {
+// 	go ( bytesRead, err = fn())
+// 	return
+// }
+
 func DoHttpCallWithConsoleDots(fn func() ([]byte, error)) (bytesRead []byte, err error) {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	done := make(chan bool)
