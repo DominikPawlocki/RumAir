@@ -7,7 +7,7 @@ import (
 )
 
 // func DoHttpCallIn(fn func() ([]byte, error)) (bytesRead []byte, err error) {
-// 	go ( bytesRead, err = fn())
+// 	go ( bytesRead, err = fn()) aaa
 // 	return
 // }
 
