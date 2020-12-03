@@ -10,20 +10,10 @@ import (
 	"net/http"
 )
 
-type IStationsCapabiltiesFetcher interface {
-	DoAllMeasurmentsAPIcall() ([]byte, error)
-}
-type StationsCapabiltiesFetcher struct {
-}
-
-func (StationsCapabiltiesFetcher) DoAllMeasurmentsAPIcall() ([]byte, error) {
-	return DoAllMeasurmentsAPIcall()
-}
-
 var allStationsMeasurmentsURL string = "http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 var pmproSystemBaseAPIURL string = "http://pmpro.dacsystem.pl/webapp/data"
 
-func DoAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
+/*func DoAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
 	var netResp *http.Response
 
 	netResp, err = http.Get(allStationsMeasurmentsURL)
@@ -46,7 +36,7 @@ func DoAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
 
 	fmt.Printf("%v bytes read from network for `../table=Measurement&v=2` endpoint. \n", len(bytesRead))
 	return
-}
+}*/
 
 // kinda utils and refasctor to use this by old one !
 type IHttpAbstracter interface {
@@ -83,13 +73,13 @@ func doHttpGetCall(uri string) (bytesRead []byte, err error) {
 	return
 }
 
-func DoHttpCallWithConsoleDots(fn func() ([]byte, error)) (bytesRead []byte, err error) {
+func DoHttpCallWithConsoleDots(fn func(uri string) ([]byte, error), uri string) (bytesRead []byte, err error) {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	done := make(chan bool)
 
 	go selectTicker(done, ticker)
 
-	bytesRead, err = fn()
+	bytesRead, err = fn(uri)
 
 	ticker.Stop()
 	done <- true

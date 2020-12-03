@@ -22,7 +22,7 @@ import (
 //     "description": "It seems none of the stations has sensors. Probably some error occured ?"
 //   "500":
 //     "$ref": "#/responses/internalServerError"
-func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter) {
 	var resultBytes []byte
 
 	if result, err := airStations.GetAllStationsCapabilities(f); err != nil {
@@ -58,7 +58,7 @@ func ShowAllStationsSensorCodesHandler(w http.ResponseWriter, r *http.Request, f
 //     "$ref": "#/responses/stationsResponse"
 //   "500":
 //     "$ref": "#/responses/internalServerError"
-func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter) {
 	var resultBytes []byte
 	if result, err := airStations.GetAllStationsCapabilities(f); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
@@ -72,7 +72,7 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 	}
 }
 
-func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher) {
+func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter) {
 	// swagger:operation GET /stations/{stationId}/sensors stationsAndSensors sensorsFetching
 	// Gets a list of sensors belonging to given station, with all the (sensors) properties (extended model).
 	// ---

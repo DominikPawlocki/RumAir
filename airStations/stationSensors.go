@@ -90,10 +90,10 @@ type AirStationSimplified struct {
 
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
 //This method returns all station's Ids, information if station is geolocalizable and its sensors (capabilities)
-func GetAllStationsCapabilities(fetchData IStationsCapabiltiesFetcher) (result map[string]*AirStation, err error) {
+func GetAllStationsCapabilities(fetchData IHttpAbstracter) (result map[string]*AirStation, err error) {
 	allMeasurments := SensorsSimplifiedResponse{}
 
-	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoHttpGetCall, allStationsMeasurmentsURL)
 	if err != nil {
 		return
 	}
@@ -133,10 +133,10 @@ func GetAllStationsCapabilities(fetchData IStationsCapabiltiesFetcher) (result m
 	return
 }
 
-func GetStationCapabilities(fetchData IStationsCapabiltiesFetcher, stationID string) (result *AirStation) {
+func GetStationCapabilities(fetchData IHttpAbstracter, stationID string) (result *AirStation) {
 	var allMeasurments *SensorsSimplifiedResponse
 
-	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoHttpGetCall, allStationsMeasurmentsURL)
 	if err != nil {
 		fmt.Println("Error during getting data from `../table=Measurement&v=2`. Error is :", err)
 		return
@@ -166,11 +166,11 @@ func GetStationCapabilities(fetchData IStationsCapabiltiesFetcher, stationID str
 
 //GetStationSensors - Returns station all sensors.
 //Returns richer sensor objects (Sensor) instead simpler one returned by GetAllStationsCapabilities() ...
-func GetStationSensors(fetchData IStationsCapabiltiesFetcher, stationID string) (result []Sensor, err error) {
+func GetStationSensors(fetchData IHttpAbstracter, stationID string) (result []Sensor, err error) {
 	//instead of reuturn nil - slice `zero` value default, return empty slice
 	var allMeasurments *SensorsResponse
 
-	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoAllMeasurmentsAPIcall)
+	bytesRead, err := DoHttpCallWithConsoleDots(fetchData.DoHttpGetCall, allStationsMeasurmentsURL)
 	if err != nil {
 		fmt.Println("Error during getting data from `../table=Measurement&v=2`. Error is :", err)
 		return

@@ -11,20 +11,11 @@ import (
 )
 
 type MockableHTTPHandler struct {
-	mockableDataFetcher airStations.IStationsCapabiltiesFetcher
-	methodToBeCalled    func(w http.ResponseWriter, r *http.Request, f airStations.IStationsCapabiltiesFetcher)
-}
-
-type MockableHTTPHandler2 struct {
 	mockableDataFetcher airStations.IHttpAbstracter
 	methodToBeCalled    func(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter)
 }
 
 func (m MockableHTTPHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	m.methodToBeCalled(w, r, m.mockableDataFetcher)
-}
-
-func (m MockableHTTPHandler2) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.methodToBeCalled(w, r, m.mockableDataFetcher)
 }
 
@@ -43,16 +34,16 @@ func Main() {
 	myRouter.HandleFunc("/stations/locate/locationIQ/numbersPerCity", GetStationNumbersPerCityHandler).Methods("GET") //not mockable for unit testing
 
 	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
-		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    GetStationSensorsHandler}).Methods("GET")
 	myRouter.Handle("/stations/sensors", MockableHTTPHandler{
-		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    GetAllStationsCapabilitiesHandler}).Methods("GET")
 	myRouter.Handle("/stations/sensors/codes", MockableHTTPHandler{
-		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
 
-	myRouter.Handle("/stations/{stationId}/data", MockableHTTPHandler2{
+	myRouter.Handle("/stations/{stationId}/data", MockableHTTPHandler{
 		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    AAAAAAAAAAAAA}).Methods("GET")
 	myRouter.HandleFunc("/healthCheck", healthCheck).Methods("GET")
