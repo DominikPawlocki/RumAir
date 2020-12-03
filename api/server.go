@@ -46,6 +46,7 @@ func Main() {
 	myRouter.Handle("/stations/{stationId}/data", MockableHTTPHandler{
 		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    AAAAAAAAAAAAA}).Methods("GET")
+
 	myRouter.HandleFunc("/healthCheck", healthCheck).Methods("GET")
 
 	// all origins accepted with simple methods (GET, POST). Security antipattern, will look there later.
