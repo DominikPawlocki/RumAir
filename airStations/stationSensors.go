@@ -7,27 +7,12 @@ The call : 'https://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2' ans
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
-
-type IStationsCapabiltiesFetcher interface {
-	DoAllMeasurmentsAPIcall() ([]byte, error)
-}
-type StationsCapabiltiesFetcher struct {
-}
-
-func (StationsCapabiltiesFetcher) DoAllMeasurmentsAPIcall() ([]byte, error) {
-	return DoAllMeasurmentsAPIcall()
-}
-
-var allStationsMeasurmentsURL string = "http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 
 type SensorsResponse struct {
 	Success    bool     `json:"success"`
@@ -119,12 +104,18 @@ func GetAllStationsCapabilities(fetchData IStationsCapabiltiesFetcher) (result m
 		return
 	}
 
-	re := regexp.MustCompile("[0-9]+")
+	re, err := regexp.Compile("[0-9]+")
 	result = map[string]*AirStation{} //exact same like result = make(map[string]AirStation)
 
 	for _, measurmentType := range allMeasurments.Data {
 		// Assumption ! - The 1st digits set in this string means stationId ! Like in `001NO2` the stationId is 001. Can be 2 or 3 numbers.
-		stationID := re.FindAllString(measurmentType.Code, 1)[0]
+		allStationIdsFound := re.FindAllString(measurmentType.Code, 1)
+		if allStationIdsFound == nil {
+			fmt.Println("Not found :", measurmentType.Code)
+			continue
+		}
+		stationID := allStationIdsFound[0]
+
 		station, isExisting := result[stationID]
 		if !isExisting {
 			station = createNewStation(stationID)
@@ -214,54 +205,6 @@ func ShowStationsSensorsCodes(stations map[string]*AirStation) (result []string)
 		result = append(result, fmt.Sprintf("Station : %s can : %s", stationID, strBldr.String()))
 	}
 	return result
-}
-
-func SaveJsonToFile(v interface{}, fileName string) (err error) {
-	if err != nil {
-		fmt.Println("error:", err)
-		return
-	}
-
-	var bytesToFile []byte
-
-	// pattern called:  Type Assertion
-	switch v.(type) {
-	case []SensorSimplified:
-		bytesToFile, _ = json.MarshalIndent(v.([]SensorSimplified), "", "\t")
-	case []Sensor:
-		bytesToFile, _ = json.MarshalIndent(v.([]Sensor), "", "\t")
-	case map[string]*AirStation:
-		bytesToFile, _ = json.MarshalIndent(v.(map[string]*AirStation), "", "\t")
-	default:
-		return errors.New("Saving to file : type not recognized \n")
-	}
-	err = ioutil.WriteFile(fileName, bytesToFile, 0644)
-	return
-}
-
-func DoAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
-	var netResp *http.Response
-
-	netResp, err = http.Get(allStationsMeasurmentsURL)
-	if err != nil {
-		return
-	}
-
-	defer netResp.Body.Close()
-
-	// allMeasurments slice contains whole system capability. Pretty big JSON (ca 1800 objects).
-	//SLICE INITIALIZATIONS !
-	//allMeasurments := make([]Sensor, 2)
-	//var allMeasurments *[]Sensor = &[]Sensor{}
-
-	bytesRead, err = ioutil.ReadAll(netResp.Body)
-	if err != nil {
-		fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
-		return
-	}
-
-	fmt.Printf("%v bytes read from network for `../table=Measurement&v=2` endpoint. \n", len(bytesRead))
-	return
 }
 
 //Maps and slices are reference types in Go and should be passed by values !
