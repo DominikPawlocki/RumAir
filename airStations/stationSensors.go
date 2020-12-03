@@ -11,7 +11,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type SensorsResponse struct {
@@ -27,38 +26,38 @@ type SensorsSimplifiedResponse struct {
 }
 
 type Sensor struct {
-	ID                 int       `json:"id"`
-	Code               string    `json:"code"` //The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.
-	Name               string    `json:"name"`
-	CompoundType       string    `json:"compound_type"`
-	PhysicalDeviceID   int       `json:"physical_device_id"`
-	PhysicalDeviceSlot string    `json:"physical_device_slot"`
-	UnitID             string    `json:"unit_id"`
-	CoefA              float32   `json:"coef_a"`
-	CoefB              float32   `json:"coef_b"`
-	TechnicalP         int       `json:"technical_p"`
-	VirtualP           int       `json:"virtual_p"`
-	AnalogP            int       `json:"analog_p"`
-	AnalogChan         int       `json:"analog_chan"`
-	BinaryP            int       `json:"binary_p"`
-	BinaryChan         int       `json:"binary_chan"`
-	BinaryCounter      int       `json:"binary_counter"`
-	CoverageRate       int       `json:"coverage_rate"`
-	AggUnit            string    `json:"agg_unit"`
-	Fconv              float32   `json:"fconv"`
-	Decimals           int       `json:"decimals"`
-	Format             string    `json:"format"`
-	SampleType         string    `json:"sample_type"`
-	AverageType        string    `json:"average_type"`
-	Averages           string    `json:"averages"`
-	HighAverages       string    `json:"high_averages"`
-	Expression         string    `json:"expression"`
-	FinishDate         string    `json:"finish_date"`
-	IsPublished        int       `json:"is_published"`
-	Timeshift          int       `json:"timeshift"`
-	ManualP            int       `json:"manual_p"`
-	PassiveP           int       `json:"passive_p"`
-	StartDate          time.Time `json:"start_date"`
+	ID                 int     `json:"id"`
+	Code               string  `json:"code"` //The first two letters of `Code` is the station Id where given station is installed! If same first 2 letters then it means same station.
+	Name               string  `json:"name"`
+	CompoundType       string  `json:"compound_type"`
+	PhysicalDeviceID   int     `json:"physical_device_id"`
+	PhysicalDeviceSlot string  `json:"physical_device_slot"`
+	UnitID             string  `json:"unit_id"`
+	CoefA              float32 `json:"coef_a"`
+	CoefB              float32 `json:"coef_b"`
+	TechnicalP         int     `json:"technical_p"`
+	VirtualP           int     `json:"virtual_p"`
+	AnalogP            int     `json:"analog_p"`
+	AnalogChan         int     `json:"analog_chan"`
+	BinaryP            int     `json:"binary_p"`
+	BinaryChan         int     `json:"binary_chan"`
+	BinaryCounter      int     `json:"binary_counter"`
+	CoverageRate       int     `json:"coverage_rate"`
+	AggUnit            string  `json:"agg_unit"`
+	Fconv              float32 `json:"fconv"`
+	Decimals           int     `json:"decimals"`
+	Format             string  `json:"format"`
+	SampleType         string  `json:"sample_type"`
+	AverageType        string  `json:"average_type"`
+	Averages           string  `json:"averages"`
+	HighAverages       string  `json:"high_averages"`
+	Expression         string  `json:"expression"`
+	FinishDate         string  `json:"finish_date"`
+	IsPublished        int     `json:"is_published"`
+	Timeshift          int     `json:"timeshift"`
+	ManualP            int     `json:"manual_p"`
+	PassiveP           int     `json:"passive_p"`
+	StartDate          uint64  `json:"start_date"`
 }
 
 // Same like above, but simpler one

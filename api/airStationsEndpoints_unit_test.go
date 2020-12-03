@@ -150,16 +150,16 @@ func Test_Given_CorrectResponseFromDoAllMeasurmentsAPIcall_When_ShowAllStationsS
 		fmt.Sprintf("Expected error starts like %s,but got %s in result", stationsCapabilitesFetchingError, bodyString))
 }
 
-func setUpMock(t *testing.T, mockedResponse []byte, mockedError error) (m *MockIStationsCapabiltiesFetcher) {
+func setUpMock(t *testing.T, mockedResponse []byte, mockedError error) (m *MockIHttpAbstracter) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	m = NewMockIStationsCapabiltiesFetcher(ctrl)
+	m = NewMockIHttpAbstracter(ctrl)
 
 	// Mock setting up
 	m.
 		EXPECT().
-		DoAllMeasurmentsAPIcall().
+		DoHttpGetCall("http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2").
 		Return(mockedResponse, mockedError).
 		AnyTimes()
 

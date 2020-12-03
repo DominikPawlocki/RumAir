@@ -13,31 +13,6 @@ import (
 var allStationsMeasurmentsURL string = "http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 var pmproSystemBaseAPIURL string = "http://pmpro.dacsystem.pl/webapp/data"
 
-/*func DoAllMeasurmentsAPIcall() (bytesRead []byte, err error) {
-	var netResp *http.Response
-
-	netResp, err = http.Get(allStationsMeasurmentsURL)
-	if err != nil {
-		return
-	}
-
-	defer netResp.Body.Close()
-
-	// allMeasurments slice contains whole system capability. Pretty big JSON (ca 1800 objects).
-	//SLICE INITIALIZATIONS !
-	//allMeasurments := make([]Sensor, 2)
-	//var allMeasurments *[]Sensor = &[]Sensor{}
-
-	bytesRead, err = ioutil.ReadAll(netResp.Body)
-	if err != nil {
-		fmt.Printf("Error during ReadAll bytesRead: %s err: %v. \n", bytesRead, err)
-		return
-	}
-
-	fmt.Printf("%v bytes read from network for `../table=Measurement&v=2` endpoint. \n", len(bytesRead))
-	return
-}*/
-
 // kinda utils and refasctor to use this by old one !
 type IHttpAbstracter interface {
 	DoHttpGetCall(uri string) ([]byte, error)

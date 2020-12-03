@@ -18,7 +18,7 @@ var stations map[string]*AirStation
 var err error
 
 func setupIntegrationTests() {
-	stations, err = GetAllStationsCapabilities(StationsCapabiltiesFetcher{})
+	stations, err = GetAllStationsCapabilities(HttpAbstracter{})
 }
 
 func TestMain(m *testing.M) {
@@ -63,7 +63,7 @@ func Test_GetStationsCapabilities_StationShouldContainOnlyOwnSensors(t *testing.
 		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
 	}
 	var stationID string = "04"
-	actual := GetStationCapabilities(StationsCapabiltiesFetcher{}, stationID)
+	actual := GetStationCapabilities(HttpAbstracter{}, stationID)
 
 	assert.NotNil(t, actual)
 	assert.Equal(t, actual.ID, 4, fmt.Sprintf("Asking for %v stationID, got %v in result", stationID, actual.ID))
@@ -89,7 +89,7 @@ func Test_Given_StationNumber04_When_GetStationSensors_Then_AnswerContainsMinimu
 	if !*withIntegration {
 		t.Skip("Test ommited. Flag `withIntegrationTests` set to : false")
 	}
-	actual, err := GetStationSensors(StationsCapabiltiesFetcher{}, "04")
+	actual, err := GetStationSensors(HttpAbstracter{}, "04")
 
 	assert.Nil(t, err)
 	assert.GreaterOrEqual(t, len(actual), 25, fmt.Sprintf("There should be minimum like 25 stations fetched. %v stations was fetched.", len(actual)))

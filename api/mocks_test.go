@@ -9,40 +9,40 @@ import (
 	reflect "reflect"
 )
 
-// MockIStationsCapabiltiesFetcher is a mock of IStationsCapabiltiesFetcher interface
-type MockIStationsCapabiltiesFetcher struct {
+// MockIHttpAbstracter is a mock of IHttpAbstracter interface.
+type MockIHttpAbstracter struct {
 	ctrl     *gomock.Controller
-	recorder *MockIStationsCapabiltiesFetcherMockRecorder
+	recorder *MockIHttpAbstracterMockRecorder
 }
 
-// MockIStationsCapabiltiesFetcherMockRecorder is the mock recorder for MockIStationsCapabiltiesFetcher
-type MockIStationsCapabiltiesFetcherMockRecorder struct {
-	mock *MockIStationsCapabiltiesFetcher
+// MockIHttpAbstracterMockRecorder is the mock recorder for MockIHttpAbstracter.
+type MockIHttpAbstracterMockRecorder struct {
+	mock *MockIHttpAbstracter
 }
 
-// NewMockIStationsCapabiltiesFetcher creates a new mock instance
-func NewMockIStationsCapabiltiesFetcher(ctrl *gomock.Controller) *MockIStationsCapabiltiesFetcher {
-	mock := &MockIStationsCapabiltiesFetcher{ctrl: ctrl}
-	mock.recorder = &MockIStationsCapabiltiesFetcherMockRecorder{mock}
+// NewMockIHttpAbstracter creates a new mock instance.
+func NewMockIHttpAbstracter(ctrl *gomock.Controller) *MockIHttpAbstracter {
+	mock := &MockIHttpAbstracter{ctrl: ctrl}
+	mock.recorder = &MockIHttpAbstracterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIStationsCapabiltiesFetcher) EXPECT() *MockIStationsCapabiltiesFetcherMockRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIHttpAbstracter) EXPECT() *MockIHttpAbstracterMockRecorder {
 	return m.recorder
 }
 
-// DoAllMeasurmentsAPIcall mocks base method
-func (m *MockIStationsCapabiltiesFetcher) DoAllMeasurmentsAPIcall() ([]byte, error) {
+// DoHttpGetCall mocks base method.
+func (m *MockIHttpAbstracter) DoHttpGetCall(arg0 string) ([]byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DoAllMeasurmentsAPIcall")
+	ret := m.ctrl.Call(m, "DoHttpGetCall", arg0)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// DoAllMeasurmentsAPIcall indicates an expected call of DoAllMeasurmentsAPIcall
-func (mr *MockIStationsCapabiltiesFetcherMockRecorder) DoAllMeasurmentsAPIcall() *gomock.Call {
+// DoHttpGetCall indicates an expected call of DoHttpGetCall.
+func (mr *MockIHttpAbstracterMockRecorder) DoHttpGetCall(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DoAllMeasurmentsAPIcall", reflect.TypeOf((*MockIStationsCapabiltiesFetcher)(nil).DoAllMeasurmentsAPIcall))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DoHttpGetCall", reflect.TypeOf((*MockIHttpAbstracter)(nil).DoHttpGetCall), arg0)
 }
