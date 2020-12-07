@@ -96,6 +96,8 @@ https://pmpro.dacsystem.pl/webapp/data/averages
 &start=1571123328
 &end=1571382528
 &vars=08HUMID_O%3AA1h%2C08PRESS_O%3AA1h%2C08PM10A_6_k%3AA1h%2C08PM25A_6_k%3AA1h
+
+https://pmpro.dacsystem.pl/webapp/data/averages?_dc=1571382648880&type=chart&avg=1h&start=1571123328&end=1571382528&vars=08HUMID_O%3AA1h%2C08PRESS_O%3AA1h%2C08PM10A_6_k%3AA1h%2C08PM25A_6_k%3AA1h
 */
 func buildCompleteDataRequestURI(requestTime string, startTime string, endTime string, timeOfAverage string, sensorCodes []string) (uri string) {
 	var strBldr strings.Builder
@@ -105,6 +107,7 @@ func buildCompleteDataRequestURI(requestTime string, startTime string, endTime s
 	strBldr.WriteString("?_dc=")
 	strBldr.WriteString(requestTime) //fmt.Sprintf("dasda %s, time.Now().Unix())
 	strBldr.WriteString("&type=chart")
+	strBldr.WriteString("&avg=1h") // CHECK
 	strBldr.WriteString("&start=")
 	strBldr.WriteString(startTime)
 	strBldr.WriteString("&end=")
@@ -118,11 +121,14 @@ func buildCompleteDataRequestURI(requestTime string, startTime string, endTime s
 //08HUMID_O%3AA1h%2C08PRESS_O%3AA1h%2C08PM10A_6_k%3AA1h%2C08PM25A_6_k%3AA1h
 func buildDataRequestSensorsURIPart(timeOfAverage string, sensorCodes []string) string {
 	var strBldr strings.Builder
-	for _, sensorCode := range sensorCodes {
+	var sensorCodesNr = len(sensorCodes)
+	for i, sensorCode := range sensorCodes {
 		strBldr.WriteString(sensorCode)
 		strBldr.WriteString(delimiter3A)
 		strBldr.WriteString(timeOfAverage)
-		strBldr.WriteString(delimiter2C)
+		if i < sensorCodesNr-1 {
+			strBldr.WriteString(delimiter2C)
+		}
 	}
 
 	return strBldr.String()

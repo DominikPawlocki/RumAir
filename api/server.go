@@ -33,7 +33,7 @@ func Main() {
 	myRouter.HandleFunc("/stations/locate/geobytes", LocalizeAllStationsUsingGeoBytesHandler).Methods("GET")          //not mockable for unit testing
 	myRouter.HandleFunc("/stations/locate/locationIQ/numbersPerCity", GetStationNumbersPerCityHandler).Methods("GET") //not mockable for unit testing
 
-	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
+	myRouter.Handle("/stations/{id:[0-9]+}/sensors", MockableHTTPHandler{
 		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    GetStationSensorsHandler}).Methods("GET")
 	myRouter.Handle("/stations/sensors", MockableHTTPHandler{
@@ -43,9 +43,15 @@ func Main() {
 		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
 
-	myRouter.Handle("/stations/{stationId}/data", MockableHTTPHandler{
-		mockableDataFetcher: airStations.HttpAbstracter{},
-		methodToBeCalled:    AAAAAAAAAAAAA}).Methods("GET")
+	myRouter.Path("/stations/{stationId}/data").
+		Queries("day", "{day}", "month", "{month}", "year", "{year}", "sensorCodes", "{sensorCodes}").
+		HandlerFunc(func(h1 http.ResponseWriter, h2 *http.Request) { AAAAAAAAAAAAA(h1, h2, airStations.HttpAbstracter{}) })
+
+	//myRouter.Queries("version", "{version}").Name("item/version").HandlerFunc("/stations/{stationId}/data",
+
+	/*Handle("/stations/{stationId}/data", MockableHTTPHandler{
+	mockableDataFetcher: airStations.HttpAbstracter{},
+	methodToBeCalled:    AAAAAAAAAAAAA}).Methods("GET")*/
 
 	myRouter.HandleFunc("/healthCheck", healthCheck).Methods("GET")
 

@@ -25,14 +25,14 @@ type sensorDataKeyedViaSensorCodeResponse struct {
 	} `json:"data"`
 }
 
-func GetSensorsDataBetweenTimePointsVIATIME(httpClient IHttpAbstracter, startTime time.Time, endTime time.Time, timeofAverage string, sensorCodes []string) (result SensorDataKeyedViaSensorCodeResponse, err error) {
+func GetSensorsDataBetweenTimePointsVIATIME(httpClient IHttpAbstracter, startTimeUnix int64, endTimeUnix int64, timeofAverage string, sensorCodes []string) (result SensorDataKeyedViaSensorCodeResponse, err error) {
 	result = SensorDataKeyedViaSensorCodeResponse{}
 	result.Data = make([]sensorDataKeyedViaSensorCodeResponse, len(sensorCodes))
 
 	bytesRead, err := httpClient.DoHttpGetCall(buildCompleteDataRequestURI(
 		strconv.FormatInt(time.Now().Unix(), 10),
-		strconv.FormatInt(startTime.Unix(), 10),
-		strconv.FormatInt(endTime.Unix(), 10),
+		strconv.FormatInt(startTimeUnix, 10),
+		strconv.FormatInt(endTimeUnix, 10),
 		timeofAverage, sensorCodes))
 	if err != nil {
 		return
