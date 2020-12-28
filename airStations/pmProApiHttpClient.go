@@ -13,7 +13,6 @@ import (
 var allStationsMeasurmentsURL string = "http://pmpro.dacsystem.pl/webapp/json/do?table=Measurement&v=2"
 var pmproSystemBaseAPIURL string = "http://pmpro.dacsystem.pl/webapp/data"
 
-// kinda utils and refasctor to use this by old one !
 type IHttpAbstracter interface {
 	DoHttpGetCall(uri string) ([]byte, error)
 }
@@ -59,17 +58,6 @@ func DoHttpCallWithConsoleDots(fn func(uri string) ([]byte, error), uri string) 
 	ticker.Stop()
 	done <- true
 	return
-}
-
-// used also in geoLocalize package
-type PmProSensorsDataInTimePeriodResponse struct {
-	EndTime   int64 `json:"end"`
-	StartTime int64 `json:"start"`
-	Data      [][]struct {
-		Time  int64   `json:"t"` // "t": 1597611600, "v": 62.780000000000000,
-		Value float32 `json:"v"`
-	} `json:"values"`
-	Vars []string `json:"vars"`
 }
 
 /// Averages or high averages. Please be avare that particular sensors can have particular averages available

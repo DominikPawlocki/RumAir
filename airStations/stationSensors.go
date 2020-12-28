@@ -193,6 +193,18 @@ func GetStationSensors(fetchData IHttpAbstracter, stationID string) (result []Se
 	return
 }
 
+//UNIT TESTS !
+func GetStationSensorCodesOnly(fetchData IHttpAbstracter, stationID string) (result []string, err error) {
+	var resultSensors []Sensor
+	if resultSensors, err = GetStationSensors(fetchData, stationID); err != nil {
+		return
+	}
+	for i := range resultSensors {
+		result = append(result, resultSensors[i].Code)
+	}
+	return
+}
+
 func ShowStationsSensorsCodes(stations map[string]*AirStation) (result []string) {
 	var strBldr strings.Builder
 

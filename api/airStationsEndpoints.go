@@ -72,26 +72,26 @@ func GetAllStationsCapabilitiesHandler(w http.ResponseWriter, r *http.Request, f
 	}
 }
 
+// swagger:operation GET /stations/{stationId}/sensors stationsAndSensors fullSensorsFetching
+// Gets a list of sensors belonging to given station, with all the (sensors) properties (extended model).
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: stationId
+//   in: path
+//   description: weather station id
+//   required: true
+//   type: string
+//   format: should be like 02, 04 etc
+// responses:
+//   "200":
+//     "$ref": "#/responses/sensorsResponse"
+//   "404":
+//     "$ref": "#/responses/notFound"
+//   "500":
+//     "$ref": "#/responses/internalServerError"
 func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter) {
-	// swagger:operation GET /stations/{stationId}/sensors stationsAndSensors sensorsFetching
-	// Gets a list of sensors belonging to given station, with all the (sensors) properties (extended model).
-	// ---
-	// produces:
-	// - application/json
-	// parameters:
-	// - name: stationId
-	//   in: path
-	//   description: weather station id
-	//   required: true
-	//   type: string
-	//   format: should be like 02, 04 etc
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/sensorsResponse"
-	//   "404":
-	//     "$ref": "#/responses/notFound"
-	//   "500":
-	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
 	//stationID := r.URL.Query()["message"][0]
@@ -99,6 +99,43 @@ func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStati
 	stationID := vars["id"]
 
 	if result, err := airStations.GetStationSensors(f, stationID); err != nil {
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusNotFound)
+		return
+	} else if resultBytes, err = json.Marshal(result); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(resultBytes)
+	}
+}
+
+// swagger:operation GET /stations/{stationId}/sensors/codes stationsAndSensors sensorCodesOnlyFetching
+// Gets a CODES ONLY !!!!!!!
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: stationId
+//   in: path
+//   description: weather station id
+//   required: true
+//   type: string
+//   format: should be like 02, 04 etc
+// responses:
+//   "200":
+//     "$ref": "#/responses/stationSensorCodesHandlerSuccessResp"
+//   "404":
+//     "$ref": "#/responses/notFound"
+//   "500":
+//     "$ref": "#/responses/internalServerError"
+func GetStationSensorsOnlyCodesHandler(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter) {
+	var resultBytes []byte
+
+	vars := mux.Vars(r)
+	stationID := vars["id"]
+
+	if result, err := airStations.GetStationSensorCodesOnly(f, stationID); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusNotFound)
 		return
 	} else if resultBytes, err = json.Marshal(result); err != nil {

@@ -5,6 +5,13 @@ import (
 	geolocalize "github.com/dompaw/RumAir_Pmpro_Sensors_API/geoLocalize"
 )
 
+// Not Found 400 response
+// swagger:response badRequest
+type swaggBadReqResp struct {
+	// in: body
+	Body string
+}
+
 // Not Found 404 response
 // swagger:response notFound
 type swaggNotFoundResp struct {
@@ -65,6 +72,54 @@ type swaggGeolocateParticularStationUsingLocationIQHandlerSuccessResp struct {
 // swagger:response allStationsSensorCodesStringifiedResponse
 type swaggShowAllStationsSensorCodesHandlerSuccessResp struct {
 	// in: body
-	// Example: [Station : 12 can : 12HUMID_F 12HUMID_O 12PRESS_F 12PM10A]
+	// Example:
+	// [Station : 12 can : 12HUMID_F 12HUMID_O 12PRESS_F 12PM10A],
 	Body []string
+}
+
+// Success response is list of sensors codes which belongs to given station
+// swagger:response stationSensorCodesHandlerSuccessResp
+type swaggShowStationSensorCodesHandlerSuccessResp struct {
+	// in: body
+	// Example:
+	// [Station : 12 can : 12HUMID_F 12HUMID_O 12PRESS_F 12PM10A],
+	Body []string
+}
+
+// Data ordered (keyed) by sensorCode.
+// swagger:response sensorDataKeyedViaCodeHandlerResponse
+type swaggSensorDataKeyedViaCodeHandlerSuccessResp struct {
+	// in: body
+	//Example:
+	// {
+	// 	"data": [
+	// 	  {
+	// 		"sensorCode": "04HUMID_O:A1h",
+	// 		"data": [
+	// 		  {
+	// 			"time": 1555632000,
+	// 			"value": 55.7294
+	// 		  },
+	// 		  {
+	// 			"time": 1555714800,
+	// 			"value": 52.4889
+	// 		  }
+	// 		]
+	// 	  },
+	// 	  {
+	// 		"sensorCode": "04PRESS_O:A1h",
+	// 		"data": [
+	// 		  {
+	// 			"time": 1555632000,
+	// 			"value": 1033.01
+	// 		  },
+	// 		  {
+	// 			"time": 1555635600,
+	// 			"value": 1033
+	// 		  }
+	// 		]
+	// 	  }
+	// 	]
+	//   }
+	Body *airStations.SensorDataKeyedViaCode
 }
