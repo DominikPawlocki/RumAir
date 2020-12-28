@@ -87,7 +87,7 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 
 	var date time.Time
 	var err error
-
+	var sensors []string
 	//------------check stationId - doesitExiist
 
 	if date, err = dayMonthYearParser(day, month, year); err != nil {
@@ -98,7 +98,10 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 
 	begin, end := getBeginAndEndofTheDayInUnixEpoch(date)
 
-	var sensors []string
+	if sensors, err = fetchOrProcessSensorCodes(sensorsQueryString, stationID, f); err != nil {
+		http.Error(w, fmt.Sprintf("%v", err.Error()), http.StatusBadRequest)
+		return
+	}
 
 	var sensorCodeKeyedResp = airStations.SensorDataKeyedViaCode{}
 	if sensorCodeKeyedResp, _, err = airStations.GetSensorsDataBetweenTimePoints(f, begin, end, airStations.A1H, sensors); err != nil {
@@ -157,7 +160,7 @@ func filterQueryStringToGetSensorsCodesBelongingToStationOnly(sensorsQueryString
 	result = []string{}
 
 	for _, sensor := range querySplitted {
-		//a trivial, initial check - let it be at least first two ASCII signs convertible to number, which is a stion naumber a sensor belongs to, in fact
+		//a trivial, initial check - let it be at least first two ASCII signs convertible to number, which is a stion number a sensor belongs to, in fact
 		//stationNr, err := stationstrconv.ParseInt(sensor[1:2],10,8); err != nil{
 		if strings.HasPrefix(sensor, stationID) {
 			result = append(result, sensor)
@@ -170,7 +173,7 @@ func fetchOrProcessSensorCodes(sensorsQueryString string, stationID string, f ai
 	if sensorsQueryString != "" {
 		sensors = filterQueryStringToGetSensorsCodesBelongingToStationOnly(sensorsQueryString, stationID)
 		if len(sensors) == 0 {
-			err = fmt.Errorf("All the sensors from query : %s invalid", sensorsQueryString)
+			err = fmt.Errorf("All the sensors from query : %s invalid, or doesnt belong to given station.", sensorsQueryString)
 			return
 		}
 	} else {

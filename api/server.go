@@ -51,6 +51,11 @@ func Main() {
 		HandlerFunc(func(h1 http.ResponseWriter, h2 *http.Request) {
 			GetSingleDayOfStationSensorsReadings(h1, h2, airStations.HttpAbstracter{})
 		})
+	myRouter.Path("/stations/{stationId}/data").
+		Queries("day", "{day}", "month", "{month}", "year", "{year}").
+		HandlerFunc(func(h1 http.ResponseWriter, h2 *http.Request) {
+			GetSingleDayOfStationSensorsReadings(h1, h2, airStations.HttpAbstracter{})
+		})
 
 	myRouter.HandleFunc("/healthCheck", healthCheck).Methods("GET")
 
