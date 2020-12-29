@@ -81,8 +81,6 @@ type swaggShowAllStationsSensorCodesHandlerSuccessResp struct {
 // swagger:response stationSensorCodesHandlerSuccessResp
 type swaggShowStationSensorCodesHandlerSuccessResp struct {
 	// in: body
-	// Example:
-	// [Station : 12 can : 12HUMID_F 12HUMID_O 12PRESS_F 12PM10A],
 	Body []string
 }
 

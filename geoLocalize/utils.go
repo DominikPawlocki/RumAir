@@ -85,25 +85,6 @@ func GetStationNrPerCity(localized map[string]*LocalizedAirStationSimplified) (r
 }
 
 func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
-	/*type LimitedOneValueResponse struct {
-		End    int `json:"end"`
-		Start  int `json:"start"`
-		Values [][]struct {
-			T int     `json:"t"`
-			V float64 `json:"v"`
-		} `json:"values"`
-		Vars []string `json:"vars"`
-	}
-
-	EndTime   int64 `json:"end"`
-	StartTime int64 `json:"start"`
-	Data      [][]struct {
-		Time  int64   `json:"t"` // "t": 1597611600, "v": 62.780000000000000,
-		Value float32 `json:"v"`
-	} `json:"values"`
-	Vars []string `json:"vars"`
-	//pmProResponse PmProSensorsDataInTimePeriodResponse, */
-
 	resp := &airStations.PmProSensorsDataInTimePeriodResponse{}
 	bytesRead, err := doAPIGet(sensorCallURI)
 	if err != nil {
