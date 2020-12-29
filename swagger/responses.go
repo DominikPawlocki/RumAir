@@ -5,7 +5,7 @@ import (
 	geolocalize "github.com/dompaw/RumAir_Pmpro_Sensors_API/geoLocalize"
 )
 
-// Not Found 400 response
+// Bad request 400 response-something nok with the query string, probably
 // swagger:response badRequest
 type swaggBadReqResp struct {
 	// in: body
@@ -90,10 +90,10 @@ type swaggShowStationSensorCodesHandlerSuccessResp struct {
 // swagger:response sensorDataKeyedViaCodeHandlerResponse
 type swaggSensorDataKeyedViaCodeHandlerSuccessResp struct {
 	// in: body
-	//Example:
-	// {
-	// 	"data": [
-	// 	  {
+	// Example:
+	//  {
+	//   "data": [
+	//    {
 	// 		"sensorCode": "04HUMID_O:A1h",
 	// 		"data": [
 	// 		  {

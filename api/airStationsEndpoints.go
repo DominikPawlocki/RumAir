@@ -111,7 +111,7 @@ func GetStationSensorsHandler(w http.ResponseWriter, r *http.Request, f airStati
 }
 
 // swagger:operation GET /stations/{stationId}/sensors/codes stationsAndSensors sensorCodesOnlyFetching
-// Gets a CODES ONLY !!!!!!!
+// Returns only codes of all the sensors given station has.
 // ---
 // produces:
 // - application/json

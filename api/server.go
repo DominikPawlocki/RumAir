@@ -47,12 +47,12 @@ func Main() {
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
 
 	myRouter.Path("/stations/{stationId}/data").
-		Queries("day", "{day}", "month", "{month}", "year", "{year}", "sensorCodes", "{sensorCodes}").
+		Queries("day", "{day}", "month", "{month}", "year", "{year}", "interval", "{interval}", "sensorCodes", "{sensorCodes}").
 		HandlerFunc(func(h1 http.ResponseWriter, h2 *http.Request) {
 			GetSingleDayOfStationSensorsReadings(h1, h2, airStations.HttpAbstracter{})
 		})
 	myRouter.Path("/stations/{stationId}/data").
-		Queries("day", "{day}", "month", "{month}", "year", "{year}").
+		Queries("day", "{day}", "month", "{month}", "year", "{year}", "interval", "{interval}").
 		HandlerFunc(func(h1 http.ResponseWriter, h2 *http.Request) {
 			GetSingleDayOfStationSensorsReadings(h1, h2, airStations.HttpAbstracter{})
 		})

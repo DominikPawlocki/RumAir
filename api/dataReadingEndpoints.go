@@ -15,9 +15,9 @@ import (
 
 func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter) {
 	// swagger:operation GET /stations/{stationId}/data dataGetting dailyDataFetching
-	// Gets a sensor's data readings. All of the readings are daily, per given day.
-	// When sensorsCode(s) provided, there will be 24 readings returned per given station's sensors, in 1h interval. The sensorCodes in a queryString HAS to belong to given station (starting with its number).
-	// When no sensorCode is provided, then it tries to read ALL the station sensors data, but it needs to fetch these (sensor) names first, so this version of the call is much SLOWER then with sensor codes given.
+	// Gets a sensor's data readings, starting at a 00:00:00 of given day.
+	// to given station
+	// W
 	// ---
 	// produces:
 	// - application/json
@@ -32,36 +32,41 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 	//   in: query
 	//   description: The day part of the date
 	//   required: true
+	//   minimum: 1
+	//   maximum: 31
 	//   type: integer
 	//   format: dd format
 	// - name: month
 	//   in: query
 	//   description: The month part of the date (of reading(s)).
 	//   required: true
+	//   minimum: 1
+	//   maximum: 12
 	//   type: integer
 	//   format: MM format
 	// - name: year
 	//   in: query
 	//   description: The year part of the date (of reading(s)).
 	//   required: true
+	//   minimum: 2014
+	//   maximum: 2050
 	//   type: integer
 	//   format: yyyy format
+	// - name: interval
+	//   in: query
+	//   description: Means the average the (pmPro) system does for readings. A1h - hour averages, so by given day there will be 24 results returned per every sensor. A24h - means dayily averages, so there will be 1 result per day returned.
+	//   required: true
+	//   type: string
+	//   enum: [A1h, A24h]
 	// - name: sensorCodes
 	//   in: query
-	//   description: The station sensors names. If a sensor doesnt belong to the station, will be ommited. There will be 24 readings returned per every sensor per given date( in 1 h intervals). If this is not provided, the endpoint will return data from ALL the sensors the particular station has. Performance costly and much slower then !
+	//   description: The station sensors names. If a sensor doesnt belong to the station, will be ommited. If this is not provided, the endpoint will return data from ALL the sensors the particular station has. It needs to fetch those (sensor) first.. Performance costly and much slower then !
 	//   required: false
 	//   type: array
 	//   maxItems: 15
 	//   minItems: 1
 	//   unique: true
 	//   collectionFormat: csv
-	//   examples:
-	//     oneId:
-	//       summary: Example of a single ID
-	//       value: [5]   # ?ids=5
-	//     multipleIds:
-	//       summary: Example of multiple IDs
-	//       value: [1, 5, 7]   # ?ids=1,5,7
 	//   items:
 	//     type: string
 	//     minLength: 3
@@ -76,10 +81,9 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 	//     "$ref": "#/responses/notFound"
 	//   "500":
 	//     "$ref": "#/responses/internalServerError"
-	var resultBytes []byte
-
 	vars := mux.Vars(r)
 	stationID := vars["stationId"]
+	interval := vars["interval"]
 	sensorsQueryString := vars["sensorCodes"]
 	year := vars["year"]
 	month := vars["month"]
@@ -87,8 +91,8 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 
 	var date time.Time
 	var err error
-	var sensors []string
-	//------------check stationId - doesitExiist
+
+	//--------- todo : check stationId - if it doesnt exist
 
 	if date, err = dayMonthYearParser(day, month, year); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -96,25 +100,39 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 	}
 	fmt.Println(fmt.Sprintf("stationId: %s, date: %v, sensors: %v", stationID, date, sensorsQueryString))
 
+	switch interval {
+	case "A1h":
+		interval = airStations.A1H
+	case "A24h":
+		interval = airStations.A24H
+	default:
+		http.Error(w, fmt.Sprintf("%s not supported for now. 'A1h' and 'A24h' supported.", interval), http.StatusBadRequest)
+		return
+	}
+
 	begin, end := getBeginAndEndofTheDayInUnixEpoch(date)
 
+	resultBytes, err := runTheFlow(sensorsQueryString, stationID, begin, end, interval, f)
+
+	w.Header().Add("Content-Type", "application/json; charset=utf-8")
+	w.Write(resultBytes)
+}
+
+func runTheFlow(sensorsQueryString string, stationID string, begin int64, end int64, timeofAverage string, f airStations.IHttpAbstracter) (resultBytes []byte, err error) {
+	var sensors []string
+
 	if sensors, err = fetchOrProcessSensorCodes(sensorsQueryString, stationID, f); err != nil {
-		http.Error(w, fmt.Sprintf("%v", err.Error()), http.StatusBadRequest)
 		return
 	}
 
 	var sensorCodeKeyedResp = airStations.SensorDataKeyedViaCode{}
-	if sensorCodeKeyedResp, _, err = airStations.GetSensorsDataBetweenTimePoints(f, begin, end, airStations.A1H, sensors); err != nil {
-		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
-		return
+	if sensorCodeKeyedResp, _, err = airStations.GetSensorsDataBetweenTimePoints(f, begin, end, timeofAverage, sensors); err != nil {
+		return nil, fmt.Errorf("%s %v", stationsCapabilitesFetchingError, err.Error())
 	}
 	if resultBytes, err = json.Marshal(sensorCodeKeyedResp); err != nil {
-		http.Error(w, fmt.Sprintf("%s %v", locationIQdeserializingError, err.Error()), http.StatusInternalServerError)
-		return
+		return nil, fmt.Errorf("%s %v", locationIQdeserializingError, err.Error())
 	}
-
-	w.Header().Add("Content-Type", "application/json; charset=utf-8")
-	w.Write(resultBytes)
+	return
 }
 
 func dayMonthYearParser(day string, month string, year string) (result time.Time, err error) {
