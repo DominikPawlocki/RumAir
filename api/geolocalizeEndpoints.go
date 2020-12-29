@@ -25,7 +25,7 @@ func LocalizeAllStationsUsingGeoBytesHandler(w http.ResponseWriter, r *http.Requ
 	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
-	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(airStations.HttpAbstracter{}); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if localized, err := geolocalize.LocalizeStationsGeoBytes(result); err != nil {
@@ -61,7 +61,7 @@ func LocalizeAllStationsUsingLocationIQHandler(w http.ResponseWriter, r *http.Re
 	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
-	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(airStations.HttpAbstracter{}); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if localized, err := geolocalize.LocalizeStationsLocIQ(result); err != nil {
@@ -107,7 +107,7 @@ func LocalizeStationUsingLocationIQHandler(w http.ResponseWriter, r *http.Reques
 
 	var resultBytes []byte
 
-	if result := airStations.GetStationCapabilities(airStations.StationsCapabiltiesFetcher{}, stationID); len(result.Sensors) <= 0 {
+	if result := airStations.GetStationCapabilities(airStations.HttpAbstracter{}, stationID); len(result.Sensors) <= 0 {
 		http.Error(w, fmt.Sprintf("Cannot fetch station with ID %s", stationID), http.StatusNotFound)
 		return
 	} else if localized, err := geolocalize.LocalizeStationLocIQ(result); err != nil {
@@ -137,7 +137,7 @@ func GetStationNumbersPerCityHandler(w http.ResponseWriter, r *http.Request) {
 	//     "$ref": "#/responses/internalServerError"
 	var resultBytes []byte
 
-	if result, err := airStations.GetAllStationsCapabilities(airStations.StationsCapabiltiesFetcher{}); err != nil {
+	if result, err := airStations.GetAllStationsCapabilities(airStations.HttpAbstracter{}); err != nil {
 		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusInternalServerError)
 		return
 	} else if localized, err := geolocalize.LocalizeStationsLocIQ(result); err != nil {

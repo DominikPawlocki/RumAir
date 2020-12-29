@@ -85,17 +85,7 @@ func GetStationNrPerCity(localized map[string]*LocalizedAirStationSimplified) (r
 }
 
 func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
-	type LimitedOneValueResponse struct {
-		End    int `json:"end"`
-		Start  int `json:"start"`
-		Values [][]struct {
-			T int     `json:"t"`
-			V float64 `json:"v"`
-		} `json:"values"`
-		Vars []string `json:"vars"`
-	}
-
-	resp := &LimitedOneValueResponse{}
+	resp := &airStations.PmProSensorsDataInTimePeriodResponse{}
 	bytesRead, err := doAPIGet(sensorCallURI)
 	if err != nil {
 		fmt.Printf("Error during asking endpoint %s %v.\n", sensorCallURI, err)
@@ -111,8 +101,8 @@ func getLatOrLonFromAPI(sensorCallURI string) (result float64, err error) {
 		return
 	}
 
-	if resp.Values[0] != nil && len(resp.Values[0]) > 0 && resp.Values[0][0].V != 0 {
-		result = resp.Values[0][0].V
+	if resp.Data[0] != nil && len(resp.Data[0]) > 0 && resp.Data[0][0].Value != 0 {
+		result = float64(resp.Data[0][0].Value)
 		//fmt.Printf(" %v for : %s. \n", result, sensorCallURI)
 	}
 	//else {
@@ -138,6 +128,7 @@ func getStationCoordinates(station *airStations.AirStation) (latitude float64, l
 	return
 }
 
+// Can be switched to airStations package pmProApiHttpClient !
 func doAPIGet(uri string) (bytesRead []byte, err error) {
 	var netResp *http.Response
 

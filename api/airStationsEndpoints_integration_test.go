@@ -26,7 +26,7 @@ func Test_GivenStationNumber04_WhenShowStationSensorCodesHandler_ThenResponceIsC
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
-		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    GetStationSensorsHandler}).Methods("GET")
 	myRouter.ServeHTTP(rr, req)
 
@@ -53,7 +53,7 @@ func Test_GivenIncorrectStationNumber_WhenShowStationSensorCodesHandlerHandler_T
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	myRouter.Handle("/stations/{id}/sensors", MockableHTTPHandler{
-		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    GetStationSensorsHandler}).Methods("GET")
 	myRouter.ServeHTTP(rr, req)
 
@@ -71,7 +71,7 @@ func Test_WhenShowAllStationsSensorsCodesHandler_ThenResponceIsCorrect(t *testin
 
 	rr := httptest.NewRecorder()
 	handler := http.Handler(MockableHTTPHandler{
-		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler})
 	handler.ServeHTTP(rr, req)
 
@@ -96,7 +96,7 @@ func Test_WhenGetAllStationsCapabilitiesHandler_ThenResponceIsCorrect(t *testing
 
 	rr := httptest.NewRecorder()
 	handler := http.Handler(MockableHTTPHandler{
-		mockableDataFetcher: airStations.StationsCapabiltiesFetcher{},
+		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    GetAllStationsCapabilitiesHandler})
 	handler.ServeHTTP(rr, req)
 

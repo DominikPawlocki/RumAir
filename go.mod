@@ -1,31 +1,15 @@
 module github.com/dompaw/RumAir_Pmpro_Sensors_API
 
-go 1.13
+go 1.15
 
 require (
-	github.com/DataDog/zstd v1.4.4 // indirect
-	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
-	github.com/go-openapi/errors v0.19.4
-	github.com/go-openapi/loads v0.19.3
-	github.com/go-openapi/runtime v0.19.14
-	github.com/go-openapi/spec v0.19.3
-	github.com/go-openapi/strfmt v0.19.5
-	github.com/go-openapi/swag v0.19.8
-	github.com/go-openapi/validate v0.19.3
-	github.com/golang/mock v1.3.1
-	github.com/google/go-cmp v0.3.1 // indirect
-	github.com/gorilla/mux v1.7.3
-	github.com/jessevdk/go-flags v1.4.0
-	github.com/mailru/easyjson v0.7.1 // indirect
-	github.com/matryer/moq v0.0.0-20200106131100-75d0ddfc0007 // indirect
-	github.com/mitchellh/mapstructure v1.2.2 // indirect
-	github.com/pdrum/swagger-automation v0.0.0-20190629163613-c8c7c80ba858
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang/mock v1.4.4
+	github.com/gorilla/mux v1.8.0
+	github.com/kr/text v0.2.0 // indirect
+	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/rs/cors v1.7.0
-	github.com/stretchr/testify v1.4.0
-	github.com/xdg/stringprep v1.0.0 // indirect
-	go.mongodb.org/mongo-driver v1.3.1 // indirect
-	golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413 // indirect
-	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
-	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
-	gopkg.in/yaml.v2 v2.2.8 // indirect
+	github.com/stretchr/testify v1.6.1
+	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
+	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )

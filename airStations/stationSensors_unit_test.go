@@ -13,18 +13,19 @@ import (
 //remember that TestMain(m *testing.M) is also called for that module !
 // MOCK GENERATING :
 // mockgen.exe -destination=.\api\mocks_test1.go -package= api github.com/dompaw/Abax/api IStationsCapabiltiesFetcher
+// or reflect mode and then copy paste from console : C:\.....\RumAir_Pmpro_Sensors_API> mockgen.exe github.com/dompaw/RumAir_Pmpro_Sensors_API/airStations IHttpAbstracter
 func Test_Given_ErrorResponseFromDoAllMeasurmentsAPIcall_When_GetAllStationsCapabilities_Then_ResponseIsNilAndError(t *testing.T) {
 	exampleMockErrorText := "timeout expired"
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	m := NewMockIStationsCapabiltiesFetcher(ctrl)
+	m := NewMockIHttpAbstracter(ctrl)
 
 	// Mock setting up
 	m.
 		EXPECT().
-		DoAllMeasurmentsAPIcall().
+		DoHttpGetCall(allStationsMeasurmentsURL).
 		Return(nil, errors.New(exampleMockErrorText)).
 		AnyTimes()
 
@@ -73,12 +74,12 @@ func Test_Given_StationNumber04_And_ErrorResponseFromDoAllMeasurmentsAPIcall_Whe
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	m := NewMockIStationsCapabiltiesFetcher(ctrl)
+	m := NewMockIHttpAbstracter(ctrl)
 
 	// Mock setting up
 	m.
 		EXPECT().
-		DoAllMeasurmentsAPIcall().
+		DoHttpGetCall(allStationsMeasurmentsURL).
 		Return(nil, errors.New(exampleMockErrorText)).
 		AnyTimes()
 
