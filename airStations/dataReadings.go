@@ -24,8 +24,9 @@ type SensorDataKeyedViaCode struct {
 type sensorDataKeyedViaCode struct {
 	SensorCode string `json:"sensorCode"`
 	Data       []struct {
-		Time  int64   `json:"time"`
-		Value float32 `json:"value"`
+		TimeUnix int64     `json:"tUnix"`
+		Time     time.Time `json:"t"`
+		Value    float32   `json:"v"`
 	} `json:"data"`
 }
 
@@ -88,9 +89,10 @@ func processResponseViaSensorCode(r PmProSensorsDataInTimePeriodResponse) (resul
 		}
 		for _, singleDataEntry := range sensorData {
 			singleSensorResult.Data = append(singleSensorResult.Data, struct {
-				Time  int64   "json:\"time\""
-				Value float32 "json:\"value\""
-			}{Time: singleDataEntry.Time, Value: singleDataEntry.Value})
+				TimeUnix int64     "json:\"tUnix\""
+				Time     time.Time "json:\"t\""
+				Value    float32   "json:\"v\""
+			}{TimeUnix: singleDataEntry.Time, Time: time.Unix(singleDataEntry.Time, 0), Value: singleDataEntry.Value})
 		}
 		result.Data[sensorNameiterator] = singleSensorResult
 	}

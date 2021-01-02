@@ -56,6 +56,12 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 	//   required: true
 	//   type: string
 	//   enum: [A1h, A24h]
+	// - name: nextDaysToRead
+	//   in: query
+	//   description: How many additional days to read. 1- means 1 addional day, so in summary readings from 2 days will be returned. 6 means a week of data will be returned.
+	//   required: true
+	//   type: integer
+	//   enum: [0,1,2,3,4,5,6]
 	// - name: sensorCodes
 	//   in: query
 	//   description: The station sensors names. If a sensor doesnt belong to the station, will be ommited. If this is not provided, the endpoint will return data from ALL the sensors the particular station has. It needs to fetch those (sensor) first.. Performance costly and much slower then !
@@ -81,11 +87,12 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 	//     "$ref": "#/responses/internalServerError"
 	vars := mux.Vars(r)
 	stationID := vars["stationId"]
-	interval := vars["interval"]
-	sensorsQueryString := vars["sensorCodes"]
 	year := vars["year"]
 	month := vars["month"]
 	day := vars["day"]
+	interval := vars["interval"]
+	howManyAdditionalDaysToRead := vars["nextDaysToRead"]
+	sensorsQueryString := vars["sensorCodes"]
 
 	var date time.Time
 	var err error
@@ -108,7 +115,12 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	begin, end := getBeginAndEndofTheDayInUnixEpoch(date)
+	var howManyAdditionalDaysToReadInt int
+	if howManyAdditionalDaysToReadInt, err = strconv.Atoi(howManyAdditionalDaysToRead); err != nil {
+		howManyAdditionalDaysToReadInt = 0
+	}
+
+	begin, end := getBeginAndEndofTheDayInUnixEpoch(date, howManyAdditionalDaysToReadInt)
 
 	resultBytes, err := runTheFlow(sensorsQueryString, stationID, begin, end, interval, f)
 
@@ -164,10 +176,11 @@ func dayMonthYearParser(day string, month string, year string) (result time.Time
 	return
 }
 
-func getBeginAndEndofTheDayInUnixEpoch(date time.Time) (dayBegin int64, dayEnd int64) {
+func getBeginAndEndofTheDayInUnixEpoch(date time.Time, daysToAdd int) (dayBegin int64, dayEnd int64) {
+	endYear, endMonth, endDay := date.AddDate(0, 0, daysToAdd).Date()
 	year, month, day := date.Date()
 	dayBegin = time.Date(year, month, day, 0, 0, 0, 0, time.UTC).Unix()
-	dayEnd = time.Date(year, month, day, 23, 59, 59, 999, time.UTC).Unix()
+	dayEnd = time.Date(endYear, endMonth, endDay, 23, 59, 59, 999, time.UTC).Unix()
 	return
 }
 
