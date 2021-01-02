@@ -16,8 +16,6 @@ import (
 func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter) {
 	// swagger:operation GET /stations/{stationId}/data dataGetting dailyDataFetching
 	// Gets a sensor's data readings, starting at a 00:00:00 of given day.
-	// to given station
-	// W
 	// ---
 	// produces:
 	// - application/json
@@ -175,7 +173,6 @@ func getBeginAndEndofTheDayInUnixEpoch(date time.Time) (dayBegin int64, dayEnd i
 
 func filterQueryStringToGetSensorsCodesBelongingToStationOnly(sensorsQueryString string, stationID string) (result []string) {
 	querySplitted := strings.Split(sensorsQueryString, ",")
-	result = []string{}
 
 	for _, sensor := range querySplitted {
 		//a trivial, initial check - let it be at least first two ASCII signs convertible to number, which is a stion number a sensor belongs to, in fact
