@@ -45,7 +45,7 @@ func Main() {
 	myRouter.Handle("/stations/sensors/codes", MockableHTTPHandler{
 		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    ShowAllStationsSensorCodesHandler}).Methods("GET")
-	myRouter.Handle("/stations/{id:[0-9]+}/sensors/startTimes", MockableHTTPHandler{
+	myRouter.Handle("/stations/{id:[0-9]+}/sensors/dayOfStart", MockableHTTPHandler{
 		mockableDataFetcher: airStations.HttpAbstracter{},
 		methodToBeCalled:    GetStationSensorsStartDatesHandler}).Methods("GET")
 
