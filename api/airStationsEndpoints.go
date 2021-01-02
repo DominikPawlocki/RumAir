@@ -147,9 +147,9 @@ func GetStationSensorsOnlyCodesHandler(w http.ResponseWriter, r *http.Request, f
 	}
 }
 
-// swagger:operation GET /stations/{stationId}/sensors/startTimes stationsAndSensors sensorsStartTimeFetching
-// Returns the station sensors startTime. Shows which sensor began to work when.
-// Unfortunately, the property 'StartDate' from sensor data is bullshit sometimes.. Eg station 23 - tells some sensor started to run in 2217, when in reality it started to collect data at June 2018...
+// swagger:operation GET /stations/{stationId}/sensors/dayOfStart stationsAndSensors sensorsStartTimeFetching
+// Returns the station sensors day of start. Shows which sensor began to work when.
+// Unfortunately, the property 'StartDate' from sensor 'properties is bullshit sometimes.. Eg station 23 - tells some sensor started to run in 2217, when in reality it started to collect data at June 2018...
 // Have to find a better way to get that date of sensor start, then.
 // ---
 // produces:
