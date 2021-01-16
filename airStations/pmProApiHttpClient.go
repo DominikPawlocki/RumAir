@@ -117,6 +117,7 @@ func buildDataRequestSensorsURIPart(timeOfAverage string, sensorCodes []string) 
 func deserializePmProDataResponse(bytesRead []byte) (pmProResponse PmProSensorsDataInTimePeriodResponse, err error) {
 	err = json.Unmarshal(bytesRead, &pmProResponse)
 	if err != nil {
+		//System works that way, then when error occures, there is a view returned as 200 response.
 		fmt.Println("Error during deserializing occured :", err)
 		return
 	}

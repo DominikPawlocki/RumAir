@@ -135,11 +135,16 @@ func runTheFlow(sensorsQueryString string, stationID string, begin int64, end in
 		return
 	}
 
-	var sensorCodeKeyedResp = airStations.SensorDataKeyedViaCode{}
-	if sensorCodeKeyedResp, _, err = airStations.GetSensorsDataBetweenTimePoints(f, begin, end, timeofAverage, sensors); err != nil {
+	var bothResults struct {
+		ViaCode airStations.SensorDataKeyedViaCode "json:\"viaCode\""
+		ViaTime airStations.SensorDataKeyedViaTime "json:\"viaTime\""
+	}
+	//var sensorCodeKeyedResp = airStations.SensorDataKeyedViaCode{}
+
+	if bothResults.ViaCode, bothResults.ViaTime, err = airStations.GetSensorsDataBetweenTimePoints(f, begin, end, timeofAverage, sensors); err != nil {
 		return nil, fmt.Errorf("%s %v", stationsCapabilitesFetchingError, err.Error())
 	}
-	if resultBytes, err = json.Marshal(sensorCodeKeyedResp); err != nil {
+	if resultBytes, err = json.Marshal(bothResults); err != nil {
 		return nil, fmt.Errorf("%s %v", locationIQdeserializingError, err.Error())
 	}
 	return

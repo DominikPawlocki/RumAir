@@ -51,10 +51,10 @@ func Test_GivenOKSensorCodesQueryStr_WhenFilteringIt_ReturnsCorrectResult(t *tes
 	assert.Equal(t, []string{s1, s2}, actual, fmt.Sprintf("There should be nil and is not."))
 }
 
-func Test_GivenDate_WhenConvertingToEpoch_ReturnsCorrectDate(t *testing.T) {
+func Test_GivenSameBeginEndDate_WhenConvertingToEpoch_ReturnsCorrectDate(t *testing.T) {
 	var testTime = time.Date(2020, 05, 18, 05, 40, 15, 0, time.UTC)
 
-	beginOfDay, endOfDay := getBeginAndEndofTheDayInUnixEpoch(testTime)
+	beginOfDay, endOfDay := getBeginAndEndofTheDayInUnixEpoch(testTime, 0)
 	assert.NotEmpty(t, beginOfDay)
 	assert.NotEmpty(t, endOfDay)
 	assert.Equal(t, time.Date(testTime.Year(), testTime.Month(), testTime.Day(), 0, 0, 0, 0, time.UTC).Unix(), beginOfDay)
