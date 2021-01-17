@@ -2,6 +2,7 @@ package airStations
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -118,7 +119,9 @@ func deserializePmProDataResponse(bytesRead []byte) (pmProResponse PmProSensorsD
 	err = json.Unmarshal(bytesRead, &pmProResponse)
 	if err != nil {
 		//System works that way, then when error occures, there is a view returned as 200 response.
-		fmt.Println("Error during deserializing occured :", err)
+		e, _ := GetErrorMessageFromHtmlView(bytesRead)
+		err = errors.New(e)
+		fmt.Println("Error during occured :", err)
 		return
 	}
 	return pmProResponse, nil

@@ -123,6 +123,10 @@ func GetSingleDayOfStationSensorsReadings(w http.ResponseWriter, r *http.Request
 	begin, end := getBeginAndEndofTheDayInUnixEpoch(date, howManyAdditionalDaysToReadInt)
 
 	resultBytes, err := runTheFlow(sensorsQueryString, stationID, begin, end, interval, f)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.Write(resultBytes)
@@ -142,10 +146,10 @@ func runTheFlow(sensorsQueryString string, stationID string, begin int64, end in
 	//var sensorCodeKeyedResp = airStations.SensorDataKeyedViaCode{}
 
 	if bothResults.ViaCode, bothResults.ViaTime, err = airStations.GetSensorsDataBetweenTimePoints(f, begin, end, timeofAverage, sensors); err != nil {
-		return nil, fmt.Errorf("%s %v", stationsCapabilitesFetchingError, err.Error())
+		return
 	}
 	if resultBytes, err = json.Marshal(bothResults); err != nil {
-		return nil, fmt.Errorf("%s %v", locationIQdeserializingError, err.Error())
+		return nil, fmt.Errorf("%s %v", "deserializing error", err.Error())
 	}
 	return
 }
