@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type SensorsResponse struct {
@@ -57,7 +58,7 @@ type Sensor struct {
 	Timeshift          int     `json:"timeshift"`
 	ManualP            int     `json:"manual_p"`
 	PassiveP           int     `json:"passive_p"`
-	StartDate          uint64  `json:"start_date"`
+	StartDate          int64   `json:"start_date"`
 }
 
 // Same like above, but simpler one
@@ -85,6 +86,11 @@ type AirStation struct {
 type AirStationSimplified struct {
 	ID           int //ID as int doesnt make sense here, cause of eg 004
 	SensorsCount int
+}
+
+type SensorDateAndCode struct {
+	StartDate time.Time `json:"time"`
+	Codes     []string  `json:"codes"`
 }
 
 //GetAllStationsCapabilities - Stations are placed all over a Poland within `pmpro.dacsystem.pl/` system.
@@ -193,7 +199,6 @@ func GetStationSensors(fetchData IHttpAbstracter, stationID string) (result []Se
 	return
 }
 
-//UNIT TESTS !
 func GetStationSensorCodesOnly(fetchData IHttpAbstracter, stationID string) (result []string, err error) {
 	var resultSensors []Sensor
 	if resultSensors, err = GetStationSensors(fetchData, stationID); err != nil {
@@ -201,6 +206,23 @@ func GetStationSensorCodesOnly(fetchData IHttpAbstracter, stationID string) (res
 	}
 	for i := range resultSensors {
 		result = append(result, resultSensors[i].Code)
+	}
+	return
+}
+
+func GetSensorStartTimeAndCode(fetchData IHttpAbstracter, stationID string) (result map[int64]*SensorDateAndCode, err error) {
+	var resultSensors []Sensor
+	if resultSensors, err = GetStationSensors(fetchData, stationID); err != nil {
+		return
+	}
+
+	result = make(map[int64]*SensorDateAndCode)
+	for _, sensor := range resultSensors {
+		if codes, ok := result[sensor.StartDate]; !ok {
+			result[sensor.StartDate] = &SensorDateAndCode{StartDate: time.Unix(sensor.StartDate, 0).UTC(), Codes: []string{sensor.Code}}
+		} else {
+			result[sensor.StartDate].Codes = append(codes.Codes, sensor.Code)
+		}
 	}
 	return
 }

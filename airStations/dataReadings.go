@@ -10,10 +10,11 @@ type SensorDataKeyedViaTime struct {
 }
 
 type sensorDataKeyedViaTime struct {
-	Time int64 `json:"time"`
-	Data []struct {
-		SensorCode string  `json:"sensorCode"`
-		Value      float32 `json:"value"`
+	TimeUnix int64     `json:"tUnix"`
+	Time     time.Time `json:"t"`
+	Data     []struct {
+		SensorCode string  `json:"c"`
+		Value      float32 `json:"v"`
 	} `json:"data"`
 }
 
@@ -24,8 +25,9 @@ type SensorDataKeyedViaCode struct {
 type sensorDataKeyedViaCode struct {
 	SensorCode string `json:"sensorCode"`
 	Data       []struct {
-		Time  int64   `json:"time"`
-		Value float32 `json:"value"`
+		TimeUnix int64     `json:"tUnix"`
+		Time     time.Time `json:"t"`
+		Value    float32   `json:"v"`
 	} `json:"data"`
 }
 
@@ -50,6 +52,7 @@ func GetSensorsDataBetweenTimePoints(httpClient IHttpAbstracter, startTimeUnix i
 		timeofAverage, sensorCodes))
 	if err != nil {
 		return
+
 	}
 
 	pmProResponse, err := deserializePmProDataResponse(bytesRead)
@@ -73,7 +76,7 @@ func GetSensorsDataBetweenTimePoints(httpClient IHttpAbstracter, startTimeUnix i
 	// 	]
 
 	viaCode = processResponseViaSensorCode(pmProResponse)
-	viaTime = SensorDataKeyedViaTime{Data: nil} //todo
+	viaTime = processResponseViaTime(pmProResponse)
 	return
 }
 
@@ -88,37 +91,41 @@ func processResponseViaSensorCode(r PmProSensorsDataInTimePeriodResponse) (resul
 		}
 		for _, singleDataEntry := range sensorData {
 			singleSensorResult.Data = append(singleSensorResult.Data, struct {
-				Time  int64   "json:\"time\""
-				Value float32 "json:\"value\""
-			}{Time: singleDataEntry.Time, Value: singleDataEntry.Value})
+				TimeUnix int64     "json:\"tUnix\""
+				Time     time.Time "json:\"t\""
+				Value    float32   "json:\"v\""
+			}{TimeUnix: singleDataEntry.Time, Time: time.Unix(singleDataEntry.Time, 0), Value: singleDataEntry.Value})
 		}
 		result.Data[sensorNameiterator] = singleSensorResult
 	}
 	return
 }
 
-/*func processResponseViaTime(r PmProSensorsDataInTimePeriodResponse) (result SensorDataKeyedViaTime) {
-	result = SensorDataKeyedViaTime{
-		Data: make([]sensorDataKeyedViaTime, len(r.Sensors)),
+func processResponseViaTime(r PmProSensorsDataInTimePeriodResponse) (result SensorDataKeyedViaTime) {
+	type readingInTimeTemp struct {
+		SensorCode string
+		Value      float32
 	}
+
+	var byTime = make(map[int64][]*readingInTimeTemp)
 
 	for sensorNameiterator, sensorData := range r.Data {
-		sensorName := r.Sensors[sensorNameiterator]
-
+		sensorCode := r.Sensors[sensorNameiterator]
 		for _, singleDataEntry := range sensorData {
-			singleSensorResult := sensorDataKeyedViaTime{
-				Time: singleDataEntry.Time,
-				Data: append(singleSensorResult.Data, struct {
-					SensorCode string   "json:\"sensorCode\""
-					Value float32 "json:\"value\""
-				}{SensorCode: sensorName, Value: singleDataEntry.Value})
-			}
-			// singleSensorResult.Data = append(singleSensorResult.Data, struct {
-			// 	SensorCode string   "json:\"time\""
-			// 	Value float32 "json:\"value\""
-			// }{SensorCode: singleDataEntry.Time, Value: singleDataEntry.Value})
+			byTime[singleDataEntry.Time] = append(byTime[singleDataEntry.Time], &readingInTimeTemp{SensorCode: sensorCode, Value: singleDataEntry.Value})
 		}
-		result.Data[sensorNameiterator] = singleSensorResult
+	}
+
+	result = SensorDataKeyedViaTime{}
+	for timeUnix, readings := range byTime {
+		r := sensorDataKeyedViaTime{TimeUnix: timeUnix, Time: time.Unix(timeUnix, 0)}
+		for _, singleRead := range readings {
+			r.Data = append(r.Data, struct {
+				SensorCode string  `json:"c"`
+				Value      float32 `json:"v"`
+			}{SensorCode: singleRead.SensorCode, Value: singleRead.Value})
+		}
+		result.Data = append(result.Data, r)
 	}
 	return
-}*/
+}

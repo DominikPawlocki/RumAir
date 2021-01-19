@@ -147,6 +147,45 @@ func GetStationSensorsOnlyCodesHandler(w http.ResponseWriter, r *http.Request, f
 	}
 }
 
+// swagger:operation GET /stations/{stationId}/sensors/dayOfStart stationsAndSensors sensorsStartTimeFetching
+// Returns the station sensors day of start. Shows which sensor began to work when.
+// Unfortunately, the property 'StartDate' from sensor 'properties is bullshit sometimes.. Eg station 23 - tells some sensor started to run in 2217, when in reality it started to collect data at June 2018...
+// Have to find a better way to get that date of sensor start, then.
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: stationId
+//   in: path
+//   description: weather station id
+//   required: true
+//   type: string
+//   format: should be like 02, 04 etc
+// responses:
+//   "200":
+//     "$ref": "#/responses/stationSensorCodesHandlerSuccessResp"
+//   "404":
+//     "$ref": "#/responses/notFound"
+//   "500":
+//     "$ref": "#/responses/internalServerError"
+func GetStationSensorsStartDatesHandler(w http.ResponseWriter, r *http.Request, f airStations.IHttpAbstracter) {
+	var resultBytes []byte
+
+	vars := mux.Vars(r)
+	stationID := vars["id"]
+
+	if result, err := airStations.GetSensorStartTimeAndCode(f, stationID); err != nil {
+		http.Error(w, fmt.Sprintf("%s %v", stationsCapabilitesFetchingError, err.Error()), http.StatusNotFound)
+		return
+	} else if resultBytes, err = json.Marshal(result); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(resultBytes)
+	}
+}
+
 /*
 func createNewArticle(w http.ResponseWriter, r *http.Request) {
 	// get the body of our POST request
