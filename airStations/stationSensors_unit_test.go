@@ -120,7 +120,7 @@ func Test_GivenTwoSensorsWithSameStartDate_When_GetSensorStartTimeAndCode_Then_A
 	actual, _ := GetSensorStartTimeAndCode(m, "07")
 
 	assert.NotNil(t, actual)
-	assert.Equal(t, time.Date(2020, 12, 30, 21, 03, 20, 0, time.UTC), actual[expectedUnixTime].StartDate,
+	assert.Equal(t, time.Date(2020, 12, 30, 20, 03, 20, 0, time.UTC), actual[expectedUnixTime].StartDate,
 		fmt.Sprintf("There should %v and is %s", expectedUnixTime, actual[expectedUnixTime].StartDate))
 	assert.Equal(t, 2, len(actual[expectedUnixTime].Codes), fmt.Sprintf("There should len of 2 and is %v", len(actual[expectedUnixTime].Codes)))
 	assert.Equal(t, sensorCode1, actual[expectedUnixTime].Codes[0], fmt.Sprintf("There should be %s and is %s", sensorCode1, actual[expectedUnixTime].Codes[0]))
