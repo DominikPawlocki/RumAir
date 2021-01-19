@@ -29,11 +29,9 @@ func body(doc *html.Node) (*html.Node, error) {
 }
 
 func renderNode(n *html.Node) string {
-	//func renderNode(n *html.Node) []byte {
 	var buf bytes.Buffer
 	w := io.Writer(&buf)
 	html.Render(w, n)
-	//return buf.Bytes()
 	html.Render(w, n)
 	return buf.String()
 }

@@ -218,7 +218,7 @@ func GetSensorStartTimeAndCode(fetchData IHttpAbstracter, stationID string) (res
 
 	result = make(map[int64]*SensorDateAndCode)
 	for _, sensor := range resultSensors {
-		if codes, ok := result[sensor.StartDate]; !ok { //not pretty sure if this pattern is needed at, all, maybe can add directly to empty ?
+		if codes, ok := result[sensor.StartDate]; !ok {
 			result[sensor.StartDate] = &SensorDateAndCode{StartDate: time.Unix(sensor.StartDate, 0).UTC(), Codes: []string{sensor.Code}}
 		} else {
 			result[sensor.StartDate].Codes = append(codes.Codes, sensor.Code)
